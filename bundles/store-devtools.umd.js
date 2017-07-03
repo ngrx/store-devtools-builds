@@ -503,7 +503,6 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
 }
 var STORE_DEVTOOLS_CONFIG = new _angular_core.InjectionToken('@ngrx/devtools Options');
 var INITIAL_OPTIONS = new _angular_core.InjectionToken('@ngrx/devtools Initial Config');
-var SHOULD_INSTRUMENT = new _angular_core.InjectionToken('@ngrx/devtools Should Instrument');
 var DevtoolsDispatcher = (function (_super) {
     __extends(DevtoolsDispatcher, _super);
     function DevtoolsDispatcher() {
@@ -678,20 +677,11 @@ function createReduxDevtoolsExtension() {
     }
 }
 /**
- * @param {?} shouldInstrument
- * @param {?} injector
+ * @param {?} devtools
  * @return {?}
  */
-function createStateObservable(shouldInstrument, injector) {
-    return shouldInstrument ? injector.get(StoreDevtools).state : injector.get(_ngrx_store.State);
-}
-/**
- * @param {?} shouldInstrument
- * @param {?} injector
- * @return {?}
- */
-function createReducerManagerDispatcher(shouldInstrument, injector) {
-    return shouldInstrument ? injector.get(DevtoolsDispatcher) : injector.get(_ngrx_store.ActionsSubject);
+function createStateObservable(devtools) {
+    return devtools.state;
 }
 /**
  * @return {?}
@@ -706,8 +696,7 @@ function noMonitor() {
 function createConfig(_options) {
     var /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
-        monitor: noMonitor,
-        shouldInstrument: IS_EXTENSION_OR_MONITOR_PRESENT,
+        monitor: noMonitor
     };
     var /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     var /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -715,14 +704,6 @@ function createConfig(_options) {
         throw new Error("Devtools 'maxAge' cannot be less than 2, got " + config.maxAge);
     }
     return config;
-}
-/**
- * @param {?} injector
- * @param {?} config
- * @return {?}
- */
-function createShouldInstrument(injector, config) {
-    return injector.get(config.shouldInstrument);
 }
 var StoreDevtoolsModule = (function () {
     function StoreDevtoolsModule() {
@@ -750,24 +731,18 @@ var StoreDevtoolsModule = (function () {
                     useFactory: createReduxDevtoolsExtension
                 },
                 {
-                    provide: SHOULD_INSTRUMENT,
-                    deps: [_angular_core.Injector, STORE_DEVTOOLS_CONFIG],
-                    useFactory: createShouldInstrument
-                },
-                {
                     provide: STORE_DEVTOOLS_CONFIG,
                     deps: [INITIAL_OPTIONS],
                     useFactory: createConfig
                 },
                 {
                     provide: _ngrx_store.StateObservable,
-                    deps: [SHOULD_INSTRUMENT, _angular_core.Injector],
+                    deps: [StoreDevtools],
                     useFactory: createStateObservable
                 },
                 {
                     provide: _ngrx_store.ReducerManagerDispatcher,
-                    deps: [SHOULD_INSTRUMENT, _angular_core.Injector],
-                    useFactory: createReducerManagerDispatcher
+                    useExisting: DevtoolsDispatcher
                 },
             ]
         };
@@ -793,20 +768,17 @@ StoreDevtoolsModule.ctorParameters = function () { return []; };
 
 exports.StoreDevtoolsModule = StoreDevtoolsModule;
 exports.StoreDevtools = StoreDevtools;
-exports.SHOULD_INSTRUMENT = SHOULD_INSTRUMENT;
-exports.ɵk = INITIAL_OPTIONS;
-exports.ɵj = STORE_DEVTOOLS_CONFIG;
-exports.ɵi = DevtoolsDispatcher;
-exports.ɵm = DevtoolsExtension;
-exports.ɵl = REDUX_DEVTOOLS_EXTENSION;
+exports.ɵi = INITIAL_OPTIONS;
+exports.ɵh = STORE_DEVTOOLS_CONFIG;
+exports.ɵg = DevtoolsDispatcher;
+exports.ɵk = DevtoolsExtension;
+exports.ɵj = REDUX_DEVTOOLS_EXTENSION;
 exports.ɵa = IS_EXTENSION_OR_MONITOR_PRESENT;
-exports.ɵg = createConfig;
+exports.ɵf = createConfig;
 exports.ɵb = createIsExtensionOrMonitorPresent;
-exports.ɵe = createReducerManagerDispatcher;
 exports.ɵc = createReduxDevtoolsExtension;
-exports.ɵh = createShouldInstrument;
 exports.ɵd = createStateObservable;
-exports.ɵf = noMonitor;
+exports.ɵe = noMonitor;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -8,8 +8,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { Inject, Injectable, InjectionToken, Injector, NgModule } from '@angular/core';
-import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, State, StateObservable, StoreModule, UPDATE } from '@ngrx/store';
+import { Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
+import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, StoreModule, UPDATE } from '@ngrx/store';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { map } from 'rxjs/operator/map';
 import { merge } from 'rxjs/operator/merge';
@@ -513,7 +513,6 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
 }
 var STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
 var INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
-var SHOULD_INSTRUMENT = new InjectionToken('@ngrx/devtools Should Instrument');
 var DevtoolsDispatcher = (function (_super) {
     __extends(DevtoolsDispatcher, _super);
     function DevtoolsDispatcher() {
@@ -688,20 +687,11 @@ function createReduxDevtoolsExtension() {
     }
 }
 /**
- * @param {?} shouldInstrument
- * @param {?} injector
+ * @param {?} devtools
  * @return {?}
  */
-function createStateObservable(shouldInstrument, injector) {
-    return shouldInstrument ? injector.get(StoreDevtools).state : injector.get(State);
-}
-/**
- * @param {?} shouldInstrument
- * @param {?} injector
- * @return {?}
- */
-function createReducerManagerDispatcher(shouldInstrument, injector) {
-    return shouldInstrument ? injector.get(DevtoolsDispatcher) : injector.get(ActionsSubject);
+function createStateObservable(devtools) {
+    return devtools.state;
 }
 /**
  * @return {?}
@@ -716,8 +706,7 @@ function noMonitor() {
 function createConfig(_options) {
     var /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
-        monitor: noMonitor,
-        shouldInstrument: IS_EXTENSION_OR_MONITOR_PRESENT,
+        monitor: noMonitor
     };
     var /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     var /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -725,14 +714,6 @@ function createConfig(_options) {
         throw new Error("Devtools 'maxAge' cannot be less than 2, got " + config.maxAge);
     }
     return config;
-}
-/**
- * @param {?} injector
- * @param {?} config
- * @return {?}
- */
-function createShouldInstrument(injector, config) {
-    return injector.get(config.shouldInstrument);
 }
 var StoreDevtoolsModule = (function () {
     function StoreDevtoolsModule() {
@@ -760,24 +741,18 @@ var StoreDevtoolsModule = (function () {
                     useFactory: createReduxDevtoolsExtension
                 },
                 {
-                    provide: SHOULD_INSTRUMENT,
-                    deps: [Injector, STORE_DEVTOOLS_CONFIG],
-                    useFactory: createShouldInstrument
-                },
-                {
                     provide: STORE_DEVTOOLS_CONFIG,
                     deps: [INITIAL_OPTIONS],
                     useFactory: createConfig
                 },
                 {
                     provide: StateObservable,
-                    deps: [SHOULD_INSTRUMENT, Injector],
+                    deps: [StoreDevtools],
                     useFactory: createStateObservable
                 },
                 {
                     provide: ReducerManagerDispatcher,
-                    deps: [SHOULD_INSTRUMENT, Injector],
-                    useFactory: createReducerManagerDispatcher
+                    useExisting: DevtoolsDispatcher
                 },
             ]
         };
@@ -803,5 +778,5 @@ StoreDevtoolsModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { StoreDevtoolsModule, StoreDevtools, SHOULD_INSTRUMENT, INITIAL_OPTIONS as ɵk, STORE_DEVTOOLS_CONFIG as ɵj, DevtoolsDispatcher as ɵi, DevtoolsExtension as ɵm, REDUX_DEVTOOLS_EXTENSION as ɵl, IS_EXTENSION_OR_MONITOR_PRESENT as ɵa, createConfig as ɵg, createIsExtensionOrMonitorPresent as ɵb, createReducerManagerDispatcher as ɵe, createReduxDevtoolsExtension as ɵc, createShouldInstrument as ɵh, createStateObservable as ɵd, noMonitor as ɵf };
+export { StoreDevtoolsModule, StoreDevtools, INITIAL_OPTIONS as ɵi, STORE_DEVTOOLS_CONFIG as ɵh, DevtoolsDispatcher as ɵg, DevtoolsExtension as ɵk, REDUX_DEVTOOLS_EXTENSION as ɵj, IS_EXTENSION_OR_MONITOR_PRESENT as ɵa, createConfig as ɵf, createIsExtensionOrMonitorPresent as ɵb, createReduxDevtoolsExtension as ɵc, createStateObservable as ɵd, noMonitor as ɵe };
 //# sourceMappingURL=store-devtools.es5.js.map
