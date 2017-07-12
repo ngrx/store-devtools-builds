@@ -1,5 +1,5 @@
 import { Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
-import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, StoreModule, UPDATE } from '@ngrx/store';
+import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, UPDATE } from '@ngrx/store';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { map } from 'rxjs/operator/map';
 import { merge } from 'rxjs/operator/merge';
@@ -709,6 +709,9 @@ class StoreDevtoolsModule {
         return {
             ngModule: StoreDevtoolsModule,
             providers: [
+                DevtoolsExtension,
+                DevtoolsDispatcher,
+                StoreDevtools,
                 {
                     provide: INITIAL_OPTIONS,
                     useValue: options
@@ -741,16 +744,7 @@ class StoreDevtoolsModule {
     }
 }
 StoreDevtoolsModule.decorators = [
-    { type: NgModule, args: [{
-                imports: [
-                    StoreModule
-                ],
-                providers: [
-                    DevtoolsExtension,
-                    DevtoolsDispatcher,
-                    StoreDevtools,
-                ]
-            },] },
+    { type: NgModule, args: [{},] },
 ];
 /**
  * @nocollapse

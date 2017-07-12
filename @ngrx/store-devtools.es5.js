@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
-import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, StoreModule, UPDATE } from '@ngrx/store';
+import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, UPDATE } from '@ngrx/store';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { map } from 'rxjs/operator/map';
 import { merge } from 'rxjs/operator/merge';
@@ -727,6 +727,9 @@ var StoreDevtoolsModule = (function () {
         return {
             ngModule: StoreDevtoolsModule,
             providers: [
+                DevtoolsExtension,
+                DevtoolsDispatcher,
+                StoreDevtools,
                 {
                     provide: INITIAL_OPTIONS,
                     useValue: options
@@ -760,16 +763,7 @@ var StoreDevtoolsModule = (function () {
     return StoreDevtoolsModule;
 }());
 StoreDevtoolsModule.decorators = [
-    { type: NgModule, args: [{
-                imports: [
-                    StoreModule
-                ],
-                providers: [
-                    DevtoolsExtension,
-                    DevtoolsDispatcher,
-                    StoreDevtools,
-                ]
-            },] },
+    { type: NgModule, args: [{},] },
 ];
 /**
  * @nocollapse

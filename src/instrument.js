@@ -1,5 +1,5 @@
 import { NgModule, InjectionToken } from '@angular/core';
-import { StoreModule, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
+import { StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
 import { StoreDevtools, DevtoolsDispatcher } from './devtools';
 import { STORE_DEVTOOLS_CONFIG, INITIAL_OPTIONS } from './config';
 import { DevtoolsExtension, REDUX_DEVTOOLS_EXTENSION } from './extension';
@@ -62,6 +62,9 @@ export class StoreDevtoolsModule {
         return {
             ngModule: StoreDevtoolsModule,
             providers: [
+                DevtoolsExtension,
+                DevtoolsDispatcher,
+                StoreDevtools,
                 {
                     provide: INITIAL_OPTIONS,
                     useValue: options
@@ -94,16 +97,7 @@ export class StoreDevtoolsModule {
     }
 }
 StoreDevtoolsModule.decorators = [
-    { type: NgModule, args: [{
-                imports: [
-                    StoreModule
-                ],
-                providers: [
-                    DevtoolsExtension,
-                    DevtoolsDispatcher,
-                    StoreDevtools,
-                ]
-            },] },
+    { type: NgModule, args: [{},] },
 ];
 /**
  * @nocollapse
