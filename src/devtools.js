@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { INITIAL_STATE, ReducerObservable, ActionsSubject, ScannedActionsSubject } from '@ngrx/store';
+import { INITIAL_STATE, ReducerObservable, ActionsSubject, ScannedActionsSubject, } from '@ngrx/store';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { map } from 'rxjs/operator/map';
 import { merge } from 'rxjs/operator/merge';
@@ -49,17 +49,21 @@ export class StoreDevtools {
             [merge, extension.actions$],
             [map, liftAction],
             [merge, dispatcher, extension.liftedActions$],
-            [observeOn, queue]
+            [observeOn, queue],
         ]);
         const liftedReducer$ = map.call(reducers$, liftReducer);
         const liftedStateSubject = new ReplaySubject(1);
         const liftedStateSubscription = applyOperators(liftedAction$, [
             [withLatestFrom, liftedReducer$],
-            [scan, ({ state: liftedState }, [action, reducer]) => {
+            [
+                scan,
+                ({ state: liftedState }, [action, reducer]) => {
                     const state = reducer(liftedState, action);
                     extension.notify(action, state);
                     return { state, action };
-                }, { state: liftedInitialState, action: null }]
+                },
+                { state: liftedInitialState, action: null },
+            ],
         ]).subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === Actions.PERFORM_ACTION) {

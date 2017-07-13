@@ -146,7 +146,7 @@ const ExtensionActionTypes = {
     START: 'START',
     DISPATCH: 'DISPATCH',
     STOP: 'STOP',
-    ACTION: 'ACTION'
+    ACTION: 'ACTION',
 };
 const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
 class DevtoolsExtension {
@@ -177,7 +177,9 @@ class DevtoolsExtension {
             return empty();
         }
         return new Observable(subscriber => {
-            const /** @type {?} */ connection = this.devtoolsExtension.connect({ instanceId: this.instanceId });
+            const /** @type {?} */ connection = this.devtoolsExtension.connect({
+                instanceId: this.instanceId,
+            });
             connection.subscribe((change) => subscriber.next(change));
             return connection.unsubscribe;
         });
@@ -195,12 +197,12 @@ class DevtoolsExtension {
         // Listen for lifted actions
         const /** @type {?} */ liftedActions$ = applyOperators(changes$, [
             [filter, (change) => change.type === ExtensionActionTypes.DISPATCH],
-            [map, (change) => this.unwrapAction(change.payload)]
+            [map, (change) => this.unwrapAction(change.payload)],
         ]);
         // Listen for unlifted actions
         const /** @type {?} */ actions$ = applyOperators(changes$, [
             [filter, (change) => change.type === ExtensionActionTypes.ACTION],
-            [map, (change) => this.unwrapAction(change.payload)]
+            [map, (change) => this.unwrapAction(change.payload)],
         ]);
         const /** @type {?} */ actionsUntilStop$ = takeUntil.call(actions$, stop$);
         const /** @type {?} */ liftedUntilStop$ = takeUntil.call(liftedActions$, stop$);
@@ -239,7 +241,7 @@ function computeNextEntry(reducer, action, state, error) {
     if (error) {
         return {
             state,
-            error: 'Interrupted by an error up the chain'
+            error: 'Interrupted by an error up the chain',
         };
     }
     let /** @type {?} */ nextState = state;
@@ -253,7 +255,7 @@ function computeNextEntry(reducer, action, state, error) {
     }
     return {
         state: nextState,
-        error: nextError
+        error: nextError,
     };
 }
 /**
@@ -282,9 +284,9 @@ function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, comm
         const /** @type {?} */ previousState = previousEntry ? previousEntry.state : committedState;
         const /** @type {?} */ previousError = previousEntry ? previousEntry.error : undefined;
         const /** @type {?} */ shouldSkip = skippedActionIds.indexOf(actionId) > -1;
-        const /** @type {?} */ entry = shouldSkip ?
-            previousEntry :
-            computeNextEntry(reducer, action, previousState, previousError);
+        const /** @type {?} */ entry = shouldSkip
+            ? previousEntry
+            : computeNextEntry(reducer, action, previousState, previousError);
         nextComputedStates.push(entry);
     }
     return nextComputedStates;
@@ -303,7 +305,7 @@ function liftInitialState(initialCommittedState, monitorReducer) {
         skippedActionIds: [],
         committedState: initialCommittedState,
         currentStateIndex: 0,
-        computedStates: []
+        computedStates: [],
     };
 }
 /**
@@ -319,7 +321,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
     * Manages how the history actions modify the history state.
     */
     return (reducer) => (liftedState, liftedAction) => {
-        let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates } = liftedState || initialLiftedState;
+        let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, } = liftedState || initialLiftedState;
         if (!liftedState) {
             // Prevent mutating initialLiftedState
             actionsById = Object.create(actionsById);
@@ -347,9 +349,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
             stagedActionIds = [0, ...stagedActionIds.slice(excess + 1)];
             committedState = computedStates[excess].state;
             computedStates = computedStates.slice(excess);
-            currentStateIndex = currentStateIndex > excess
-                ? currentStateIndex - excess
-                : 0;
+            currentStateIndex =
+                currentStateIndex > excess ? currentStateIndex - excess : 0;
         }
         // By default, agressively recompute every state whatever happens.
         // This has O(n) performance, so we'll override this to a sensible
@@ -464,7 +465,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     skippedActionIds,
                     committedState,
                     currentStateIndex,
-                    computedStates
+                    computedStates,
                 } = liftedAction.nextLiftedState);
                 break;
             }
@@ -498,7 +499,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
             skippedActionIds,
             committedState,
             currentStateIndex,
-            computedStates
+            computedStates,
         };
     };
 }
@@ -533,17 +534,21 @@ class StoreDevtools {
             [merge, extension.actions$],
             [map, liftAction],
             [merge, dispatcher, extension.liftedActions$],
-            [observeOn, queue]
+            [observeOn, queue],
         ]);
         const liftedReducer$ = map.call(reducers$, liftReducer);
         const liftedStateSubject = new ReplaySubject(1);
         const liftedStateSubscription = applyOperators(liftedAction$, [
             [withLatestFrom, liftedReducer$],
-            [scan, ({ state: liftedState }, [action, reducer]) => {
+            [
+                scan,
+                ({ state: liftedState }, [action, reducer]) => {
                     const state = reducer(liftedState, action);
                     extension.notify(action, state);
                     return { state, action };
-                }, { state: liftedInitialState, action: null }]
+                },
+                { state: liftedInitialState, action: null },
+            ],
         ]).subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
@@ -664,7 +669,8 @@ function createIsExtensionOrMonitorPresent(extension, config) {
  */
 function createReduxDevtoolsExtension() {
     const /** @type {?} */ extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
-    if (typeof window === 'object' && typeof ((window))[extensionKey] !== 'undefined') {
+    if (typeof window === 'object' &&
+        typeof ((window))[extensionKey] !== 'undefined') {
         return ((window))[extensionKey];
     }
     else {
@@ -691,7 +697,7 @@ function noMonitor() {
 function createConfig(_options) {
     const /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
-        monitor: noMonitor
+        monitor: noMonitor,
     };
     let /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     const /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -714,32 +720,32 @@ class StoreDevtoolsModule {
                 StoreDevtools,
                 {
                     provide: INITIAL_OPTIONS,
-                    useValue: options
+                    useValue: options,
                 },
                 {
                     provide: IS_EXTENSION_OR_MONITOR_PRESENT,
                     deps: [REDUX_DEVTOOLS_EXTENSION, STORE_DEVTOOLS_CONFIG],
-                    useFactory: createIsExtensionOrMonitorPresent
+                    useFactory: createIsExtensionOrMonitorPresent,
                 },
                 {
                     provide: REDUX_DEVTOOLS_EXTENSION,
-                    useFactory: createReduxDevtoolsExtension
+                    useFactory: createReduxDevtoolsExtension,
                 },
                 {
                     provide: STORE_DEVTOOLS_CONFIG,
                     deps: [INITIAL_OPTIONS],
-                    useFactory: createConfig
+                    useFactory: createConfig,
                 },
                 {
                     provide: StateObservable,
                     deps: [StoreDevtools],
-                    useFactory: createStateObservable
+                    useFactory: createStateObservable,
                 },
                 {
                     provide: ReducerManagerDispatcher,
-                    useExisting: DevtoolsDispatcher
+                    useExisting: DevtoolsDispatcher,
                 },
-            ]
+            ],
         };
     }
 }

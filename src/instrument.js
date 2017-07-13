@@ -1,8 +1,8 @@
-import { NgModule, InjectionToken } from '@angular/core';
-import { StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
+import { NgModule, InjectionToken, } from '@angular/core';
+import { StateObservable, ReducerManagerDispatcher, } from '@ngrx/store';
 import { StoreDevtools, DevtoolsDispatcher } from './devtools';
-import { STORE_DEVTOOLS_CONFIG, INITIAL_OPTIONS } from './config';
-import { DevtoolsExtension, REDUX_DEVTOOLS_EXTENSION } from './extension';
+import { STORE_DEVTOOLS_CONFIG, INITIAL_OPTIONS, } from './config';
+import { DevtoolsExtension, REDUX_DEVTOOLS_EXTENSION, } from './extension';
 export const /** @type {?} */ IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
 /**
  * @param {?} extension
@@ -17,7 +17,8 @@ export function createIsExtensionOrMonitorPresent(extension, config) {
  */
 export function createReduxDevtoolsExtension() {
     const /** @type {?} */ extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
-    if (typeof window === 'object' && typeof ((window))[extensionKey] !== 'undefined') {
+    if (typeof window === 'object' &&
+        typeof ((window))[extensionKey] !== 'undefined') {
         return ((window))[extensionKey];
     }
     else {
@@ -44,7 +45,7 @@ export function noMonitor() {
 export function createConfig(_options) {
     const /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
-        monitor: noMonitor
+        monitor: noMonitor,
     };
     let /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     const /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -67,32 +68,32 @@ export class StoreDevtoolsModule {
                 StoreDevtools,
                 {
                     provide: INITIAL_OPTIONS,
-                    useValue: options
+                    useValue: options,
                 },
                 {
                     provide: IS_EXTENSION_OR_MONITOR_PRESENT,
                     deps: [REDUX_DEVTOOLS_EXTENSION, STORE_DEVTOOLS_CONFIG],
-                    useFactory: createIsExtensionOrMonitorPresent
+                    useFactory: createIsExtensionOrMonitorPresent,
                 },
                 {
                     provide: REDUX_DEVTOOLS_EXTENSION,
-                    useFactory: createReduxDevtoolsExtension
+                    useFactory: createReduxDevtoolsExtension,
                 },
                 {
                     provide: STORE_DEVTOOLS_CONFIG,
                     deps: [INITIAL_OPTIONS],
-                    useFactory: createConfig
+                    useFactory: createConfig,
                 },
                 {
                     provide: StateObservable,
                     deps: [StoreDevtools],
-                    useFactory: createStateObservable
+                    useFactory: createStateObservable,
                 },
                 {
                     provide: ReducerManagerDispatcher,
-                    useExisting: DevtoolsDispatcher
+                    useExisting: DevtoolsDispatcher,
                 },
-            ]
+            ],
         };
     }
 }

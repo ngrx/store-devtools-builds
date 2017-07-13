@@ -1,4 +1,4 @@
-import { UPDATE, INIT } from '@ngrx/store';
+import { UPDATE, INIT, } from '@ngrx/store';
 import { difference, liftAction } from './utils';
 import * as Actions from './actions';
 export const /** @type {?} */ INIT_ACTION = { type: INIT };
@@ -14,7 +14,7 @@ function computeNextEntry(reducer, action, state, error) {
     if (error) {
         return {
             state,
-            error: 'Interrupted by an error up the chain'
+            error: 'Interrupted by an error up the chain',
         };
     }
     let /** @type {?} */ nextState = state;
@@ -28,7 +28,7 @@ function computeNextEntry(reducer, action, state, error) {
     }
     return {
         state: nextState,
-        error: nextError
+        error: nextError,
     };
 }
 /**
@@ -57,9 +57,9 @@ function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, comm
         const /** @type {?} */ previousState = previousEntry ? previousEntry.state : committedState;
         const /** @type {?} */ previousError = previousEntry ? previousEntry.error : undefined;
         const /** @type {?} */ shouldSkip = skippedActionIds.indexOf(actionId) > -1;
-        const /** @type {?} */ entry = shouldSkip ?
-            previousEntry :
-            computeNextEntry(reducer, action, previousState, previousError);
+        const /** @type {?} */ entry = shouldSkip
+            ? previousEntry
+            : computeNextEntry(reducer, action, previousState, previousError);
         nextComputedStates.push(entry);
     }
     return nextComputedStates;
@@ -78,7 +78,7 @@ export function liftInitialState(initialCommittedState, monitorReducer) {
         skippedActionIds: [],
         committedState: initialCommittedState,
         currentStateIndex: 0,
-        computedStates: []
+        computedStates: [],
     };
 }
 /**
@@ -94,7 +94,7 @@ export function liftReducerWith(initialCommittedState, initialLiftedState, monit
     * Manages how the history actions modify the history state.
     */
     return (reducer) => (liftedState, liftedAction) => {
-        let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates } = liftedState || initialLiftedState;
+        let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, } = liftedState || initialLiftedState;
         if (!liftedState) {
             // Prevent mutating initialLiftedState
             actionsById = Object.create(actionsById);
@@ -122,9 +122,8 @@ export function liftReducerWith(initialCommittedState, initialLiftedState, monit
             stagedActionIds = [0, ...stagedActionIds.slice(excess + 1)];
             committedState = computedStates[excess].state;
             computedStates = computedStates.slice(excess);
-            currentStateIndex = currentStateIndex > excess
-                ? currentStateIndex - excess
-                : 0;
+            currentStateIndex =
+                currentStateIndex > excess ? currentStateIndex - excess : 0;
         }
         // By default, agressively recompute every state whatever happens.
         // This has O(n) performance, so we'll override this to a sensible
@@ -239,7 +238,7 @@ export function liftReducerWith(initialCommittedState, initialLiftedState, monit
                     skippedActionIds,
                     committedState,
                     currentStateIndex,
-                    computedStates
+                    computedStates,
                 } = liftedAction.nextLiftedState);
                 break;
             }
@@ -273,7 +272,7 @@ export function liftReducerWith(initialCommittedState, initialLiftedState, monit
             skippedActionIds,
             committedState,
             currentStateIndex,
-            computedStates
+            computedStates,
         };
     };
 }

@@ -11,7 +11,7 @@ export const /** @type {?} */ ExtensionActionTypes = {
     START: 'START',
     DISPATCH: 'DISPATCH',
     STOP: 'STOP',
-    ACTION: 'ACTION'
+    ACTION: 'ACTION',
 };
 export const /** @type {?} */ REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
 export class DevtoolsExtension {
@@ -42,7 +42,9 @@ export class DevtoolsExtension {
             return empty();
         }
         return new Observable(subscriber => {
-            const /** @type {?} */ connection = this.devtoolsExtension.connect({ instanceId: this.instanceId });
+            const /** @type {?} */ connection = this.devtoolsExtension.connect({
+                instanceId: this.instanceId,
+            });
             connection.subscribe((change) => subscriber.next(change));
             return connection.unsubscribe;
         });
@@ -60,12 +62,12 @@ export class DevtoolsExtension {
         // Listen for lifted actions
         const /** @type {?} */ liftedActions$ = applyOperators(changes$, [
             [filter, (change) => change.type === ExtensionActionTypes.DISPATCH],
-            [map, (change) => this.unwrapAction(change.payload)]
+            [map, (change) => this.unwrapAction(change.payload)],
         ]);
         // Listen for unlifted actions
         const /** @type {?} */ actions$ = applyOperators(changes$, [
             [filter, (change) => change.type === ExtensionActionTypes.ACTION],
-            [map, (change) => this.unwrapAction(change.payload)]
+            [map, (change) => this.unwrapAction(change.payload)],
         ]);
         const /** @type {?} */ actionsUntilStop$ = takeUntil.call(actions$, stop$);
         const /** @type {?} */ liftedUntilStop$ = takeUntil.call(liftedActions$, stop$);

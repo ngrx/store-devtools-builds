@@ -160,7 +160,7 @@ var ExtensionActionTypes = {
     START: 'START',
     DISPATCH: 'DISPATCH',
     STOP: 'STOP',
-    ACTION: 'ACTION'
+    ACTION: 'ACTION',
 };
 var REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
 var DevtoolsExtension = (function () {
@@ -192,7 +192,9 @@ var DevtoolsExtension = (function () {
             return empty();
         }
         return new Observable(function (subscriber) {
-            var /** @type {?} */ connection = _this.devtoolsExtension.connect({ instanceId: _this.instanceId });
+            var /** @type {?} */ connection = _this.devtoolsExtension.connect({
+                instanceId: _this.instanceId,
+            });
             connection.subscribe(function (change) { return subscriber.next(change); });
             return connection.unsubscribe;
         });
@@ -211,12 +213,12 @@ var DevtoolsExtension = (function () {
         // Listen for lifted actions
         var /** @type {?} */ liftedActions$ = applyOperators(changes$, [
             [filter, function (change) { return change.type === ExtensionActionTypes.DISPATCH; }],
-            [map, function (change) { return _this.unwrapAction(change.payload); }]
+            [map, function (change) { return _this.unwrapAction(change.payload); }],
         ]);
         // Listen for unlifted actions
         var /** @type {?} */ actions$ = applyOperators(changes$, [
             [filter, function (change) { return change.type === ExtensionActionTypes.ACTION; }],
-            [map, function (change) { return _this.unwrapAction(change.payload); }]
+            [map, function (change) { return _this.unwrapAction(change.payload); }],
         ]);
         var /** @type {?} */ actionsUntilStop$ = takeUntil.call(actions$, stop$);
         var /** @type {?} */ liftedUntilStop$ = takeUntil.call(liftedActions$, stop$);
@@ -255,7 +257,7 @@ function computeNextEntry(reducer, action, state, error) {
     if (error) {
         return {
             state: state,
-            error: 'Interrupted by an error up the chain'
+            error: 'Interrupted by an error up the chain',
         };
     }
     var /** @type {?} */ nextState = state;
@@ -269,7 +271,7 @@ function computeNextEntry(reducer, action, state, error) {
     }
     return {
         state: nextState,
-        error: nextError
+        error: nextError,
     };
 }
 /**
@@ -298,9 +300,9 @@ function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, comm
         var /** @type {?} */ previousState = previousEntry ? previousEntry.state : committedState;
         var /** @type {?} */ previousError = previousEntry ? previousEntry.error : undefined;
         var /** @type {?} */ shouldSkip = skippedActionIds.indexOf(actionId) > -1;
-        var /** @type {?} */ entry = shouldSkip ?
-            previousEntry :
-            computeNextEntry(reducer, action, previousState, previousError);
+        var /** @type {?} */ entry = shouldSkip
+            ? previousEntry
+            : computeNextEntry(reducer, action, previousState, previousError);
         nextComputedStates.push(entry);
     }
     return nextComputedStates;
@@ -319,7 +321,7 @@ function liftInitialState(initialCommittedState, monitorReducer) {
         skippedActionIds: [],
         committedState: initialCommittedState,
         currentStateIndex: 0,
-        computedStates: []
+        computedStates: [],
     };
 }
 /**
@@ -364,9 +366,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
             stagedActionIds = [0].concat(stagedActionIds.slice(excess + 1));
             committedState = computedStates[excess].state;
             computedStates = computedStates.slice(excess);
-            currentStateIndex = currentStateIndex > excess
-                ? currentStateIndex - excess
-                : 0;
+            currentStateIndex =
+                currentStateIndex > excess ? currentStateIndex - excess : 0;
         }
         // By default, agressively recompute every state whatever happens.
         // This has O(n) performance, so we'll override this to a sensible
@@ -506,7 +507,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
             skippedActionIds: skippedActionIds,
             committedState: committedState,
             currentStateIndex: currentStateIndex,
-            computedStates: computedStates
+            computedStates: computedStates,
         };
         var _b;
     }; };
@@ -545,19 +546,23 @@ var StoreDevtools = (function () {
             [merge, extension.actions$],
             [map, liftAction],
             [merge, dispatcher, extension.liftedActions$],
-            [observeOn, queue]
+            [observeOn, queue],
         ]);
         var liftedReducer$ = map.call(reducers$, liftReducer);
         var liftedStateSubject = new ReplaySubject(1);
         var liftedStateSubscription = applyOperators(liftedAction$, [
             [withLatestFrom, liftedReducer$],
-            [scan, function (_a, _b) {
+            [
+                scan,
+                function (_a, _b) {
                     var liftedState = _a.state;
                     var action = _b[0], reducer = _b[1];
                     var state = reducer(liftedState, action);
                     extension.notify(action, state);
                     return { state: state, action: action };
-                }, { state: liftedInitialState, action: null }]
+                },
+                { state: liftedInitialState, action: null },
+            ],
         ]).subscribe(function (_a) {
             var state = _a.state, action = _a.action;
             liftedStateSubject.next(state);
@@ -679,7 +684,8 @@ function createIsExtensionOrMonitorPresent(extension, config) {
  */
 function createReduxDevtoolsExtension() {
     var /** @type {?} */ extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
-    if (typeof window === 'object' && typeof ((window))[extensionKey] !== 'undefined') {
+    if (typeof window === 'object' &&
+        typeof ((window))[extensionKey] !== 'undefined') {
         return ((window))[extensionKey];
     }
     else {
@@ -706,7 +712,7 @@ function noMonitor() {
 function createConfig(_options) {
     var /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
-        monitor: noMonitor
+        monitor: noMonitor,
     };
     var /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     var /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -732,32 +738,32 @@ var StoreDevtoolsModule = (function () {
                 StoreDevtools,
                 {
                     provide: INITIAL_OPTIONS,
-                    useValue: options
+                    useValue: options,
                 },
                 {
                     provide: IS_EXTENSION_OR_MONITOR_PRESENT,
                     deps: [REDUX_DEVTOOLS_EXTENSION, STORE_DEVTOOLS_CONFIG],
-                    useFactory: createIsExtensionOrMonitorPresent
+                    useFactory: createIsExtensionOrMonitorPresent,
                 },
                 {
                     provide: REDUX_DEVTOOLS_EXTENSION,
-                    useFactory: createReduxDevtoolsExtension
+                    useFactory: createReduxDevtoolsExtension,
                 },
                 {
                     provide: STORE_DEVTOOLS_CONFIG,
                     deps: [INITIAL_OPTIONS],
-                    useFactory: createConfig
+                    useFactory: createConfig,
                 },
                 {
                     provide: StateObservable,
                     deps: [StoreDevtools],
-                    useFactory: createStateObservable
+                    useFactory: createStateObservable,
                 },
                 {
                     provide: ReducerManagerDispatcher,
-                    useExisting: DevtoolsDispatcher
+                    useExisting: DevtoolsDispatcher,
                 },
-            ]
+            ],
         };
     };
     return StoreDevtoolsModule;
