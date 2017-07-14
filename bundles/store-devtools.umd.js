@@ -171,7 +171,7 @@ var DevtoolsExtension = (function () {
         if (!this.devtoolsExtension) {
             return;
         }
-        this.devtoolsExtension.send(null, state, false, this.instanceId);
+        this.devtoolsExtension.send(null, state, { serialize: false }, this.instanceId);
     };
     /**
      * @return {?}

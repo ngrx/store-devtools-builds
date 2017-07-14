@@ -19,7 +19,9 @@ export interface ReduxDevtoolsExtension {
         shouldStringify?: boolean;
         instanceId: string;
     }): ReduxDevtoolsExtensionConnection;
-    send(action: any, state: any, shouldStringify?: boolean, instanceId?: string): void;
+    send(action: any, state: any, options?: boolean | {
+        serialize: boolean | object;
+    }, instanceId?: string): void;
 }
 export declare class DevtoolsExtension {
     private instanceId;
