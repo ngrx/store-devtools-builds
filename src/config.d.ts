@@ -1,6 +1,6 @@
 import { ActionReducer } from '@ngrx/store';
 import { InjectionToken } from '@angular/core';
-export interface StoreDevtoolsConfig {
+export declare class StoreDevtoolsConfig {
     maxAge: number | false;
     monitor: ActionReducer<any, any>;
 }

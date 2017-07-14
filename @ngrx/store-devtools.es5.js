@@ -512,6 +512,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
         var _b;
     }; };
 }
+var StoreDevtoolsConfig = (function () {
+    function StoreDevtoolsConfig() {
+    }
+    return StoreDevtoolsConfig;
+}());
 var STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
 var INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
 var DevtoolsDispatcher = (function (_super) {
@@ -668,7 +673,7 @@ StoreDevtools.ctorParameters = function () { return [
     { type: DevtoolsExtension, },
     { type: ScannedActionsSubject, },
     { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] },] },
-    { type: undefined, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ]; };
 var IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
 /**
@@ -778,5 +783,5 @@ StoreDevtoolsModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { StoreDevtoolsModule, StoreDevtools, INITIAL_OPTIONS as ɵi, STORE_DEVTOOLS_CONFIG as ɵh, DevtoolsDispatcher as ɵg, DevtoolsExtension as ɵk, REDUX_DEVTOOLS_EXTENSION as ɵj, IS_EXTENSION_OR_MONITOR_PRESENT as ɵa, createConfig as ɵf, createIsExtensionOrMonitorPresent as ɵb, createReduxDevtoolsExtension as ɵc, createStateObservable as ɵd, noMonitor as ɵe };
+export { StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig, INITIAL_OPTIONS as ɵi, STORE_DEVTOOLS_CONFIG as ɵh, DevtoolsDispatcher as ɵg, DevtoolsExtension as ɵk, REDUX_DEVTOOLS_EXTENSION as ɵj, IS_EXTENSION_OR_MONITOR_PRESENT as ɵa, createConfig as ɵf, createIsExtensionOrMonitorPresent as ɵb, createReduxDevtoolsExtension as ɵc, createStateObservable as ɵd, noMonitor as ɵe };
 //# sourceMappingURL=store-devtools.es5.js.map

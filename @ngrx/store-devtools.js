@@ -504,6 +504,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
     };
 }
 
+class StoreDevtoolsConfig {
+}
 const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
 const INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
 
@@ -652,7 +654,7 @@ StoreDevtools.ctorParameters = () => [
     { type: DevtoolsExtension, },
     { type: ScannedActionsSubject, },
     { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] },] },
-    { type: undefined, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 
 const IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
@@ -761,5 +763,5 @@ StoreDevtoolsModule.ctorParameters = () => [];
  * Generated bundle index. Do not edit.
  */
 
-export { StoreDevtoolsModule, StoreDevtools, INITIAL_OPTIONS as ɵi, STORE_DEVTOOLS_CONFIG as ɵh, DevtoolsDispatcher as ɵg, DevtoolsExtension as ɵk, REDUX_DEVTOOLS_EXTENSION as ɵj, IS_EXTENSION_OR_MONITOR_PRESENT as ɵa, createConfig as ɵf, createIsExtensionOrMonitorPresent as ɵb, createReduxDevtoolsExtension as ɵc, createStateObservable as ɵd, noMonitor as ɵe };
+export { StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig, INITIAL_OPTIONS as ɵi, STORE_DEVTOOLS_CONFIG as ɵh, DevtoolsDispatcher as ɵg, DevtoolsExtension as ɵk, REDUX_DEVTOOLS_EXTENSION as ɵj, IS_EXTENSION_OR_MONITOR_PRESENT as ɵa, createConfig as ɵf, createIsExtensionOrMonitorPresent as ɵb, createReduxDevtoolsExtension as ɵc, createStateObservable as ɵd, noMonitor as ɵe };
 //# sourceMappingURL=store-devtools.js.map

@@ -12,7 +12,7 @@ import { DevtoolsExtension } from './extension';
 import { liftAction, unliftState, applyOperators } from './utils';
 import { liftReducerWith, liftInitialState } from './reducer';
 import * as Actions from './actions';
-import { STORE_DEVTOOLS_CONFIG } from './config';
+import { StoreDevtoolsConfig, STORE_DEVTOOLS_CONFIG } from './config';
 export class DevtoolsDispatcher extends ActionsSubject {
 }
 DevtoolsDispatcher.decorators = [
@@ -167,7 +167,7 @@ StoreDevtools.ctorParameters = () => [
     { type: DevtoolsExtension, },
     { type: ScannedActionsSubject, },
     { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] },] },
-    { type: undefined, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 function StoreDevtools_tsickle_Closure_declarations() {
     /** @type {?} */

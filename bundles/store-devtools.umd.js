@@ -502,6 +502,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
         var _b;
     }; };
 }
+var StoreDevtoolsConfig = (function () {
+    function StoreDevtoolsConfig() {
+    }
+    return StoreDevtoolsConfig;
+}());
 var STORE_DEVTOOLS_CONFIG = new _angular_core.InjectionToken('@ngrx/devtools Options');
 var INITIAL_OPTIONS = new _angular_core.InjectionToken('@ngrx/devtools Initial Config');
 var DevtoolsDispatcher = (function (_super) {
@@ -658,7 +663,7 @@ StoreDevtools.ctorParameters = function () { return [
     { type: DevtoolsExtension, },
     { type: _ngrx_store.ScannedActionsSubject, },
     { type: undefined, decorators: [{ type: _angular_core.Inject, args: [_ngrx_store.INITIAL_STATE,] },] },
-    { type: undefined, decorators: [{ type: _angular_core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: _angular_core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ]; };
 var IS_EXTENSION_OR_MONITOR_PRESENT = new _angular_core.InjectionToken('Is Devtools Extension or Monitor Present');
 /**
@@ -768,6 +773,7 @@ StoreDevtoolsModule.ctorParameters = function () { return []; };
 
 exports.StoreDevtoolsModule = StoreDevtoolsModule;
 exports.StoreDevtools = StoreDevtools;
+exports.StoreDevtoolsConfig = StoreDevtoolsConfig;
 exports.ɵi = INITIAL_OPTIONS;
 exports.ɵh = STORE_DEVTOOLS_CONFIG;
 exports.ɵg = DevtoolsDispatcher;

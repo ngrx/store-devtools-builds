@@ -1,2 +1,2 @@
-export { StoreDevtoolsModule, StoreDevtools } from './src/index';
+export { StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig } from './src/index';
 //# sourceMappingURL=public_api.js.map

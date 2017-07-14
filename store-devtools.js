@@ -1,7 +1,7 @@
 /**
  * Generated bundle index. Do not edit.
  */
-export { StoreDevtoolsModule, StoreDevtools } from './public_api';
+export { StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig } from './public_api';
 export { INITIAL_OPTIONS as ɵi, STORE_DEVTOOLS_CONFIG as ɵh } from './src/config';
 export { DevtoolsDispatcher as ɵg } from './src/devtools';
 export { DevtoolsExtension as ɵk, REDUX_DEVTOOLS_EXTENSION as ɵj } from './src/extension';
