@@ -9,7 +9,7 @@ export declare type UpdateReducerAction = {
 export declare type CoreActions = InitAction | UpdateReducerAction;
 export declare type Actions = Actions.All | CoreActions;
 export declare const INIT_ACTION: {
-    type: string;
+    type: "@ngrx/store/init";
 };
 export interface LiftedState {
     monitorState: any;
