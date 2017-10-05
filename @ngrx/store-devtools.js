@@ -1,19 +1,19 @@
 import { Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
 import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, UPDATE } from '@ngrx/store';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { map } from 'rxjs/operator/map';
-import { merge } from 'rxjs/operator/merge';
-import { observeOn } from 'rxjs/operator/observeOn';
-import { scan } from 'rxjs/operator/scan';
-import { skip } from 'rxjs/operator/skip';
-import { withLatestFrom } from 'rxjs/operator/withLatestFrom';
-import { queue } from 'rxjs/scheduler/queue';
-import { Observable } from 'rxjs/Observable';
-import { empty } from 'rxjs/observable/empty';
-import { filter } from 'rxjs/operator/filter';
-import { share } from 'rxjs/operator/share';
-import { switchMap } from 'rxjs/operator/switchMap';
-import { takeUntil } from 'rxjs/operator/takeUntil';
+import { ReplaySubject as ReplaySubject$1 } from 'rxjs/ReplaySubject';
+import { map as map$1 } from 'rxjs/operator/map';
+import { merge as merge$1 } from 'rxjs/operator/merge';
+import { observeOn as observeOn$1 } from 'rxjs/operator/observeOn';
+import { scan as scan$1 } from 'rxjs/operator/scan';
+import { skip as skip$1 } from 'rxjs/operator/skip';
+import { withLatestFrom as withLatestFrom$1 } from 'rxjs/operator/withLatestFrom';
+import { queue as queue$1 } from 'rxjs/scheduler/queue';
+import { Observable as Observable$1 } from 'rxjs/Observable';
+import { empty as empty$1 } from 'rxjs/observable/empty';
+import { filter as filter$1 } from 'rxjs/operator/filter';
+import { share as share$1 } from 'rxjs/operator/share';
+import { switchMap as switchMap$1 } from 'rxjs/operator/switchMap';
+import { takeUntil as takeUntil$1 } from 'rxjs/operator/takeUntil';
 
 const PERFORM_ACTION = 'PERFORM_ACTION';
 const RESET = 'RESET';
@@ -174,9 +174,9 @@ class DevtoolsExtension {
      */
     createChangesObservable() {
         if (!this.devtoolsExtension) {
-            return empty();
+            return empty$1();
         }
-        return new Observable(subscriber => {
+        return new Observable$1(subscriber => {
             const /** @type {?} */ connection = this.devtoolsExtension.connect({
                 instanceId: this.instanceId,
             });
@@ -189,26 +189,26 @@ class DevtoolsExtension {
      */
     createActionStreams() {
         // Listens to all changes based on our instanceId
-        const /** @type {?} */ changes$ = share.call(this.createChangesObservable());
+        const /** @type {?} */ changes$ = share$1.call(this.createChangesObservable());
         // Listen for the start action
-        const /** @type {?} */ start$ = filter.call(changes$, (change) => change.type === ExtensionActionTypes.START);
+        const /** @type {?} */ start$ = filter$1.call(changes$, (change) => change.type === ExtensionActionTypes.START);
         // Listen for the stop action
-        const /** @type {?} */ stop$ = filter.call(changes$, (change) => change.type === ExtensionActionTypes.STOP);
+        const /** @type {?} */ stop$ = filter$1.call(changes$, (change) => change.type === ExtensionActionTypes.STOP);
         // Listen for lifted actions
         const /** @type {?} */ liftedActions$ = applyOperators(changes$, [
-            [filter, (change) => change.type === ExtensionActionTypes.DISPATCH],
-            [map, (change) => this.unwrapAction(change.payload)],
+            [filter$1, (change) => change.type === ExtensionActionTypes.DISPATCH],
+            [map$1, (change) => this.unwrapAction(change.payload)],
         ]);
         // Listen for unlifted actions
         const /** @type {?} */ actions$ = applyOperators(changes$, [
-            [filter, (change) => change.type === ExtensionActionTypes.ACTION],
-            [map, (change) => this.unwrapAction(change.payload)],
+            [filter$1, (change) => change.type === ExtensionActionTypes.ACTION],
+            [map$1, (change) => this.unwrapAction(change.payload)],
         ]);
-        const /** @type {?} */ actionsUntilStop$ = takeUntil.call(actions$, stop$);
-        const /** @type {?} */ liftedUntilStop$ = takeUntil.call(liftedActions$, stop$);
+        const /** @type {?} */ actionsUntilStop$ = takeUntil$1.call(actions$, stop$);
+        const /** @type {?} */ liftedUntilStop$ = takeUntil$1.call(liftedActions$, stop$);
         // Only take the action sources between the start/stop events
-        this.actions$ = switchMap.call(start$, () => actionsUntilStop$);
-        this.liftedActions$ = switchMap.call(start$, () => liftedUntilStop$);
+        this.actions$ = switchMap$1.call(start$, () => actionsUntilStop$);
+        this.liftedActions$ = switchMap$1.call(start$, () => liftedUntilStop$);
     }
     /**
      * @param {?} action
@@ -532,18 +532,18 @@ class StoreDevtools {
         const liftedInitialState = liftInitialState(initialState, config.monitor);
         const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config.maxAge ? { maxAge: config.maxAge } : {});
         const liftedAction$ = applyOperators(actions$.asObservable(), [
-            [skip, 1],
-            [merge, extension.actions$],
-            [map, liftAction],
-            [merge, dispatcher, extension.liftedActions$],
-            [observeOn, queue],
+            [skip$1, 1],
+            [merge$1, extension.actions$],
+            [map$1, liftAction],
+            [merge$1, dispatcher, extension.liftedActions$],
+            [observeOn$1, queue$1],
         ]);
-        const liftedReducer$ = map.call(reducers$, liftReducer);
-        const liftedStateSubject = new ReplaySubject(1);
+        const liftedReducer$ = map$1.call(reducers$, liftReducer);
+        const liftedStateSubject = new ReplaySubject$1(1);
         const liftedStateSubscription = applyOperators(liftedAction$, [
-            [withLatestFrom, liftedReducer$],
+            [withLatestFrom$1, liftedReducer$],
             [
-                scan,
+                scan$1,
                 ({ state: liftedState }, [action, reducer]) => {
                     const state = reducer(liftedState, action);
                     extension.notify(action, state);
@@ -559,7 +559,7 @@ class StoreDevtools {
             }
         });
         const liftedState$ = liftedStateSubject.asObservable();
-        const state$ = map.call(liftedState$, unliftState);
+        const state$ = map$1.call(liftedState$, unliftState);
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;

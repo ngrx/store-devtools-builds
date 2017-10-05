@@ -10,20 +10,20 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
 import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, UPDATE } from '@ngrx/store';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { map } from 'rxjs/operator/map';
-import { merge } from 'rxjs/operator/merge';
-import { observeOn } from 'rxjs/operator/observeOn';
-import { scan } from 'rxjs/operator/scan';
-import { skip } from 'rxjs/operator/skip';
-import { withLatestFrom } from 'rxjs/operator/withLatestFrom';
-import { queue } from 'rxjs/scheduler/queue';
-import { Observable } from 'rxjs/Observable';
-import { empty } from 'rxjs/observable/empty';
-import { filter } from 'rxjs/operator/filter';
-import { share } from 'rxjs/operator/share';
-import { switchMap } from 'rxjs/operator/switchMap';
-import { takeUntil } from 'rxjs/operator/takeUntil';
+import { ReplaySubject as ReplaySubject$1 } from 'rxjs/ReplaySubject';
+import { map as map$1 } from 'rxjs/operator/map';
+import { merge as merge$1 } from 'rxjs/operator/merge';
+import { observeOn as observeOn$1 } from 'rxjs/operator/observeOn';
+import { scan as scan$1 } from 'rxjs/operator/scan';
+import { skip as skip$1 } from 'rxjs/operator/skip';
+import { withLatestFrom as withLatestFrom$1 } from 'rxjs/operator/withLatestFrom';
+import { queue as queue$1 } from 'rxjs/scheduler/queue';
+import { Observable as Observable$1 } from 'rxjs/Observable';
+import { empty as empty$1 } from 'rxjs/observable/empty';
+import { filter as filter$1 } from 'rxjs/operator/filter';
+import { share as share$1 } from 'rxjs/operator/share';
+import { switchMap as switchMap$1 } from 'rxjs/operator/switchMap';
+import { takeUntil as takeUntil$1 } from 'rxjs/operator/takeUntil';
 var PERFORM_ACTION = 'PERFORM_ACTION';
 var RESET = 'RESET';
 var ROLLBACK = 'ROLLBACK';
@@ -189,9 +189,9 @@ var DevtoolsExtension = (function () {
     DevtoolsExtension.prototype.createChangesObservable = function () {
         var _this = this;
         if (!this.devtoolsExtension) {
-            return empty();
+            return empty$1();
         }
-        return new Observable(function (subscriber) {
+        return new Observable$1(function (subscriber) {
             var /** @type {?} */ connection = _this.devtoolsExtension.connect({
                 instanceId: _this.instanceId,
             });
@@ -205,26 +205,26 @@ var DevtoolsExtension = (function () {
     DevtoolsExtension.prototype.createActionStreams = function () {
         var _this = this;
         // Listens to all changes based on our instanceId
-        var /** @type {?} */ changes$ = share.call(this.createChangesObservable());
+        var /** @type {?} */ changes$ = share$1.call(this.createChangesObservable());
         // Listen for the start action
-        var /** @type {?} */ start$ = filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.START; });
+        var /** @type {?} */ start$ = filter$1.call(changes$, function (change) { return change.type === ExtensionActionTypes.START; });
         // Listen for the stop action
-        var /** @type {?} */ stop$ = filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.STOP; });
+        var /** @type {?} */ stop$ = filter$1.call(changes$, function (change) { return change.type === ExtensionActionTypes.STOP; });
         // Listen for lifted actions
         var /** @type {?} */ liftedActions$ = applyOperators(changes$, [
-            [filter, function (change) { return change.type === ExtensionActionTypes.DISPATCH; }],
-            [map, function (change) { return _this.unwrapAction(change.payload); }],
+            [filter$1, function (change) { return change.type === ExtensionActionTypes.DISPATCH; }],
+            [map$1, function (change) { return _this.unwrapAction(change.payload); }],
         ]);
         // Listen for unlifted actions
         var /** @type {?} */ actions$ = applyOperators(changes$, [
-            [filter, function (change) { return change.type === ExtensionActionTypes.ACTION; }],
-            [map, function (change) { return _this.unwrapAction(change.payload); }],
+            [filter$1, function (change) { return change.type === ExtensionActionTypes.ACTION; }],
+            [map$1, function (change) { return _this.unwrapAction(change.payload); }],
         ]);
-        var /** @type {?} */ actionsUntilStop$ = takeUntil.call(actions$, stop$);
-        var /** @type {?} */ liftedUntilStop$ = takeUntil.call(liftedActions$, stop$);
+        var /** @type {?} */ actionsUntilStop$ = takeUntil$1.call(actions$, stop$);
+        var /** @type {?} */ liftedUntilStop$ = takeUntil$1.call(liftedActions$, stop$);
         // Only take the action sources between the start/stop events
-        this.actions$ = switchMap.call(start$, function () { return actionsUntilStop$; });
-        this.liftedActions$ = switchMap.call(start$, function () { return liftedUntilStop$; });
+        this.actions$ = switchMap$1.call(start$, function () { return actionsUntilStop$; });
+        this.liftedActions$ = switchMap$1.call(start$, function () { return liftedUntilStop$; });
     };
     /**
      * @param {?} action
@@ -547,18 +547,18 @@ var StoreDevtools = (function () {
         var liftedInitialState = liftInitialState(initialState, config.monitor);
         var liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config.maxAge ? { maxAge: config.maxAge } : {});
         var liftedAction$ = applyOperators(actions$.asObservable(), [
-            [skip, 1],
-            [merge, extension.actions$],
-            [map, liftAction],
-            [merge, dispatcher, extension.liftedActions$],
-            [observeOn, queue],
+            [skip$1, 1],
+            [merge$1, extension.actions$],
+            [map$1, liftAction],
+            [merge$1, dispatcher, extension.liftedActions$],
+            [observeOn$1, queue$1],
         ]);
-        var liftedReducer$ = map.call(reducers$, liftReducer);
-        var liftedStateSubject = new ReplaySubject(1);
+        var liftedReducer$ = map$1.call(reducers$, liftReducer);
+        var liftedStateSubject = new ReplaySubject$1(1);
         var liftedStateSubscription = applyOperators(liftedAction$, [
-            [withLatestFrom, liftedReducer$],
+            [withLatestFrom$1, liftedReducer$],
             [
-                scan,
+                scan$1,
                 function (_a, _b) {
                     var liftedState = _a.state;
                     var action = _b[0], reducer = _b[1];
@@ -577,7 +577,7 @@ var StoreDevtools = (function () {
             }
         });
         var liftedState$ = liftedStateSubject.asObservable();
-        var state$ = map.call(liftedState$, unliftState);
+        var state$ = map$1.call(liftedState$, unliftState);
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;

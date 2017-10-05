@@ -1,8 +1,8 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@ngrx/store'), require('rxjs/ReplaySubject'), require('rxjs/operator/map'), require('rxjs/operator/merge'), require('rxjs/operator/observeOn'), require('rxjs/operator/scan'), require('rxjs/operator/skip'), require('rxjs/operator/withLatestFrom'), require('rxjs/scheduler/queue'), require('rxjs/Observable'), require('rxjs/observable/empty'), require('rxjs/operator/filter'), require('rxjs/operator/share'), require('rxjs/operator/switchMap'), require('rxjs/operator/takeUntil')) :
 	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', '@ngrx/store', 'rxjs/ReplaySubject', 'rxjs/operator/map', 'rxjs/operator/merge', 'rxjs/operator/observeOn', 'rxjs/operator/scan', 'rxjs/operator/skip', 'rxjs/operator/withLatestFrom', 'rxjs/scheduler/queue', 'rxjs/Observable', 'rxjs/observable/empty', 'rxjs/operator/filter', 'rxjs/operator/share', 'rxjs/operator/switchMap', 'rxjs/operator/takeUntil'], factory) :
-	(factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = global.ngrx.storeDevtools || {}),global.ng.core,global.ngrx.store,global.Rx,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Scheduler,global.Rx,global.Rx.Observable,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype));
-}(this, (function (exports,_angular_core,_ngrx_store,rxjs_ReplaySubject,rxjs_operator_map,rxjs_operator_merge,rxjs_operator_observeOn,rxjs_operator_scan,rxjs_operator_skip,rxjs_operator_withLatestFrom,rxjs_scheduler_queue,rxjs_Observable,rxjs_observable_empty,rxjs_operator_filter,rxjs_operator_share,rxjs_operator_switchMap,rxjs_operator_takeUntil) { 'use strict';
+	(factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}),global.ng.core,global.ngrx.store,global.Rx,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Scheduler,global.Rx,global.Rx.Observable,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype));
+}(this, (function (exports,core,store,ReplaySubject,map,merge,observeOn,scan,skip,withLatestFrom,queue,Observable,empty,filter,share,switchMap,takeUntil) { 'use strict';
 
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -152,7 +152,7 @@ var ExtensionActionTypes = {
     STOP: 'STOP',
     ACTION: 'ACTION',
 };
-var REDUX_DEVTOOLS_EXTENSION = new _angular_core.InjectionToken('Redux Devtools Extension');
+var REDUX_DEVTOOLS_EXTENSION = new core.InjectionToken('Redux Devtools Extension');
 var DevtoolsExtension = (function () {
     /**
      * @param {?} devtoolsExtension
@@ -179,9 +179,9 @@ var DevtoolsExtension = (function () {
     DevtoolsExtension.prototype.createChangesObservable = function () {
         var _this = this;
         if (!this.devtoolsExtension) {
-            return rxjs_observable_empty.empty();
+            return empty.empty();
         }
-        return new rxjs_Observable.Observable(function (subscriber) {
+        return new Observable.Observable(function (subscriber) {
             var /** @type {?} */ connection = _this.devtoolsExtension.connect({
                 instanceId: _this.instanceId,
             });
@@ -195,26 +195,26 @@ var DevtoolsExtension = (function () {
     DevtoolsExtension.prototype.createActionStreams = function () {
         var _this = this;
         // Listens to all changes based on our instanceId
-        var /** @type {?} */ changes$ = rxjs_operator_share.share.call(this.createChangesObservable());
+        var /** @type {?} */ changes$ = share.share.call(this.createChangesObservable());
         // Listen for the start action
-        var /** @type {?} */ start$ = rxjs_operator_filter.filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.START; });
+        var /** @type {?} */ start$ = filter.filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.START; });
         // Listen for the stop action
-        var /** @type {?} */ stop$ = rxjs_operator_filter.filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.STOP; });
+        var /** @type {?} */ stop$ = filter.filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.STOP; });
         // Listen for lifted actions
         var /** @type {?} */ liftedActions$ = applyOperators(changes$, [
-            [rxjs_operator_filter.filter, function (change) { return change.type === ExtensionActionTypes.DISPATCH; }],
-            [rxjs_operator_map.map, function (change) { return _this.unwrapAction(change.payload); }],
+            [filter.filter, function (change) { return change.type === ExtensionActionTypes.DISPATCH; }],
+            [map.map, function (change) { return _this.unwrapAction(change.payload); }],
         ]);
         // Listen for unlifted actions
         var /** @type {?} */ actions$ = applyOperators(changes$, [
-            [rxjs_operator_filter.filter, function (change) { return change.type === ExtensionActionTypes.ACTION; }],
-            [rxjs_operator_map.map, function (change) { return _this.unwrapAction(change.payload); }],
+            [filter.filter, function (change) { return change.type === ExtensionActionTypes.ACTION; }],
+            [map.map, function (change) { return _this.unwrapAction(change.payload); }],
         ]);
-        var /** @type {?} */ actionsUntilStop$ = rxjs_operator_takeUntil.takeUntil.call(actions$, stop$);
-        var /** @type {?} */ liftedUntilStop$ = rxjs_operator_takeUntil.takeUntil.call(liftedActions$, stop$);
+        var /** @type {?} */ actionsUntilStop$ = takeUntil.takeUntil.call(actions$, stop$);
+        var /** @type {?} */ liftedUntilStop$ = takeUntil.takeUntil.call(liftedActions$, stop$);
         // Only take the action sources between the start/stop events
-        this.actions$ = rxjs_operator_switchMap.switchMap.call(start$, function () { return actionsUntilStop$; });
-        this.liftedActions$ = rxjs_operator_switchMap.switchMap.call(start$, function () { return liftedUntilStop$; });
+        this.actions$ = switchMap.switchMap.call(start$, function () { return actionsUntilStop$; });
+        this.liftedActions$ = switchMap.switchMap.call(start$, function () { return liftedUntilStop$; });
     };
     /**
      * @param {?} action
@@ -226,15 +226,15 @@ var DevtoolsExtension = (function () {
     return DevtoolsExtension;
 }());
 DevtoolsExtension.decorators = [
-    { type: _angular_core.Injectable },
+    { type: core.Injectable },
 ];
 /**
  * @nocollapse
  */
 DevtoolsExtension.ctorParameters = function () { return [
-    { type: undefined, decorators: [{ type: _angular_core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
+    { type: undefined, decorators: [{ type: core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
 ]; };
-var INIT_ACTION = { type: _ngrx_store.INIT };
+var INIT_ACTION = { type: store.INIT };
 /**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
@@ -467,8 +467,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 (_b = liftedAction.nextLiftedState, monitorState = _b.monitorState, actionsById = _b.actionsById, nextActionId = _b.nextActionId, stagedActionIds = _b.stagedActionIds, skippedActionIds = _b.skippedActionIds, committedState = _b.committedState, currentStateIndex = _b.currentStateIndex, computedStates = _b.computedStates);
                 break;
             }
-            case _ngrx_store.UPDATE:
-            case _ngrx_store.INIT: {
+            case store.UPDATE:
+            case store.INIT: {
                 // Always recompute states on hot reload and init.
                 minInvalidatedStateIndex = 0;
                 if (options.maxAge && stagedActionIds.length > options.maxAge) {
@@ -507,17 +507,17 @@ var StoreDevtoolsConfig = (function () {
     }
     return StoreDevtoolsConfig;
 }());
-var STORE_DEVTOOLS_CONFIG = new _angular_core.InjectionToken('@ngrx/devtools Options');
-var INITIAL_OPTIONS = new _angular_core.InjectionToken('@ngrx/devtools Initial Config');
+var STORE_DEVTOOLS_CONFIG = new core.InjectionToken('@ngrx/devtools Options');
+var INITIAL_OPTIONS = new core.InjectionToken('@ngrx/devtools Initial Config');
 var DevtoolsDispatcher = (function (_super) {
     __extends(DevtoolsDispatcher, _super);
     function DevtoolsDispatcher() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return DevtoolsDispatcher;
-}(_ngrx_store.ActionsSubject));
+}(store.ActionsSubject));
 DevtoolsDispatcher.decorators = [
-    { type: _angular_core.Injectable },
+    { type: core.Injectable },
 ];
 /**
  * @nocollapse
@@ -537,18 +537,18 @@ var StoreDevtools = (function () {
         var liftedInitialState = liftInitialState(initialState, config.monitor);
         var liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config.maxAge ? { maxAge: config.maxAge } : {});
         var liftedAction$ = applyOperators(actions$.asObservable(), [
-            [rxjs_operator_skip.skip, 1],
-            [rxjs_operator_merge.merge, extension.actions$],
-            [rxjs_operator_map.map, liftAction],
-            [rxjs_operator_merge.merge, dispatcher, extension.liftedActions$],
-            [rxjs_operator_observeOn.observeOn, rxjs_scheduler_queue.queue],
+            [skip.skip, 1],
+            [merge.merge, extension.actions$],
+            [map.map, liftAction],
+            [merge.merge, dispatcher, extension.liftedActions$],
+            [observeOn.observeOn, queue.queue],
         ]);
-        var liftedReducer$ = rxjs_operator_map.map.call(reducers$, liftReducer);
-        var liftedStateSubject = new rxjs_ReplaySubject.ReplaySubject(1);
+        var liftedReducer$ = map.map.call(reducers$, liftReducer);
+        var liftedStateSubject = new ReplaySubject.ReplaySubject(1);
         var liftedStateSubscription = applyOperators(liftedAction$, [
-            [rxjs_operator_withLatestFrom.withLatestFrom, liftedReducer$],
+            [withLatestFrom.withLatestFrom, liftedReducer$],
             [
-                rxjs_operator_scan.scan,
+                scan.scan,
                 function (_a, _b) {
                     var liftedState = _a.state;
                     var action = _b[0], reducer = _b[1];
@@ -567,7 +567,7 @@ var StoreDevtools = (function () {
             }
         });
         var liftedState$ = liftedStateSubject.asObservable();
-        var state$ = rxjs_operator_map.map.call(liftedState$, unliftState);
+        var state$ = map.map.call(liftedState$, unliftState);
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -651,21 +651,21 @@ var StoreDevtools = (function () {
     return StoreDevtools;
 }());
 StoreDevtools.decorators = [
-    { type: _angular_core.Injectable },
+    { type: core.Injectable },
 ];
 /**
  * @nocollapse
  */
 StoreDevtools.ctorParameters = function () { return [
     { type: DevtoolsDispatcher, },
-    { type: _ngrx_store.ActionsSubject, },
-    { type: _ngrx_store.ReducerObservable, },
+    { type: store.ActionsSubject, },
+    { type: store.ReducerObservable, },
     { type: DevtoolsExtension, },
-    { type: _ngrx_store.ScannedActionsSubject, },
-    { type: undefined, decorators: [{ type: _angular_core.Inject, args: [_ngrx_store.INITIAL_STATE,] },] },
-    { type: StoreDevtoolsConfig, decorators: [{ type: _angular_core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+    { type: store.ScannedActionsSubject, },
+    { type: undefined, decorators: [{ type: core.Inject, args: [store.INITIAL_STATE,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ]; };
-var IS_EXTENSION_OR_MONITOR_PRESENT = new _angular_core.InjectionToken('Is Devtools Extension or Monitor Present');
+var IS_EXTENSION_OR_MONITOR_PRESENT = new core.InjectionToken('Is Devtools Extension or Monitor Present');
 /**
  * @param {?} extension
  * @param {?} config
@@ -750,12 +750,12 @@ var StoreDevtoolsModule = (function () {
                     useFactory: createConfig,
                 },
                 {
-                    provide: _ngrx_store.StateObservable,
+                    provide: store.StateObservable,
                     deps: [StoreDevtools],
                     useFactory: createStateObservable,
                 },
                 {
-                    provide: _ngrx_store.ReducerManagerDispatcher,
+                    provide: store.ReducerManagerDispatcher,
                     useExisting: DevtoolsDispatcher,
                 },
             ],
@@ -764,7 +764,7 @@ var StoreDevtoolsModule = (function () {
     return StoreDevtoolsModule;
 }());
 StoreDevtoolsModule.decorators = [
-    { type: _angular_core.NgModule, args: [{},] },
+    { type: core.NgModule, args: [{},] },
 ];
 /**
  * @nocollapse
