@@ -43,7 +43,11 @@ export class StoreDevtools {
      */
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
         const liftedInitialState = liftInitialState(initialState, config.monitor);
-        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config.maxAge ? { maxAge: config.maxAge } : {});
+        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, {
+            maxAge: config.maxAge,
+            name: config.name,
+            serialize: config.serialize,
+        });
         const liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip, 1],
             [merge, extension.actions$],
@@ -67,8 +71,8 @@ export class StoreDevtools {
         ]).subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === Actions.PERFORM_ACTION) {
-                const unlifedAction = action.action;
-                scannedActions.next(unlifedAction);
+                const unliftedAction = action.action;
+                scannedActions.next(unliftedAction);
             }
         });
         const liftedState$ = liftedStateSubject.asObservable();

@@ -24,6 +24,13 @@ import { filter as filter$1 } from 'rxjs/operator/filter';
 import { share as share$1 } from 'rxjs/operator/share';
 import { switchMap as switchMap$1 } from 'rxjs/operator/switchMap';
 import { takeUntil as takeUntil$1 } from 'rxjs/operator/takeUntil';
+var StoreDevtoolsConfig = (function () {
+    function StoreDevtoolsConfig() {
+    }
+    return StoreDevtoolsConfig;
+}());
+var STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
+var INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
 var PERFORM_ACTION = 'PERFORM_ACTION';
 var RESET = 'RESET';
 var ROLLBACK = 'ROLLBACK';
@@ -166,8 +173,10 @@ var REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
 var DevtoolsExtension = (function () {
     /**
      * @param {?} devtoolsExtension
+     * @param {?} config
      */
-    function DevtoolsExtension(devtoolsExtension) {
+    function DevtoolsExtension(devtoolsExtension, config) {
+        this.config = config;
         this.instanceId = "ngrx-store-" + Date.now();
         this.devtoolsExtension = devtoolsExtension;
         this.createActionStreams();
@@ -181,7 +190,7 @@ var DevtoolsExtension = (function () {
         if (!this.devtoolsExtension) {
             return;
         }
-        this.devtoolsExtension.send(null, state, { serialize: false }, this.instanceId);
+        this.devtoolsExtension.send(null, state, this.config, this.instanceId);
     };
     /**
      * @return {?}
@@ -243,6 +252,7 @@ DevtoolsExtension.decorators = [
  */
 DevtoolsExtension.ctorParameters = function () { return [
     { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ]; };
 var INIT_ACTION = { type: INIT };
 /**
@@ -512,13 +522,6 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
         var _b;
     }; };
 }
-var StoreDevtoolsConfig = (function () {
-    function StoreDevtoolsConfig() {
-    }
-    return StoreDevtoolsConfig;
-}());
-var STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
-var INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
 var DevtoolsDispatcher = (function (_super) {
     __extends(DevtoolsDispatcher, _super);
     function DevtoolsDispatcher() {
@@ -545,7 +548,11 @@ var StoreDevtools = (function () {
      */
     function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
         var liftedInitialState = liftInitialState(initialState, config.monitor);
-        var liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config.maxAge ? { maxAge: config.maxAge } : {});
+        var liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, {
+            maxAge: config.maxAge,
+            name: config.name,
+            serialize: config.serialize,
+        });
         var liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip$1, 1],
             [merge$1, extension.actions$],
@@ -572,8 +579,8 @@ var StoreDevtools = (function () {
             var state = _a.state, action = _a.action;
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
-                var unlifedAction = action.action;
-                scannedActions.next(unlifedAction);
+                var unliftedAction = action.action;
+                scannedActions.next(unliftedAction);
             }
         });
         var liftedState$ = liftedStateSubject.asObservable();
@@ -710,6 +717,7 @@ function createStateObservable(devtools) {
 function noMonitor() {
     return null;
 }
+var DEFAULT_NAME = 'NgRx Store DevTools';
 /**
  * @param {?} _options
  * @return {?}
@@ -718,6 +726,8 @@ function createConfig(_options) {
     var /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
         monitor: noMonitor,
+        name: DEFAULT_NAME,
+        serialize: false,
     };
     var /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     var /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);

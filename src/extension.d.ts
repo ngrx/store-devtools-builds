@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Action } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
+import { StoreDevtoolsConfig } from './config';
 import { LiftedState } from './reducer';
 export declare const ExtensionActionTypes: {
     START: string;
@@ -19,16 +20,15 @@ export interface ReduxDevtoolsExtension {
         shouldStringify?: boolean;
         instanceId: string;
     }): ReduxDevtoolsExtensionConnection;
-    send(action: any, state: any, options?: boolean | {
-        serialize: boolean | object;
-    }, instanceId?: string): void;
+    send(action: any, state: any, options: StoreDevtoolsConfig, instanceId?: string): void;
 }
 export declare class DevtoolsExtension {
+    private config;
     private instanceId;
     private devtoolsExtension;
     liftedActions$: Observable<any>;
     actions$: Observable<any>;
-    constructor(devtoolsExtension: ReduxDevtoolsExtension);
+    constructor(devtoolsExtension: ReduxDevtoolsExtension, config: StoreDevtoolsConfig);
     notify(action: Action, state: LiftedState): void;
     private createChangesObservable();
     private createActionStreams();

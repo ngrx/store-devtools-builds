@@ -6,6 +6,10 @@ function StoreDevtoolsConfig_tsickle_Closure_declarations() {
     StoreDevtoolsConfig.prototype.maxAge;
     /** @type {?} */
     StoreDevtoolsConfig.prototype.monitor;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.name;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.serialize;
 }
 export const /** @type {?} */ STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
 export const /** @type {?} */ INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');

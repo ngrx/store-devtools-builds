@@ -15,6 +15,11 @@ import { share as share$1 } from 'rxjs/operator/share';
 import { switchMap as switchMap$1 } from 'rxjs/operator/switchMap';
 import { takeUntil as takeUntil$1 } from 'rxjs/operator/takeUntil';
 
+class StoreDevtoolsConfig {
+}
+const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
+const INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
+
 const PERFORM_ACTION = 'PERFORM_ACTION';
 const RESET = 'RESET';
 const ROLLBACK = 'ROLLBACK';
@@ -152,8 +157,10 @@ const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
 class DevtoolsExtension {
     /**
      * @param {?} devtoolsExtension
+     * @param {?} config
      */
-    constructor(devtoolsExtension) {
+    constructor(devtoolsExtension, config) {
+        this.config = config;
         this.instanceId = `ngrx-store-${Date.now()}`;
         this.devtoolsExtension = devtoolsExtension;
         this.createActionStreams();
@@ -167,7 +174,7 @@ class DevtoolsExtension {
         if (!this.devtoolsExtension) {
             return;
         }
-        this.devtoolsExtension.send(null, state, { serialize: false }, this.instanceId);
+        this.devtoolsExtension.send(null, state, this.config, this.instanceId);
     }
     /**
      * @return {?}
@@ -226,6 +233,7 @@ DevtoolsExtension.decorators = [
  */
 DevtoolsExtension.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 
 const INIT_ACTION = { type: INIT };
@@ -504,11 +512,6 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
     };
 }
 
-class StoreDevtoolsConfig {
-}
-const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
-const INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
-
 class DevtoolsDispatcher extends ActionsSubject {
 }
 DevtoolsDispatcher.decorators = [
@@ -530,7 +533,11 @@ class StoreDevtools {
      */
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
         const liftedInitialState = liftInitialState(initialState, config.monitor);
-        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config.maxAge ? { maxAge: config.maxAge } : {});
+        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, {
+            maxAge: config.maxAge,
+            name: config.name,
+            serialize: config.serialize,
+        });
         const liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip$1, 1],
             [merge$1, extension.actions$],
@@ -554,8 +561,8 @@ class StoreDevtools {
         ]).subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
-                const unlifedAction = action.action;
-                scannedActions.next(unlifedAction);
+                const unliftedAction = action.action;
+                scannedActions.next(unliftedAction);
             }
         });
         const liftedState$ = liftedStateSubject.asObservable();
@@ -692,6 +699,7 @@ function createStateObservable(devtools) {
 function noMonitor() {
     return null;
 }
+const DEFAULT_NAME = 'NgRx Store DevTools';
 /**
  * @param {?} _options
  * @return {?}
@@ -700,6 +708,8 @@ function createConfig(_options) {
     const /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
         monitor: noMonitor,
+        name: DEFAULT_NAME,
+        serialize: false,
     };
     let /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     const /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);

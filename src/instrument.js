@@ -38,6 +38,7 @@ export function createStateObservable(devtools) {
 export function noMonitor() {
     return null;
 }
+export const /** @type {?} */ DEFAULT_NAME = 'NgRx Store DevTools';
 /**
  * @param {?} _options
  * @return {?}
@@ -46,6 +47,8 @@ export function createConfig(_options) {
     const /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
         monitor: noMonitor,
+        name: DEFAULT_NAME,
+        serialize: false,
     };
     let /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
     const /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);

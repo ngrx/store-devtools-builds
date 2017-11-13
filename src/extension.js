@@ -1,4 +1,4 @@
-import { InjectionToken, Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { empty } from 'rxjs/observable/empty';
 import { filter } from 'rxjs/operator/filter';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operator/map';
 import { share } from 'rxjs/operator/share';
 import { switchMap } from 'rxjs/operator/switchMap';
 import { takeUntil } from 'rxjs/operator/takeUntil';
+import { STORE_DEVTOOLS_CONFIG, StoreDevtoolsConfig } from './config';
 import { applyOperators } from './utils';
 export const /** @type {?} */ ExtensionActionTypes = {
     START: 'START',
@@ -17,8 +18,10 @@ export const /** @type {?} */ REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Red
 export class DevtoolsExtension {
     /**
      * @param {?} devtoolsExtension
+     * @param {?} config
      */
-    constructor(devtoolsExtension) {
+    constructor(devtoolsExtension, config) {
+        this.config = config;
         this.instanceId = `ngrx-store-${Date.now()}`;
         this.devtoolsExtension = devtoolsExtension;
         this.createActionStreams();
@@ -32,7 +35,7 @@ export class DevtoolsExtension {
         if (!this.devtoolsExtension) {
             return;
         }
-        this.devtoolsExtension.send(null, state, { serialize: false }, this.instanceId);
+        this.devtoolsExtension.send(null, state, this.config, this.instanceId);
     }
     /**
      * @return {?}
@@ -91,6 +94,7 @@ DevtoolsExtension.decorators = [
  */
 DevtoolsExtension.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 function DevtoolsExtension_tsickle_Closure_declarations() {
     /** @type {?} */
@@ -108,5 +112,7 @@ function DevtoolsExtension_tsickle_Closure_declarations() {
     DevtoolsExtension.prototype.liftedActions$;
     /** @type {?} */
     DevtoolsExtension.prototype.actions$;
+    /** @type {?} */
+    DevtoolsExtension.prototype.config;
 }
 //# sourceMappingURL=extension.js.map
