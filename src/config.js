@@ -7,6 +7,10 @@ function StoreDevtoolsConfig_tsickle_Closure_declarations() {
     /** @type {?} */
     StoreDevtoolsConfig.prototype.monitor;
     /** @type {?} */
+    StoreDevtoolsConfig.prototype.actionSanitizer;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.stateSanitizer;
+    /** @type {?} */
     StoreDevtoolsConfig.prototype.name;
     /** @type {?} */
     StoreDevtoolsConfig.prototype.serialize;

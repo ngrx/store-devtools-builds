@@ -43,11 +43,7 @@ export class StoreDevtools {
      */
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
         const liftedInitialState = liftInitialState(initialState, config.monitor);
-        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, {
-            maxAge: config.maxAge,
-            name: config.name,
-            serialize: config.serialize,
-        });
+        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
         const liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip, 1],
             [merge, extension.actions$],

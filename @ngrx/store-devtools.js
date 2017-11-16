@@ -533,11 +533,7 @@ class StoreDevtools {
      */
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
         const liftedInitialState = liftInitialState(initialState, config.monitor);
-        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, {
-            maxAge: config.maxAge,
-            name: config.name,
-            serialize: config.serialize,
-        });
+        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
         const liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip$1, 1],
             [merge$1, extension.actions$],
@@ -699,6 +695,18 @@ function createStateObservable(devtools) {
 function noMonitor() {
     return null;
 }
+/**
+ * @return {?}
+ */
+function noActionSanitizer() {
+    return null;
+}
+/**
+ * @return {?}
+ */
+function noStateSanitizer() {
+    return null;
+}
 const DEFAULT_NAME = 'NgRx Store DevTools';
 /**
  * @param {?} _options
@@ -708,6 +716,8 @@ function createConfig(_options) {
     const /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
         monitor: noMonitor,
+        actionSanitizer: noActionSanitizer,
+        stateSanitizer: noStateSanitizer,
         name: DEFAULT_NAME,
         serialize: false,
     };

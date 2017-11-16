@@ -38,6 +38,18 @@ export function createStateObservable(devtools) {
 export function noMonitor() {
     return null;
 }
+/**
+ * @return {?}
+ */
+export function noActionSanitizer() {
+    return null;
+}
+/**
+ * @return {?}
+ */
+export function noStateSanitizer() {
+    return null;
+}
 export const /** @type {?} */ DEFAULT_NAME = 'NgRx Store DevTools';
 /**
  * @param {?} _options
@@ -47,6 +59,8 @@ export function createConfig(_options) {
     const /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
         monitor: noMonitor,
+        actionSanitizer: noActionSanitizer,
+        stateSanitizer: noStateSanitizer,
         name: DEFAULT_NAME,
         serialize: false,
     };
