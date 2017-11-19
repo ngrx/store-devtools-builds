@@ -1,13 +1,17 @@
-import { Inject, Injectable, InjectionToken } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { empty } from 'rxjs/observable/empty';
-import { filter } from 'rxjs/operator/filter';
-import { map } from 'rxjs/operator/map';
-import { share } from 'rxjs/operator/share';
-import { switchMap } from 'rxjs/operator/switchMap';
-import { takeUntil } from 'rxjs/operator/takeUntil';
-import { STORE_DEVTOOLS_CONFIG, StoreDevtoolsConfig } from './config';
-import { applyOperators } from './utils';
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+import { Inject, Injectable, InjectionToken } from "@angular/core";
+import { Observable } from "rxjs/Observable";
+import { empty } from "rxjs/observable/empty";
+import { filter } from "rxjs/operator/filter";
+import { map } from "rxjs/operator/map";
+import { share } from "rxjs/operator/share";
+import { switchMap } from "rxjs/operator/switchMap";
+import { takeUntil } from "rxjs/operator/takeUntil";
+import { STORE_DEVTOOLS_CONFIG, StoreDevtoolsConfig } from "./config";
+import { applyOperators } from "./utils";
 export const /** @type {?} */ ExtensionActionTypes = {
     START: 'START',
     DISPATCH: 'DISPATCH',
@@ -15,6 +19,28 @@ export const /** @type {?} */ ExtensionActionTypes = {
     ACTION: 'ACTION',
 };
 export const /** @type {?} */ REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
+/**
+ * @record
+ */
+export function ReduxDevtoolsExtensionConnection() { }
+function ReduxDevtoolsExtensionConnection_tsickle_Closure_declarations() {
+    /** @type {?} */
+    ReduxDevtoolsExtensionConnection.prototype.subscribe;
+    /** @type {?} */
+    ReduxDevtoolsExtensionConnection.prototype.unsubscribe;
+    /** @type {?} */
+    ReduxDevtoolsExtensionConnection.prototype.send;
+}
+/**
+ * @record
+ */
+export function ReduxDevtoolsExtension() { }
+function ReduxDevtoolsExtension_tsickle_Closure_declarations() {
+    /** @type {?} */
+    ReduxDevtoolsExtension.prototype.connect;
+    /** @type {?} */
+    ReduxDevtoolsExtension.prototype.send;
+}
 export class DevtoolsExtension {
     /**
      * @param {?} devtoolsExtension
@@ -89,19 +115,17 @@ export class DevtoolsExtension {
 DevtoolsExtension.decorators = [
     { type: Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 DevtoolsExtension.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 function DevtoolsExtension_tsickle_Closure_declarations() {
-    /** @type {?} */
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     DevtoolsExtension.decorators;
     /**
      * @nocollapse
-     * @type {?}
+     * @type {function(): !Array<(null|{type: ?, decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>)})>}
      */
     DevtoolsExtension.ctorParameters;
     /** @type {?} */

@@ -1,7 +1,33 @@
-import { UPDATE, INIT, } from '@ngrx/store';
-import { difference, liftAction } from './utils';
-import * as Actions from './actions';
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+import { UPDATE, INIT, } from "@ngrx/store";
+import { difference, liftAction } from "./utils";
+import * as Actions from "./actions";
 export const /** @type {?} */ INIT_ACTION = { type: INIT };
+/**
+ * @record
+ */
+export function LiftedState() { }
+function LiftedState_tsickle_Closure_declarations() {
+    /** @type {?} */
+    LiftedState.prototype.monitorState;
+    /** @type {?} */
+    LiftedState.prototype.nextActionId;
+    /** @type {?} */
+    LiftedState.prototype.actionsById;
+    /** @type {?} */
+    LiftedState.prototype.stagedActionIds;
+    /** @type {?} */
+    LiftedState.prototype.skippedActionIds;
+    /** @type {?} */
+    LiftedState.prototype.committedState;
+    /** @type {?} */
+    LiftedState.prototype.currentStateIndex;
+    /** @type {?} */
+    LiftedState.prototype.computedStates;
+}
 /**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
@@ -22,7 +48,7 @@ function computeNextEntry(reducer, action, state, error) {
     try {
         nextState = reducer(state, action);
     }
-    catch (err) {
+    catch (/** @type {?} */ err) {
         nextError = err.toString();
         console.error(err.stack || err);
     }
@@ -91,8 +117,8 @@ export function liftInitialState(initialCommittedState, monitorReducer) {
  */
 export function liftReducerWith(initialCommittedState, initialLiftedState, monitorReducer, options = {}) {
     /**
-    * Manages how the history actions modify the history state.
-    */
+      * Manages how the history actions modify the history state.
+      */
     return (reducer) => (liftedState, liftedAction) => {
         let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, } = liftedState || initialLiftedState;
         if (!liftedState) {

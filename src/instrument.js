@@ -1,8 +1,12 @@
-import { NgModule, InjectionToken, } from '@angular/core';
-import { StateObservable, ReducerManagerDispatcher, } from '@ngrx/store';
-import { StoreDevtools, DevtoolsDispatcher } from './devtools';
-import { STORE_DEVTOOLS_CONFIG, INITIAL_OPTIONS, } from './config';
-import { DevtoolsExtension, REDUX_DEVTOOLS_EXTENSION, } from './extension';
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+import { NgModule, InjectionToken, } from "@angular/core";
+import { StateObservable, ReducerManagerDispatcher, } from "@ngrx/store";
+import { StoreDevtools, DevtoolsDispatcher } from "./devtools";
+import { STORE_DEVTOOLS_CONFIG, INITIAL_OPTIONS, } from "./config";
+import { DevtoolsExtension, REDUX_DEVTOOLS_EXTENSION, } from "./extension";
 export const /** @type {?} */ IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
 /**
  * @param {?} extension
@@ -18,8 +22,8 @@ export function createIsExtensionOrMonitorPresent(extension, config) {
 export function createReduxDevtoolsExtension() {
     const /** @type {?} */ extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
     if (typeof window === 'object' &&
-        typeof ((window))[extensionKey] !== 'undefined') {
-        return ((window))[extensionKey];
+        typeof (/** @type {?} */ (window))[extensionKey] !== 'undefined') {
+        return (/** @type {?} */ (window))[extensionKey];
     }
     else {
         return null;
@@ -117,16 +121,14 @@ export class StoreDevtoolsModule {
 StoreDevtoolsModule.decorators = [
     { type: NgModule, args: [{},] },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 StoreDevtoolsModule.ctorParameters = () => [];
 function StoreDevtoolsModule_tsickle_Closure_declarations() {
-    /** @type {?} */
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     StoreDevtoolsModule.decorators;
     /**
      * @nocollapse
-     * @type {?}
+     * @type {function(): !Array<(null|{type: ?, decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>)})>}
      */
     StoreDevtoolsModule.ctorParameters;
 }

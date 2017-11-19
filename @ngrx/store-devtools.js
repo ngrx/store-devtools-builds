@@ -15,11 +15,19 @@ import { share as share$1 } from 'rxjs/operator/share';
 import { switchMap as switchMap$1 } from 'rxjs/operator/switchMap';
 import { takeUntil as takeUntil$1 } from 'rxjs/operator/takeUntil';
 
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 class StoreDevtoolsConfig {
 }
 const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
 const INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
 
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 const PERFORM_ACTION = 'PERFORM_ACTION';
 const RESET = 'RESET';
 const ROLLBACK = 'ROLLBACK';
@@ -106,6 +114,10 @@ class ImportState {
 }
 
 /**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+/**
  * @param {?} first
  * @param {?} second
  * @return {?}
@@ -147,6 +159,10 @@ function applyOperators(input$, operators) {
     }, input$);
 }
 
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 const ExtensionActionTypes = {
     START: 'START',
     DISPATCH: 'DISPATCH',
@@ -154,6 +170,14 @@ const ExtensionActionTypes = {
     ACTION: 'ACTION',
 };
 const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
+/**
+ * @record
+ */
+
+/**
+ * @record
+ */
+
 class DevtoolsExtension {
     /**
      * @param {?} devtoolsExtension
@@ -228,15 +252,21 @@ class DevtoolsExtension {
 DevtoolsExtension.decorators = [
     { type: Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 DevtoolsExtension.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 const INIT_ACTION = { type: INIT };
+/**
+ * @record
+ */
+
 /**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
@@ -257,7 +287,7 @@ function computeNextEntry(reducer, action, state, error) {
     try {
         nextState = reducer(state, action);
     }
-    catch (err) {
+    catch (/** @type {?} */ err) {
         nextError = err.toString();
         console.error(err.stack || err);
     }
@@ -326,8 +356,8 @@ function liftInitialState(initialCommittedState, monitorReducer) {
  */
 function liftReducerWith(initialCommittedState, initialLiftedState, monitorReducer, options = {}) {
     /**
-    * Manages how the history actions modify the history state.
-    */
+      * Manages how the history actions modify the history state.
+      */
     return (reducer) => (liftedState, liftedAction) => {
         let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, } = liftedState || initialLiftedState;
         if (!liftedState) {
@@ -512,14 +542,16 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
     };
 }
 
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 class DevtoolsDispatcher extends ActionsSubject {
 }
 DevtoolsDispatcher.decorators = [
     { type: Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 DevtoolsDispatcher.ctorParameters = () => [];
 class StoreDevtools {
     /**
@@ -532,23 +564,23 @@ class StoreDevtools {
      * @param {?} config
      */
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
-        const liftedInitialState = liftInitialState(initialState, config.monitor);
-        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
-        const liftedAction$ = applyOperators(actions$.asObservable(), [
+        const /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
+        const /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
+        const /** @type {?} */ liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip$1, 1],
             [merge$1, extension.actions$],
             [map$1, liftAction],
             [merge$1, dispatcher, extension.liftedActions$],
             [observeOn$1, queue$1],
         ]);
-        const liftedReducer$ = map$1.call(reducers$, liftReducer);
-        const liftedStateSubject = new ReplaySubject$1(1);
-        const liftedStateSubscription = applyOperators(liftedAction$, [
+        const /** @type {?} */ liftedReducer$ = map$1.call(reducers$, liftReducer);
+        const /** @type {?} */ liftedStateSubject = new ReplaySubject$1(1);
+        const /** @type {?} */ liftedStateSubscription = applyOperators(liftedAction$, [
             [withLatestFrom$1, liftedReducer$],
             [
                 scan$1,
                 ({ state: liftedState }, [action, reducer]) => {
-                    const state = reducer(liftedState, action);
+                    const /** @type {?} */ state = reducer(liftedState, action);
                     extension.notify(action, state);
                     return { state, action };
                 },
@@ -557,12 +589,12 @@ class StoreDevtools {
         ]).subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
-                const unliftedAction = action.action;
+                const /** @type {?} */ unliftedAction = (/** @type {?} */ (action)).action;
                 scannedActions.next(unliftedAction);
             }
         });
-        const liftedState$ = liftedStateSubject.asObservable();
-        const state$ = map$1.call(liftedState$, unliftState);
+        const /** @type {?} */ liftedState$ = /** @type {?} */ (liftedStateSubject.asObservable());
+        const /** @type {?} */ state$ = map$1.call(liftedState$, unliftState);
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -647,9 +679,7 @@ class StoreDevtools {
 StoreDevtools.decorators = [
     { type: Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 StoreDevtools.ctorParameters = () => [
     { type: DevtoolsDispatcher, },
     { type: ActionsSubject, },
@@ -660,6 +690,10 @@ StoreDevtools.ctorParameters = () => [
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 const IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
 /**
  * @param {?} extension
@@ -675,8 +709,8 @@ function createIsExtensionOrMonitorPresent(extension, config) {
 function createReduxDevtoolsExtension() {
     const /** @type {?} */ extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
     if (typeof window === 'object' &&
-        typeof ((window))[extensionKey] !== 'undefined') {
-        return ((window))[extensionKey];
+        typeof (/** @type {?} */ (window))[extensionKey] !== 'undefined') {
+        return (/** @type {?} */ (window))[extensionKey];
     }
     else {
         return null;
@@ -774,11 +808,23 @@ class StoreDevtoolsModule {
 StoreDevtoolsModule.decorators = [
     { type: NgModule, args: [{},] },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 StoreDevtoolsModule.ctorParameters = () => [];
 
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 /**
  * Generated bundle index. Do not edit.
  */

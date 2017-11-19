@@ -1,33 +1,35 @@
-import { Injectable, Inject } from '@angular/core';
-import { INITIAL_STATE, ReducerObservable, ActionsSubject, ScannedActionsSubject, } from '@ngrx/store';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { map } from 'rxjs/operator/map';
-import { merge } from 'rxjs/operator/merge';
-import { observeOn } from 'rxjs/operator/observeOn';
-import { scan } from 'rxjs/operator/scan';
-import { skip } from 'rxjs/operator/skip';
-import { withLatestFrom } from 'rxjs/operator/withLatestFrom';
-import { queue } from 'rxjs/scheduler/queue';
-import { DevtoolsExtension } from './extension';
-import { liftAction, unliftState, applyOperators } from './utils';
-import { liftReducerWith, liftInitialState } from './reducer';
-import * as Actions from './actions';
-import { StoreDevtoolsConfig, STORE_DEVTOOLS_CONFIG } from './config';
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+import { Injectable, Inject } from "@angular/core";
+import { INITIAL_STATE, ReducerObservable, ActionsSubject, ScannedActionsSubject, } from "@ngrx/store";
+import { ReplaySubject } from "rxjs/ReplaySubject";
+import { map } from "rxjs/operator/map";
+import { merge } from "rxjs/operator/merge";
+import { observeOn } from "rxjs/operator/observeOn";
+import { scan } from "rxjs/operator/scan";
+import { skip } from "rxjs/operator/skip";
+import { withLatestFrom } from "rxjs/operator/withLatestFrom";
+import { queue } from "rxjs/scheduler/queue";
+import { DevtoolsExtension } from "./extension";
+import { liftAction, unliftState, applyOperators } from "./utils";
+import { liftReducerWith, liftInitialState } from "./reducer";
+import * as Actions from "./actions";
+import { StoreDevtoolsConfig, STORE_DEVTOOLS_CONFIG } from "./config";
 export class DevtoolsDispatcher extends ActionsSubject {
 }
 DevtoolsDispatcher.decorators = [
     { type: Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 DevtoolsDispatcher.ctorParameters = () => [];
 function DevtoolsDispatcher_tsickle_Closure_declarations() {
-    /** @type {?} */
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     DevtoolsDispatcher.decorators;
     /**
      * @nocollapse
-     * @type {?}
+     * @type {function(): !Array<(null|{type: ?, decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>)})>}
      */
     DevtoolsDispatcher.ctorParameters;
 }
@@ -42,23 +44,23 @@ export class StoreDevtools {
      * @param {?} config
      */
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
-        const liftedInitialState = liftInitialState(initialState, config.monitor);
-        const liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
-        const liftedAction$ = applyOperators(actions$.asObservable(), [
+        const /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
+        const /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
+        const /** @type {?} */ liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip, 1],
             [merge, extension.actions$],
             [map, liftAction],
             [merge, dispatcher, extension.liftedActions$],
             [observeOn, queue],
         ]);
-        const liftedReducer$ = map.call(reducers$, liftReducer);
-        const liftedStateSubject = new ReplaySubject(1);
-        const liftedStateSubscription = applyOperators(liftedAction$, [
+        const /** @type {?} */ liftedReducer$ = map.call(reducers$, liftReducer);
+        const /** @type {?} */ liftedStateSubject = new ReplaySubject(1);
+        const /** @type {?} */ liftedStateSubscription = applyOperators(liftedAction$, [
             [withLatestFrom, liftedReducer$],
             [
                 scan,
                 ({ state: liftedState }, [action, reducer]) => {
-                    const state = reducer(liftedState, action);
+                    const /** @type {?} */ state = reducer(liftedState, action);
                     extension.notify(action, state);
                     return { state, action };
                 },
@@ -67,12 +69,12 @@ export class StoreDevtools {
         ]).subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === Actions.PERFORM_ACTION) {
-                const unliftedAction = action.action;
+                const /** @type {?} */ unliftedAction = (/** @type {?} */ (action)).action;
                 scannedActions.next(unliftedAction);
             }
         });
-        const liftedState$ = liftedStateSubject.asObservable();
-        const state$ = map.call(liftedState$, unliftState);
+        const /** @type {?} */ liftedState$ = /** @type {?} */ (liftedStateSubject.asObservable());
+        const /** @type {?} */ state$ = map.call(liftedState$, unliftState);
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -157,9 +159,7 @@ export class StoreDevtools {
 StoreDevtools.decorators = [
     { type: Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 StoreDevtools.ctorParameters = () => [
     { type: DevtoolsDispatcher, },
     { type: ActionsSubject, },
@@ -170,11 +170,11 @@ StoreDevtools.ctorParameters = () => [
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
 function StoreDevtools_tsickle_Closure_declarations() {
-    /** @type {?} */
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     StoreDevtools.decorators;
     /**
      * @nocollapse
-     * @type {?}
+     * @type {function(): !Array<(null|{type: ?, decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>)})>}
      */
     StoreDevtools.ctorParameters;
     /** @type {?} */

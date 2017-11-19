@@ -1,4 +1,8 @@
-import { InjectionToken } from '@angular/core';
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+import { InjectionToken } from "@angular/core";
 export class StoreDevtoolsConfig {
 }
 function StoreDevtoolsConfig_tsickle_Closure_declarations() {

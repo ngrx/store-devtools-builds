@@ -1,3 +1,7 @@
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 export const /** @type {?} */ PERFORM_ACTION = 'PERFORM_ACTION';
 export const /** @type {?} */ RESET = 'RESET';
 export const /** @type {?} */ ROLLBACK = 'ROLLBACK';

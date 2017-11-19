@@ -14,6 +14,10 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 var StoreDevtoolsConfig = (function () {
     function StoreDevtoolsConfig() {
     }
@@ -21,6 +25,10 @@ var StoreDevtoolsConfig = (function () {
 }());
 var STORE_DEVTOOLS_CONFIG = new core.InjectionToken('@ngrx/devtools Options');
 var INITIAL_OPTIONS = new core.InjectionToken('@ngrx/devtools Initial Config');
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 var PERFORM_ACTION = 'PERFORM_ACTION';
 var RESET = 'RESET';
 var ROLLBACK = 'ROLLBACK';
@@ -113,6 +121,10 @@ var ImportState = (function () {
     return ImportState;
 }());
 /**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+/**
  * @param {?} first
  * @param {?} second
  * @return {?}
@@ -153,6 +165,10 @@ function applyOperators(input$, operators) {
         return operator.apply(source$, args);
     }, input$);
 }
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 var ExtensionActionTypes = {
     START: 'START',
     DISPATCH: 'DISPATCH',
@@ -160,6 +176,12 @@ var ExtensionActionTypes = {
     ACTION: 'ACTION',
 };
 var REDUX_DEVTOOLS_EXTENSION = new core.InjectionToken('Redux Devtools Extension');
+/**
+ * @record
+ */
+/**
+ * @record
+ */
 var DevtoolsExtension = (function () {
     /**
      * @param {?} devtoolsExtension
@@ -237,14 +259,19 @@ var DevtoolsExtension = (function () {
 DevtoolsExtension.decorators = [
     { type: core.Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 DevtoolsExtension.ctorParameters = function () { return [
     { type: undefined, decorators: [{ type: core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
     { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ]; };
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 var INIT_ACTION = { type: store.INIT };
+/**
+ * @record
+ */
 /**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
@@ -335,8 +362,8 @@ function liftInitialState(initialCommittedState, monitorReducer) {
 function liftReducerWith(initialCommittedState, initialLiftedState, monitorReducer, options) {
     if (options === void 0) { options = {}; }
     /**
-    * Manages how the history actions modify the history state.
-    */
+      * Manages how the history actions modify the history state.
+      */
     return function (reducer) { return function (liftedState, liftedAction) {
         var _a = liftedState || initialLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates;
         if (!liftedState) {
@@ -512,6 +539,10 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
         var _b;
     }; };
 }
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 var DevtoolsDispatcher = (function (_super) {
     __extends(DevtoolsDispatcher, _super);
     function DevtoolsDispatcher() {
@@ -522,9 +553,7 @@ var DevtoolsDispatcher = (function (_super) {
 DevtoolsDispatcher.decorators = [
     { type: core.Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 DevtoolsDispatcher.ctorParameters = function () { return []; };
 var StoreDevtools = (function () {
     /**
@@ -537,25 +566,25 @@ var StoreDevtools = (function () {
      * @param {?} config
      */
     function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
-        var liftedInitialState = liftInitialState(initialState, config.monitor);
-        var liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
-        var liftedAction$ = applyOperators(actions$.asObservable(), [
+        var /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
+        var /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
+        var /** @type {?} */ liftedAction$ = applyOperators(actions$.asObservable(), [
             [skip.skip, 1],
             [merge.merge, extension.actions$],
             [map.map, liftAction],
             [merge.merge, dispatcher, extension.liftedActions$],
             [observeOn.observeOn, queue.queue],
         ]);
-        var liftedReducer$ = map.map.call(reducers$, liftReducer);
-        var liftedStateSubject = new ReplaySubject.ReplaySubject(1);
-        var liftedStateSubscription = applyOperators(liftedAction$, [
+        var /** @type {?} */ liftedReducer$ = map.map.call(reducers$, liftReducer);
+        var /** @type {?} */ liftedStateSubject = new ReplaySubject.ReplaySubject(1);
+        var /** @type {?} */ liftedStateSubscription = applyOperators(liftedAction$, [
             [withLatestFrom.withLatestFrom, liftedReducer$],
             [
                 scan.scan,
                 function (_a, _b) {
                     var liftedState = _a.state;
                     var action = _b[0], reducer = _b[1];
-                    var state = reducer(liftedState, action);
+                    var /** @type {?} */ state = reducer(liftedState, action);
                     extension.notify(action, state);
                     return { state: state, action: action };
                 },
@@ -565,12 +594,12 @@ var StoreDevtools = (function () {
             var state = _a.state, action = _a.action;
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
-                var unliftedAction = action.action;
+                var /** @type {?} */ unliftedAction = ((action)).action;
                 scannedActions.next(unliftedAction);
             }
         });
-        var liftedState$ = liftedStateSubject.asObservable();
-        var state$ = map.map.call(liftedState$, unliftState);
+        var /** @type {?} */ liftedState$ = (liftedStateSubject.asObservable());
+        var /** @type {?} */ state$ = map.map.call(liftedState$, unliftState);
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -656,9 +685,7 @@ var StoreDevtools = (function () {
 StoreDevtools.decorators = [
     { type: core.Injectable },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 StoreDevtools.ctorParameters = function () { return [
     { type: DevtoolsDispatcher, },
     { type: store.ActionsSubject, },
@@ -668,6 +695,10 @@ StoreDevtools.ctorParameters = function () { return [
     { type: undefined, decorators: [{ type: core.Inject, args: [store.INITIAL_STATE,] },] },
     { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ]; };
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
 var IS_EXTENSION_OR_MONITOR_PRESENT = new core.InjectionToken('Is Devtools Extension or Monitor Present');
 /**
  * @param {?} extension
@@ -786,9 +817,7 @@ var StoreDevtoolsModule = (function () {
 StoreDevtoolsModule.decorators = [
     { type: core.NgModule, args: [{},] },
 ];
-/**
- * @nocollapse
- */
+/** @nocollapse */
 StoreDevtoolsModule.ctorParameters = function () { return []; };
 
 exports.StoreDevtoolsModule = StoreDevtoolsModule;

@@ -1,4 +1,8 @@
-import * as Actions from './actions';
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes} checked by tsc
+ */
+import * as Actions from "./actions";
 /**
  * @param {?} first
  * @param {?} second
