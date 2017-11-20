@@ -507,7 +507,6 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 } = liftedAction.nextLiftedState);
                 break;
             }
-            case UPDATE:
             case INIT: {
                 // Always recompute states on hot reload and init.
                 minInvalidatedStateIndex = 0;
@@ -515,6 +514,39 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     // States must be recomputed before committing excess.
                     computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
                     commitExcessActions(stagedActionIds.length - options.maxAge);
+                    // Avoid double computation.
+                    minInvalidatedStateIndex = Infinity;
+                }
+                break;
+            }
+            case UPDATE: {
+                const /** @type {?} */ stateHasErrors = computedStates.filter(state => state.error).length > 0;
+                if (stateHasErrors) {
+                    // Recompute all states
+                    minInvalidatedStateIndex = 0;
+                    if (options.maxAge && stagedActionIds.length > options.maxAge) {
+                        // States must be recomputed before committing excess.
+                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                        commitExcessActions(stagedActionIds.length - options.maxAge);
+                        // Avoid double computation.
+                        minInvalidatedStateIndex = Infinity;
+                    }
+                }
+                else {
+                    if (currentStateIndex === stagedActionIds.length - 1) {
+                        currentStateIndex++;
+                    }
+                    // Add a new action to only recompute state
+                    const /** @type {?} */ actionId = nextActionId++;
+                    actionsById[actionId] = new PerformAction(liftedAction);
+                    stagedActionIds = [...stagedActionIds, actionId];
+                    minInvalidatedStateIndex = stagedActionIds.length - 1;
+                    // States must be recomputed before committing excess.
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                    currentStateIndex = minInvalidatedStateIndex;
+                    if (options.maxAge && stagedActionIds.length > options.maxAge) {
+                        commitExcessActions(stagedActionIds.length - options.maxAge);
+                    }
                     // Avoid double computation.
                     minInvalidatedStateIndex = Infinity;
                 }
