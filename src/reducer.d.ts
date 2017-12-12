@@ -31,6 +31,6 @@ export interface LiftedState {
 }
 export declare function liftInitialState(initialCommittedState?: any, monitorReducer?: any): LiftedState;
 /**
-* Creates a history state reducer from an app's reducer.
-*/
+ * Creates a history state reducer from an app's reducer.
+ */
 export declare function liftReducerWith(initialCommittedState: any, initialLiftedState: LiftedState, monitorReducer?: any, options?: Partial<StoreDevtoolsConfig>): (reducer: ActionReducer<any, any>) => ActionReducer<LiftedState, Actions>;

@@ -362,8 +362,8 @@ function liftInitialState(initialCommittedState, monitorReducer) {
 function liftReducerWith(initialCommittedState, initialLiftedState, monitorReducer, options) {
     if (options === void 0) { options = {}; }
     /**
-      * Manages how the history actions modify the history state.
-      */
+       * Manages how the history actions modify the history state.
+       */
     return function (reducer) { return function (liftedState, liftedAction) {
         var _a = liftedState || initialLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates;
         if (!liftedState) {

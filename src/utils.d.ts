@@ -11,7 +11,7 @@ export declare function unliftAction(liftedState: LiftedState): {
     action: Action;
 };
 /**
-* Lifts an app's action into an action on the lifted store.
-*/
+ * Lifts an app's action into an action on the lifted store.
+ */
 export declare function liftAction(action: Action): Actions.PerformAction;
 export declare function applyOperators(input$: Observable<any>, operators: any[][]): Observable<any>;

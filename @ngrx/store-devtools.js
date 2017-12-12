@@ -356,8 +356,8 @@ function liftInitialState(initialCommittedState, monitorReducer) {
  */
 function liftReducerWith(initialCommittedState, initialLiftedState, monitorReducer, options = {}) {
     /**
-      * Manages how the history actions modify the history state.
-      */
+       * Manages how the history actions modify the history state.
+       */
     return (reducer) => (liftedState, liftedAction) => {
         let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, } = liftedState || initialLiftedState;
         if (!liftedState) {
