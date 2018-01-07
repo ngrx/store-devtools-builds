@@ -22,6 +22,7 @@ export declare class StoreDevtools implements Observer<any> {
     commit(): void;
     sweep(): void;
     toggleAction(id: number): void;
+    jumpToAction(actionId: number): void;
     jumpToState(index: number): void;
     importState(nextLiftedState: any): void;
 }

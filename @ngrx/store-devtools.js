@@ -36,6 +36,7 @@ const SWEEP = 'SWEEP';
 const TOGGLE_ACTION = 'TOGGLE_ACTION';
 const SET_ACTIONS_ACTIVE = 'SET_ACTIONS_ACTIVE';
 const JUMP_TO_STATE = 'JUMP_TO_STATE';
+const JUMP_TO_ACTION = 'JUMP_TO_ACTION';
 const IMPORT_STATE = 'IMPORT_STATE';
 class PerformAction {
     /**
@@ -101,6 +102,15 @@ class JumpToState {
     constructor(index) {
         this.index = index;
         this.type = JUMP_TO_STATE;
+    }
+}
+class JumpToAction {
+    /**
+     * @param {?} actionId
+     */
+    constructor(actionId) {
+        this.actionId = actionId;
+        this.type = JUMP_TO_ACTION;
     }
 }
 class ImportState {
@@ -469,6 +479,15 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 minInvalidatedStateIndex = Infinity;
                 break;
             }
+            case JUMP_TO_ACTION: {
+                // Jumps to a corresponding state to a specific action.
+                // Useful when filtering actions.
+                const /** @type {?} */ index = stagedActionIds.indexOf(liftedAction.actionId);
+                if (index !== -1)
+                    currentStateIndex = index;
+                minInvalidatedStateIndex = Infinity;
+                break;
+            }
             case SWEEP: {
                 // Forget any actions that are currently being skipped.
                 stagedActionIds = difference(stagedActionIds, skippedActionIds);
@@ -692,6 +711,13 @@ class StoreDevtools {
      */
     toggleAction(id) {
         this.dispatch(new ToggleAction(id));
+    }
+    /**
+     * @param {?} actionId
+     * @return {?}
+     */
+    jumpToAction(actionId) {
+        this.dispatch(new JumpToAction(actionId));
     }
     /**
      * @param {?} index

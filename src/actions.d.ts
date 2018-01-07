@@ -7,6 +7,7 @@ export declare const SWEEP = "SWEEP";
 export declare const TOGGLE_ACTION = "TOGGLE_ACTION";
 export declare const SET_ACTIONS_ACTIVE = "SET_ACTIONS_ACTIVE";
 export declare const JUMP_TO_STATE = "JUMP_TO_STATE";
+export declare const JUMP_TO_ACTION = "JUMP_TO_ACTION";
 export declare const IMPORT_STATE = "IMPORT_STATE";
 export declare class PerformAction implements Action {
     action: Action;
@@ -49,9 +50,14 @@ export declare class JumpToState implements Action {
     readonly type: string;
     constructor(index: number);
 }
+export declare class JumpToAction implements Action {
+    actionId: number;
+    readonly type: string;
+    constructor(actionId: number);
+}
 export declare class ImportState implements Action {
     nextLiftedState: any;
     readonly type: string;
     constructor(nextLiftedState: any);
 }
-export declare type All = PerformAction | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | ImportState;
+export declare type All = PerformAction | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState;

@@ -47,6 +47,7 @@ var SWEEP = 'SWEEP';
 var TOGGLE_ACTION = 'TOGGLE_ACTION';
 var SET_ACTIONS_ACTIVE = 'SET_ACTIONS_ACTIVE';
 var JUMP_TO_STATE = 'JUMP_TO_STATE';
+var JUMP_TO_ACTION = 'JUMP_TO_ACTION';
 var IMPORT_STATE = 'IMPORT_STATE';
 var PerformAction = (function () {
     /**
@@ -119,6 +120,16 @@ var JumpToState = (function () {
         this.type = JUMP_TO_STATE;
     }
     return JumpToState;
+}());
+var JumpToAction = (function () {
+    /**
+     * @param {?} actionId
+     */
+    function JumpToAction(actionId) {
+        this.actionId = actionId;
+        this.type = JUMP_TO_ACTION;
+    }
+    return JumpToAction;
 }());
 var ImportState = (function () {
     /**
@@ -485,6 +496,15 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 minInvalidatedStateIndex = Infinity;
                 break;
             }
+            case JUMP_TO_ACTION: {
+                // Jumps to a corresponding state to a specific action.
+                // Useful when filtering actions.
+                var /** @type {?} */ index = stagedActionIds.indexOf(liftedAction.actionId);
+                if (index !== -1)
+                    currentStateIndex = index;
+                minInvalidatedStateIndex = Infinity;
+                break;
+            }
             case SWEEP: {
                 // Forget any actions that are currently being skipped.
                 stagedActionIds = difference(stagedActionIds, skippedActionIds);
@@ -707,6 +727,13 @@ var StoreDevtools = (function () {
      */
     StoreDevtools.prototype.toggleAction = function (id) {
         this.dispatch(new ToggleAction(id));
+    };
+    /**
+     * @param {?} actionId
+     * @return {?}
+     */
+    StoreDevtools.prototype.jumpToAction = function (actionId) {
+        this.dispatch(new JumpToAction(actionId));
     };
     /**
      * @param {?} index
