@@ -188,6 +188,10 @@ const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
  * @record
  */
 
+/**
+ * @record
+ */
+
 class DevtoolsExtension {
     /**
      * @param {?} devtoolsExtension
@@ -220,7 +224,10 @@ class DevtoolsExtension {
         return new Observable$1(subscriber => {
             const /** @type {?} */ connection = this.devtoolsExtension.connect({
                 instanceId: this.instanceId,
+                name: this.config.name,
+                features: this.config.features,
             });
+            connection.init();
             connection.subscribe((change) => subscriber.next(change));
             return connection.unsubscribe;
         });
@@ -812,9 +819,15 @@ function createConfig(_options) {
         stateSanitizer: noStateSanitizer,
         name: DEFAULT_NAME,
         serialize: false,
+        logOnly: false,
+        features: false,
     };
     let /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
-    const /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, options);
+    const /** @type {?} */ logOnly = options.logOnly
+        ? { pause: true, export: true, test: true }
+        : false;
+    const /** @type {?} */ features = options.features || logOnly;
+    const /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, { features }, options);
     if (config.maxAge && config.maxAge < 2) {
         throw new Error(`Devtools 'maxAge' cannot be less than 2, got ${config.maxAge}`);
     }

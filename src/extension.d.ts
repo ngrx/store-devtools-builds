@@ -14,12 +14,15 @@ export interface ReduxDevtoolsExtensionConnection {
     subscribe(listener: (change: any) => void): void;
     unsubscribe(): void;
     send(action: any, state: any): void;
+    init(state?: any): void;
+}
+export interface ReduxDevtoolsExtensionConfig {
+    features?: object | boolean;
+    name: string | undefined;
+    instanceId: string;
 }
 export interface ReduxDevtoolsExtension {
-    connect(options: {
-        shouldStringify?: boolean;
-        instanceId: string;
-    }): ReduxDevtoolsExtensionConnection;
+    connect(options: ReduxDevtoolsExtensionConfig): ReduxDevtoolsExtensionConnection;
     send(action: any, state: any, options: StoreDevtoolsConfig, instanceId?: string): void;
 }
 export declare class DevtoolsExtension {

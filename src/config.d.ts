@@ -7,6 +7,8 @@ export declare class StoreDevtoolsConfig {
     stateSanitizer?: <S>(state: S, index: number) => S;
     name?: string;
     serialize?: boolean;
+    logOnly?: boolean;
+    features?: any;
 }
 export declare const STORE_DEVTOOLS_CONFIG: InjectionToken<StoreDevtoolsConfig>;
 export declare const INITIAL_OPTIONS: InjectionToken<StoreDevtoolsConfig>;
