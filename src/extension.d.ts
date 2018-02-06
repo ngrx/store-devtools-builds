@@ -15,11 +15,13 @@ export interface ReduxDevtoolsExtensionConnection {
     unsubscribe(): void;
     send(action: any, state: any): void;
     init(state?: any): void;
+    error(any: any): void;
 }
 export interface ReduxDevtoolsExtensionConfig {
     features?: object | boolean;
     name: string | undefined;
     instanceId: string;
+    maxAge?: number;
 }
 export interface ReduxDevtoolsExtension {
     connect(options: ReduxDevtoolsExtensionConfig): ReduxDevtoolsExtensionConnection;
@@ -29,6 +31,7 @@ export declare class DevtoolsExtension {
     private config;
     private instanceId;
     private devtoolsExtension;
+    private extensionConnection;
     liftedActions$: Observable<any>;
     actions$: Observable<any>;
     constructor(devtoolsExtension: ReduxDevtoolsExtension, config: StoreDevtoolsConfig);
