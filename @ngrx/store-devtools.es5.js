@@ -240,7 +240,7 @@ var DevtoolsExtension = (function () {
         //   d) any action that is not a PerformAction to err on the side of
         //      caution.
         if (action instanceof PerformAction) {
-            var /** @type {?} */ currentState = state.computedStates[state.currentStateIndex].state;
+            var /** @type {?} */ currentState = unliftState(state);
             this.extensionConnection.send(action.action, currentState);
         }
         else {
@@ -261,6 +261,7 @@ var DevtoolsExtension = (function () {
                 instanceId: _this.instanceId,
                 name: _this.config.name,
                 features: _this.config.features,
+                actionSanitizer: _this.config.actionSanitizer,
             };
             if (_this.config.maxAge !== false /* support === 0 */) {
                 extensionOptions.maxAge = _this.config.maxAge;
@@ -325,6 +326,9 @@ var INIT_ACTION = { type: INIT };
  * @record
  */
 /**
+ * @record
+ */
+/**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
  * @param {?} action
@@ -362,9 +366,10 @@ function computeNextEntry(reducer, action, state, error) {
  * @param {?} actionsById
  * @param {?} stagedActionIds
  * @param {?} skippedActionIds
+ * @param {?=} stateSanitizer
  * @return {?}
  */
-function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds) {
+function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, stateSanitizer) {
     // Optimization: exit early and return the same reference
     // if we know nothing could have changed.
     if (minInvalidatedStateIndex >= computedStates.length &&
@@ -382,7 +387,13 @@ function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, comm
         var /** @type {?} */ entry = shouldSkip
             ? previousEntry
             : computeNextEntry(reducer, action, previousState, previousError);
-        nextComputedStates.push(entry);
+        if (stateSanitizer) {
+            var /** @type {?} */ sanitizedEntry = Object.assign({}, entry, { sanitizedState: stateSanitizer(entry.state, actionId) });
+            nextComputedStates.push(sanitizedEntry);
+        }
+        else {
+            nextComputedStates.push(entry);
+        }
     }
     return nextComputedStates;
 }
@@ -396,6 +407,7 @@ function liftInitialState(initialCommittedState, monitorReducer) {
         monitorState: monitorReducer(undefined, {}),
         nextActionId: 1,
         actionsById: { 0: liftAction(INIT_ACTION) },
+        sanitizedActionsById: { 0: liftAction(INIT_ACTION) },
         stagedActionIds: [0],
         skippedActionIds: [],
         committedState: initialCommittedState,
@@ -417,10 +429,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
        * Manages how the history actions modify the history state.
        */
     return function (reducer) { return function (liftedState, liftedAction) {
-        var _a = liftedState || initialLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates;
+        var _a = liftedState || initialLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, sanitizedActionsById = _a.sanitizedActionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates;
         if (!liftedState) {
             // Prevent mutating initialLiftedState
             actionsById = Object.create(actionsById);
+            sanitizedActionsById = Object.create(sanitizedActionsById);
         }
         /**
          * @param {?} n
@@ -439,6 +452,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 }
                 else {
                     delete actionsById[idsToDelete[i]];
+                    delete sanitizedActionsById[idsToDelete[i]];
                 }
             }
             skippedActionIds = skippedActionIds.filter(function (id) { return idsToDelete.indexOf(id) === -1; });
@@ -448,7 +462,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
             currentStateIndex =
                 currentStateIndex > excess ? currentStateIndex - excess : 0;
         }
-        // By default, agressively recompute every state whatever happens.
+        // By default, aggressively recompute every state whatever happens.
         // This has O(n) performance, so we'll override this to a sensible
         // value whenever we feel like we don't have to recompute the states.
         var /** @type {?} */ minInvalidatedStateIndex = 0;
@@ -456,6 +470,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
             case RESET: {
                 // Get back to the state the store was created with.
                 actionsById = { 0: liftAction(INIT_ACTION) };
+                sanitizedActionsById = { 0: liftAction(INIT_ACTION) };
                 nextActionId = 1;
                 stagedActionIds = [0];
                 skippedActionIds = [];
@@ -468,6 +483,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 // Consider the last committed state the new starting point.
                 // Squash any staged actions into a single committed state.
                 actionsById = { 0: liftAction(INIT_ACTION) };
+                sanitizedActionsById = { 0: liftAction(INIT_ACTION) };
                 nextActionId = 1;
                 stagedActionIds = [0];
                 skippedActionIds = [];
@@ -480,6 +496,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 // Forget about any staged actions.
                 // Start again from the last committed state.
                 actionsById = { 0: liftAction(INIT_ACTION) };
+                sanitizedActionsById = { 0: liftAction(INIT_ACTION) };
                 nextActionId = 1;
                 stagedActionIds = [0];
                 skippedActionIds = [];
@@ -555,6 +572,9 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 // Mutation! This is the hottest path, and we optimize on purpose.
                 // It is safe because we set a new key in a cache dictionary.
                 actionsById[actionId] = liftedAction;
+                sanitizedActionsById[actionId] = options.actionSanitizer
+                    ? liftAction(options.actionSanitizer(liftedAction.action, actionId))
+                    : liftedAction;
                 stagedActionIds = stagedActionIds.concat([actionId]);
                 // Optimization: we know that only the new action needs computing.
                 minInvalidatedStateIndex = stagedActionIds.length - 1;
@@ -562,7 +582,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
             }
             case IMPORT_STATE: {
                 // Completely replace everything.
-                (_b = liftedAction.nextLiftedState, monitorState = _b.monitorState, actionsById = _b.actionsById, nextActionId = _b.nextActionId, stagedActionIds = _b.stagedActionIds, skippedActionIds = _b.skippedActionIds, committedState = _b.committedState, currentStateIndex = _b.currentStateIndex, computedStates = _b.computedStates);
+                (_b = liftedAction.nextLiftedState, monitorState = _b.monitorState, actionsById = _b.actionsById, sanitizedActionsById = _b.sanitizedActionsById, nextActionId = _b.nextActionId, stagedActionIds = _b.stagedActionIds, skippedActionIds = _b.skippedActionIds, committedState = _b.committedState, currentStateIndex = _b.currentStateIndex, computedStates = _b.computedStates);
                 break;
             }
             case INIT: {
@@ -570,7 +590,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 minInvalidatedStateIndex = 0;
                 if (options.maxAge && stagedActionIds.length > options.maxAge) {
                     // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, options.stateSanitizer);
                     commitExcessActions(stagedActionIds.length - options.maxAge);
                     // Avoid double computation.
                     minInvalidatedStateIndex = Infinity;
@@ -584,7 +604,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     minInvalidatedStateIndex = 0;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         // States must be recomputed before committing excess.
-                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, options.stateSanitizer);
                         commitExcessActions(stagedActionIds.length - options.maxAge);
                         // Avoid double computation.
                         minInvalidatedStateIndex = Infinity;
@@ -597,10 +617,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     // Add a new action to only recompute state
                     var /** @type {?} */ actionId = nextActionId++;
                     actionsById[actionId] = new PerformAction(liftedAction);
+                    sanitizedActionsById[actionId] = new PerformAction(liftedAction);
                     stagedActionIds = stagedActionIds.concat([actionId]);
                     minInvalidatedStateIndex = stagedActionIds.length - 1;
                     // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, options.stateSanitizer);
                     currentStateIndex = minInvalidatedStateIndex;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -617,11 +638,12 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 break;
             }
         }
-        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, options.stateSanitizer);
         monitorState = monitorReducer(monitorState, liftedAction);
         return {
             monitorState: monitorState,
             actionsById: actionsById,
+            sanitizedActionsById: sanitizedActionsById,
             nextActionId: nextActionId,
             stagedActionIds: stagedActionIds,
             skippedActionIds: skippedActionIds,
@@ -659,6 +681,7 @@ var StoreDevtools = (function () {
      * @param {?} config
      */
     function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
+        var _this = this;
         var /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
         var /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
         var /** @type {?} */ liftedAction$ = applyOperators(actions$.asObservable(), [
@@ -677,9 +700,10 @@ var StoreDevtools = (function () {
                 function (_a, _b) {
                     var liftedState = _a.state;
                     var action = _b[0], reducer = _b[1];
-                    var /** @type {?} */ state = reducer(liftedState, action);
-                    extension.notify(action, state);
-                    return { state: state, action: action };
+                    var /** @type {?} */ reducedLiftedState = reducer(liftedState, action);
+                    // Extension should be sent the sanitized lifted state
+                    extension.notify(action, _this.getSanitizedState(reducedLiftedState, config.stateSanitizer));
+                    return { state: reducedLiftedState, action: action };
                 },
                 { state: liftedInitialState, action: null },
             ],
@@ -698,6 +722,23 @@ var StoreDevtools = (function () {
         this.liftedState = liftedState$;
         this.state = state$;
     }
+    /**
+     * Restructures the lifted state passed in to prepare for sending to the
+     * Redux Devtools Extension
+     * @param {?} state
+     * @param {?=} stateSanitizer
+     * @return {?}
+     */
+    StoreDevtools.prototype.getSanitizedState = function (state, stateSanitizer) {
+        var /** @type {?} */ sanitizedComputedStates = stateSanitizer
+            ? state.computedStates.map(function (entry) { return ({
+                state: entry.sanitizedState,
+                error: entry.error,
+            }); })
+            : state.computedStates;
+        // Replace action and state logs with their sanitized versions
+        return Object.assign({}, state, { actionsById: state.sanitizedActionsById, computedStates: sanitizedComputedStates });
+    };
     /**
      * @param {?} action
      * @return {?}
@@ -834,18 +875,6 @@ function createStateObservable(devtools) {
 function noMonitor() {
     return null;
 }
-/**
- * @return {?}
- */
-function noActionSanitizer() {
-    return null;
-}
-/**
- * @return {?}
- */
-function noStateSanitizer() {
-    return null;
-}
 var DEFAULT_NAME = 'NgRx Store DevTools';
 /**
  * @param {?} _options
@@ -855,8 +884,8 @@ function createConfig(_options) {
     var /** @type {?} */ DEFAULT_OPTIONS = {
         maxAge: false,
         monitor: noMonitor,
-        actionSanitizer: noActionSanitizer,
-        stateSanitizer: noStateSanitizer,
+        actionSanitizer: undefined,
+        stateSanitizer: undefined,
         name: DEFAULT_NAME,
         serialize: false,
         logOnly: false,

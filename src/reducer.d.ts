@@ -12,6 +12,11 @@ export declare type Actions = Actions.All | CoreActions;
 export declare const INIT_ACTION: {
     type: "@ngrx/store/init";
 };
+export interface ComputedState {
+    state: any;
+    sanitizedState?: any;
+    error: any;
+}
 export interface LiftedState {
     monitorState: any;
     nextActionId: number;
@@ -20,14 +25,16 @@ export interface LiftedState {
             action: Action;
         };
     };
+    sanitizedActionsById: {
+        [id: number]: {
+            action: Action;
+        };
+    };
     stagedActionIds: number[];
     skippedActionIds: number[];
     committedState: any;
     currentStateIndex: number;
-    computedStates: {
-        state: any;
-        error: any;
-    }[];
+    computedStates: ComputedState[];
 }
 export declare function liftInitialState(initialCommittedState?: any, monitorReducer?: any): LiftedState;
 /**

@@ -22,6 +22,7 @@ export interface ReduxDevtoolsExtensionConfig {
     name: string | undefined;
     instanceId: string;
     maxAge?: number;
+    actionSanitizer?: (action: Action, id: number) => Action;
 }
 export interface ReduxDevtoolsExtension {
     connect(options: ReduxDevtoolsExtensionConfig): ReduxDevtoolsExtensionConnection;

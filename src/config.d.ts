@@ -1,10 +1,12 @@
 import { ActionReducer, Action } from '@ngrx/store';
 import { InjectionToken } from '@angular/core';
+export declare type ActionSanitizer = (action: Action, id: number) => Action;
+export declare type StateSanitizer = (state: any, index: number) => any;
 export declare class StoreDevtoolsConfig {
     maxAge: number | false;
     monitor: ActionReducer<any, any>;
-    actionSanitizer?: <A extends Action>(action: A, id: number) => A;
-    stateSanitizer?: <S>(state: S, index: number) => S;
+    actionSanitizer?: ActionSanitizer;
+    stateSanitizer?: StateSanitizer;
     name?: string;
     serialize?: boolean;
     logOnly?: boolean;
