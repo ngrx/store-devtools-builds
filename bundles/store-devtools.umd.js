@@ -18,7 +18,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
-var StoreDevtoolsConfig = (function () {
+var StoreDevtoolsConfig = /** @class */ (function () {
     function StoreDevtoolsConfig() {
     }
     return StoreDevtoolsConfig;
@@ -39,7 +39,7 @@ var SET_ACTIONS_ACTIVE = 'SET_ACTIONS_ACTIVE';
 var JUMP_TO_STATE = 'JUMP_TO_STATE';
 var JUMP_TO_ACTION = 'JUMP_TO_ACTION';
 var IMPORT_STATE = 'IMPORT_STATE';
-var PerformAction = (function () {
+var PerformAction = /** @class */ (function () {
     /**
      * @param {?} action
      * @param {?=} timestamp
@@ -55,7 +55,7 @@ var PerformAction = (function () {
     }
     return PerformAction;
 }());
-var Reset = (function () {
+var Reset = /** @class */ (function () {
     /**
      * @param {?=} timestamp
      */
@@ -65,7 +65,7 @@ var Reset = (function () {
     }
     return Reset;
 }());
-var Rollback = (function () {
+var Rollback = /** @class */ (function () {
     /**
      * @param {?=} timestamp
      */
@@ -75,7 +75,7 @@ var Rollback = (function () {
     }
     return Rollback;
 }());
-var Commit = (function () {
+var Commit = /** @class */ (function () {
     /**
      * @param {?=} timestamp
      */
@@ -85,13 +85,13 @@ var Commit = (function () {
     }
     return Commit;
 }());
-var Sweep = (function () {
+var Sweep = /** @class */ (function () {
     function Sweep() {
         this.type = SWEEP;
     }
     return Sweep;
 }());
-var ToggleAction = (function () {
+var ToggleAction = /** @class */ (function () {
     /**
      * @param {?} id
      */
@@ -101,7 +101,7 @@ var ToggleAction = (function () {
     }
     return ToggleAction;
 }());
-var JumpToState = (function () {
+var JumpToState = /** @class */ (function () {
     /**
      * @param {?} index
      */
@@ -111,7 +111,7 @@ var JumpToState = (function () {
     }
     return JumpToState;
 }());
-var JumpToAction = (function () {
+var JumpToAction = /** @class */ (function () {
     /**
      * @param {?} actionId
      */
@@ -121,7 +121,7 @@ var JumpToAction = (function () {
     }
     return JumpToAction;
 }());
-var ImportState = (function () {
+var ImportState = /** @class */ (function () {
     /**
      * @param {?} nextLiftedState
      */
@@ -196,7 +196,7 @@ var REDUX_DEVTOOLS_EXTENSION = new core.InjectionToken('Redux Devtools Extension
 /**
  * @record
  */
-var DevtoolsExtension = (function () {
+var DevtoolsExtension = /** @class */ (function () {
     /**
      * @param {?} devtoolsExtension
      * @param {?} config
@@ -648,7 +648,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
-var DevtoolsDispatcher = (function (_super) {
+var DevtoolsDispatcher = /** @class */ (function (_super) {
     __extends(DevtoolsDispatcher, _super);
     function DevtoolsDispatcher() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -660,7 +660,7 @@ DevtoolsDispatcher.decorators = [
 ];
 /** @nocollapse */
 DevtoolsDispatcher.ctorParameters = function () { return []; };
-var StoreDevtools = (function () {
+var StoreDevtools = /** @class */ (function () {
     /**
      * @param {?} dispatcher
      * @param {?} actions$
@@ -892,7 +892,7 @@ function createConfig(_options) {
     }
     return config;
 }
-var StoreDevtoolsModule = (function () {
+var StoreDevtoolsModule = /** @class */ (function () {
     function StoreDevtoolsModule() {
     }
     /**
