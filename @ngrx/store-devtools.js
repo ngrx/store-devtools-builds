@@ -617,6 +617,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     minInvalidatedStateIndex = stagedActionIds.length - 1;
                     // States must be recomputed before committing excess.
                     computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, options.stateSanitizer);
+                    // Recompute state history with latest reducer and update action
+                    computedStates = computedStates.map(cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, liftedAction) })));
                     currentStateIndex = minInvalidatedStateIndex;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
