@@ -14,22 +14,19 @@ export declare const INIT_ACTION: {
 };
 export interface ComputedState {
     state: any;
-    sanitizedState?: any;
     error: any;
+}
+export interface LiftedAction {
+    type: string;
+    action: Action;
+}
+export interface LiftedActions {
+    [id: number]: LiftedAction;
 }
 export interface LiftedState {
     monitorState: any;
     nextActionId: number;
-    actionsById: {
-        [id: number]: {
-            action: Action;
-        };
-    };
-    sanitizedActionsById: {
-        [id: number]: {
-            action: Action;
-        };
-    };
+    actionsById: LiftedActions;
     stagedActionIds: number[];
     skippedActionIds: number[];
     committedState: any;

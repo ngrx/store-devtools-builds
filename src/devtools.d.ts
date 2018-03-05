@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { DevtoolsExtension } from './extension';
 import { LiftedState } from './reducer';
-import { StoreDevtoolsConfig, StateSanitizer } from './config';
+import { StoreDevtoolsConfig } from './config';
 export declare class DevtoolsDispatcher extends ActionsSubject {
 }
 export declare class StoreDevtools implements Observer<any> {
@@ -12,32 +12,6 @@ export declare class StoreDevtools implements Observer<any> {
     liftedState: Observable<LiftedState>;
     state: Observable<any>;
     constructor(dispatcher: DevtoolsDispatcher, actions$: ActionsSubject, reducers$: ReducerObservable, extension: DevtoolsExtension, scannedActions: ScannedActionsSubject, initialState: any, config: StoreDevtoolsConfig);
-    /**
-     * Restructures the lifted state passed in to prepare for sending to the
-     * Redux Devtools Extension
-     */
-    getSanitizedState(state: LiftedState, stateSanitizer?: StateSanitizer): {
-        actionsById: {
-            [id: number]: {
-                action: Action;
-            };
-        };
-        computedStates: {
-            state: any;
-            error: any;
-        }[];
-        monitorState: any;
-        nextActionId: number;
-        sanitizedActionsById: {
-            [id: number]: {
-                action: Action;
-            };
-        };
-        stagedActionIds: number[];
-        skippedActionIds: number[];
-        committedState: any;
-        currentStateIndex: number;
-    };
     dispatch(action: Action): void;
     next(action: any): void;
     error(error: any): void;

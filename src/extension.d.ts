@@ -1,8 +1,7 @@
 import { InjectionToken } from '@angular/core';
-import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { StoreDevtoolsConfig } from './config';
-import { LiftedState } from './reducer';
+import { LiftedState, LiftedAction } from './reducer';
 export declare const ExtensionActionTypes: {
     START: string;
     DISPATCH: string;
@@ -22,11 +21,11 @@ export interface ReduxDevtoolsExtensionConfig {
     name: string | undefined;
     instanceId: string;
     maxAge?: number;
-    actionSanitizer?: (action: Action, id: number) => Action;
+    serialize?: boolean;
 }
 export interface ReduxDevtoolsExtension {
     connect(options: ReduxDevtoolsExtensionConfig): ReduxDevtoolsExtensionConnection;
-    send(action: any, state: any, options: StoreDevtoolsConfig, instanceId?: string): void;
+    send(action: any, state: any, options: ReduxDevtoolsExtensionConfig, instanceId?: string): void;
 }
 export declare class DevtoolsExtension {
     private config;
@@ -36,8 +35,9 @@ export declare class DevtoolsExtension {
     liftedActions$: Observable<any>;
     actions$: Observable<any>;
     constructor(devtoolsExtension: ReduxDevtoolsExtension, config: StoreDevtoolsConfig);
-    notify(action: Action, state: LiftedState): void;
+    notify(action: LiftedAction, state: LiftedState): void;
     private createChangesObservable();
     private createActionStreams();
     private unwrapAction(action);
+    private getExtensionConfig(instanceId, config);
 }
