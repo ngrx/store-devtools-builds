@@ -13,22 +13,22 @@ export declare class PerformAction implements Action {
     action: Action;
     timestamp: number;
     readonly type: string;
-    constructor(action: Action, timestamp?: number);
+    constructor(action: Action, timestamp: number);
 }
 export declare class Reset implements Action {
     timestamp: number;
     readonly type: string;
-    constructor(timestamp?: number);
+    constructor(timestamp: number);
 }
 export declare class Rollback implements Action {
     timestamp: number;
     readonly type: string;
-    constructor(timestamp?: number);
+    constructor(timestamp: number);
 }
 export declare class Commit implements Action {
     timestamp: number;
     readonly type: string;
-    constructor(timestamp?: number);
+    constructor(timestamp: number);
 }
 export declare class Sweep implements Action {
     readonly type: string;

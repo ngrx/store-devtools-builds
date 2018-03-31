@@ -1,3 +1,4 @@
+import { ErrorHandler } from '@angular/core';
 import { Action, ActionReducer, UPDATE, INIT } from '@ngrx/store';
 import * as Actions from './actions';
 import { StoreDevtoolsConfig } from './config';
@@ -37,4 +38,4 @@ export declare function liftInitialState(initialCommittedState?: any, monitorRed
 /**
  * Creates a history state reducer from an app's reducer.
  */
-export declare function liftReducerWith(initialCommittedState: any, initialLiftedState: LiftedState, monitorReducer?: any, options?: Partial<StoreDevtoolsConfig>): (reducer: ActionReducer<any, any>) => ActionReducer<LiftedState, Actions>;
+export declare function liftReducerWith(initialCommittedState: any, initialLiftedState: LiftedState, errorHandler: ErrorHandler, monitorReducer?: any, options?: Partial<StoreDevtoolsConfig>): (reducer: ActionReducer<any, any>) => ActionReducer<LiftedState, Actions>;

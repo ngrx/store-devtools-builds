@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { StoreDevtoolsConfig } from './config';
-import { LiftedState, LiftedAction } from './reducer';
+import { LiftedAction, LiftedState } from './reducer';
 export declare const ExtensionActionTypes: {
     START: string;
     DISPATCH: string;
@@ -14,7 +14,7 @@ export interface ReduxDevtoolsExtensionConnection {
     unsubscribe(): void;
     send(action: any, state: any): void;
     init(state?: any): void;
-    error(any: any): void;
+    error(anyErr: any): void;
 }
 export interface ReduxDevtoolsExtensionConfig {
     features?: object | boolean;

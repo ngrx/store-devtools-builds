@@ -1,7 +1,7 @@
 import { InjectionToken, ModuleWithProviders } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { StoreDevtools } from './devtools';
+import { Observable } from 'rxjs';
 import { StoreDevtoolsConfig, StoreDevtoolsOptions } from './config';
+import { StoreDevtools } from './devtools';
 import { ReduxDevtoolsExtension } from './extension';
 export declare const IS_EXTENSION_OR_MONITOR_PRESENT: InjectionToken<boolean>;
 export declare function createIsExtensionOrMonitorPresent(extension: ReduxDevtoolsExtension | null, config: StoreDevtoolsConfig): boolean;

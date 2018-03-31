@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@ngrx/store'), require('rxjs/ReplaySubject'), require('rxjs/operator/map'), require('rxjs/operator/merge'), require('rxjs/operator/observeOn'), require('rxjs/operator/scan'), require('rxjs/operator/skip'), require('rxjs/operator/withLatestFrom'), require('rxjs/scheduler/queue'), require('rxjs/Observable'), require('rxjs/observable/empty'), require('rxjs/operator/filter'), require('rxjs/operator/share'), require('rxjs/operator/switchMap'), require('rxjs/operator/takeUntil')) :
-	typeof define === 'function' && define.amd ? define('@ngrx/store-devtools', ['exports', '@angular/core', '@ngrx/store', 'rxjs/ReplaySubject', 'rxjs/operator/map', 'rxjs/operator/merge', 'rxjs/operator/observeOn', 'rxjs/operator/scan', 'rxjs/operator/skip', 'rxjs/operator/withLatestFrom', 'rxjs/scheduler/queue', 'rxjs/Observable', 'rxjs/observable/empty', 'rxjs/operator/filter', 'rxjs/operator/share', 'rxjs/operator/switchMap', 'rxjs/operator/takeUntil'], factory) :
-	(factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}),global.ng.core,global.ngrx.store,global.Rx,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Scheduler,global.Rx,global.Rx.Observable,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype));
-}(this, (function (exports,core,store,ReplaySubject,map,merge,observeOn,scan,skip,withLatestFrom,queue,Observable,empty,filter,share,switchMap,takeUntil) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@ngrx/store'), require('rxjs'), require('rxjs/operators')) :
+	typeof define === 'function' && define.amd ? define('@ngrx/store-devtools', ['exports', '@angular/core', '@ngrx/store', 'rxjs', 'rxjs/operators'], factory) :
+	(factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}),global.ng.core,global.ngrx.store,global.Rx,global.operators));
+}(this, (function (exports,core,store,rxjs,operators) { 'use strict';
 
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -42,7 +42,7 @@ var IMPORT_STATE = 'IMPORT_STATE';
 var PerformAction = /** @class */ (function () {
     /**
      * @param {?} action
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     function PerformAction(action, timestamp) {
         this.action = action;
@@ -57,7 +57,7 @@ var PerformAction = /** @class */ (function () {
 }());
 var Reset = /** @class */ (function () {
     /**
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     function Reset(timestamp) {
         this.timestamp = timestamp;
@@ -67,7 +67,7 @@ var Reset = /** @class */ (function () {
 }());
 var Rollback = /** @class */ (function () {
     /**
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     function Rollback(timestamp) {
         this.timestamp = timestamp;
@@ -77,7 +77,7 @@ var Rollback = /** @class */ (function () {
 }());
 var Commit = /** @class */ (function () {
     /**
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     function Commit(timestamp) {
         this.timestamp = timestamp;
@@ -163,18 +163,7 @@ function unliftState(liftedState) {
  * @return {?}
  */
 function liftAction(action) {
-    return new PerformAction(action);
-}
-/**
- * @param {?} input$
- * @param {?} operators
- * @return {?}
- */
-function applyOperators(input$, operators) {
-    return operators.reduce(function (source$, _a) {
-        var operator = _a[0], args = _a.slice(1);
-        return operator.apply(source$, args);
-    }, input$);
+    return new PerformAction(action, +Date.now());
 }
 /**
  * Sanitizes given actions with given function.
@@ -300,9 +289,9 @@ var DevtoolsExtension = /** @class */ (function () {
     DevtoolsExtension.prototype.createChangesObservable = function () {
         var _this = this;
         if (!this.devtoolsExtension) {
-            return empty.empty();
+            return rxjs.empty();
         }
-        return new Observable.Observable(function (subscriber) {
+        return new rxjs.Observable(function (subscriber) {
             var /** @type {?} */ connection = _this.devtoolsExtension.connect(_this.getExtensionConfig(_this.instanceId, _this.config));
             _this.extensionConnection = connection;
             connection.init();
@@ -316,26 +305,20 @@ var DevtoolsExtension = /** @class */ (function () {
     DevtoolsExtension.prototype.createActionStreams = function () {
         var _this = this;
         // Listens to all changes based on our instanceId
-        var /** @type {?} */ changes$ = share.share.call(this.createChangesObservable());
+        var /** @type {?} */ changes$ = this.createChangesObservable().pipe(operators.share());
         // Listen for the start action
-        var /** @type {?} */ start$ = filter.filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.START; });
+        var /** @type {?} */ start$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.START; }));
         // Listen for the stop action
-        var /** @type {?} */ stop$ = filter.filter.call(changes$, function (change) { return change.type === ExtensionActionTypes.STOP; });
+        var /** @type {?} */ stop$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.STOP; }));
         // Listen for lifted actions
-        var /** @type {?} */ liftedActions$ = applyOperators(changes$, [
-            [filter.filter, function (change) { return change.type === ExtensionActionTypes.DISPATCH; }],
-            [map.map, function (change) { return _this.unwrapAction(change.payload); }],
-        ]);
+        var /** @type {?} */ liftedActions$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.DISPATCH; }), operators.map(function (change) { return _this.unwrapAction(change.payload); }));
         // Listen for unlifted actions
-        var /** @type {?} */ actions$ = applyOperators(changes$, [
-            [filter.filter, function (change) { return change.type === ExtensionActionTypes.ACTION; }],
-            [map.map, function (change) { return _this.unwrapAction(change.payload); }],
-        ]);
-        var /** @type {?} */ actionsUntilStop$ = takeUntil.takeUntil.call(actions$, stop$);
-        var /** @type {?} */ liftedUntilStop$ = takeUntil.takeUntil.call(liftedActions$, stop$);
+        var /** @type {?} */ actions$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.ACTION; }), operators.map(function (change) { return _this.unwrapAction(change.payload); }));
+        var /** @type {?} */ actionsUntilStop$ = actions$.pipe(operators.takeUntil(stop$));
+        var /** @type {?} */ liftedUntilStop$ = liftedActions$.pipe(operators.takeUntil(stop$));
         // Only take the action sources between the start/stop events
-        this.actions$ = switchMap.switchMap.call(start$, function () { return actionsUntilStop$; });
-        this.liftedActions$ = switchMap.switchMap.call(start$, function () { return liftedUntilStop$; });
+        this.actions$ = start$.pipe(operators.switchMap(function () { return actionsUntilStop$; }));
+        this.liftedActions$ = start$.pipe(operators.switchMap(function () { return liftedUntilStop$; }));
     };
     /**
      * @param {?} action
@@ -394,9 +377,10 @@ var INIT_ACTION = { type: store.INIT };
  * @param {?} action
  * @param {?} state
  * @param {?} error
+ * @param {?} errorHandler
  * @return {?}
  */
-function computeNextEntry(reducer, action, state, error) {
+function computeNextEntry(reducer, action, state, error, errorHandler) {
     if (error) {
         return {
             state: state,
@@ -410,7 +394,7 @@ function computeNextEntry(reducer, action, state, error) {
     }
     catch (err) {
         nextError = err.toString();
-        console.error(err.stack || err);
+        errorHandler.handleError(err.stack || err);
     }
     return {
         state: nextState,
@@ -426,9 +410,10 @@ function computeNextEntry(reducer, action, state, error) {
  * @param {?} actionsById
  * @param {?} stagedActionIds
  * @param {?} skippedActionIds
+ * @param {?} errorHandler
  * @return {?}
  */
-function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds) {
+function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler) {
     // Optimization: exit early and return the same reference
     // if we know nothing could have changed.
     if (minInvalidatedStateIndex >= computedStates.length &&
@@ -445,7 +430,7 @@ function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, comm
         var /** @type {?} */ shouldSkip = skippedActionIds.indexOf(actionId) > -1;
         var /** @type {?} */ entry = shouldSkip
             ? previousEntry
-            : computeNextEntry(reducer, action, previousState, previousError);
+            : computeNextEntry(reducer, action, previousState, previousError, errorHandler);
         nextComputedStates.push(entry);
     }
     return nextComputedStates;
@@ -471,11 +456,12 @@ function liftInitialState(initialCommittedState, monitorReducer) {
  * Creates a history state reducer from an app's reducer.
  * @param {?} initialCommittedState
  * @param {?} initialLiftedState
+ * @param {?} errorHandler
  * @param {?=} monitorReducer
  * @param {?=} options
  * @return {?}
  */
-function liftReducerWith(initialCommittedState, initialLiftedState, monitorReducer, options) {
+function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler, monitorReducer, options) {
     if (options === void 0) { options = {}; }
     /**
        * Manages how the history actions modify the history state.
@@ -634,7 +620,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 minInvalidatedStateIndex = 0;
                 if (options.maxAge && stagedActionIds.length > options.maxAge) {
                     // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
                     commitExcessActions(stagedActionIds.length - options.maxAge);
                     // Avoid double computation.
                     minInvalidatedStateIndex = Infinity;
@@ -648,7 +634,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     minInvalidatedStateIndex = 0;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         // States must be recomputed before committing excess.
-                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
                         commitExcessActions(stagedActionIds.length - options.maxAge);
                         // Avoid double computation.
                         minInvalidatedStateIndex = Infinity;
@@ -660,11 +646,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     }
                     // Add a new action to only recompute state
                     var /** @type {?} */ actionId = nextActionId++;
-                    actionsById[actionId] = new PerformAction(liftedAction);
+                    actionsById[actionId] = new PerformAction(liftedAction, +Date.now());
                     stagedActionIds = stagedActionIds.concat([actionId]);
                     minInvalidatedStateIndex = stagedActionIds.length - 1;
                     // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
                     // Recompute state history with latest reducer and update action
                     computedStates = computedStates.map(function (cmp) { return (Object.assign({}, cmp, { state: reducer(cmp.state, liftedAction) })); });
                     currentStateIndex = minInvalidatedStateIndex;
@@ -683,7 +669,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 break;
             }
         }
-        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
         monitorState = monitorReducer(monitorState, liftedAction);
         return {
             monitorState: monitorState,
@@ -721,36 +707,26 @@ var StoreDevtools = /** @class */ (function () {
      * @param {?} reducers$
      * @param {?} extension
      * @param {?} scannedActions
+     * @param {?} errorHandler
      * @param {?} initialState
      * @param {?} config
      */
-    function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
+    function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, errorHandler, initialState, config) {
         var /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
-        var /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
-        var /** @type {?} */ liftedAction$ = applyOperators(actions$.asObservable(), [
-            [skip.skip, 1],
-            [merge.merge, extension.actions$],
-            [map.map, liftAction],
-            [merge.merge, dispatcher, extension.liftedActions$],
-            [observeOn.observeOn, queue.queue],
-        ]);
-        var /** @type {?} */ liftedReducer$ = map.map.call(reducers$, liftReducer);
-        var /** @type {?} */ liftedStateSubject = new ReplaySubject.ReplaySubject(1);
-        var /** @type {?} */ liftedStateSubscription = applyOperators(liftedAction$, [
-            [withLatestFrom.withLatestFrom, liftedReducer$],
-            [
-                scan.scan,
-                function (_a, _b) {
-                    var liftedState = _a.state;
-                    var action = _b[0], reducer = _b[1];
-                    var /** @type {?} */ reducedLiftedState = reducer(liftedState, action);
-                    // Extension should be sent the sanitized lifted state
-                    extension.notify(action, reducedLiftedState);
-                    return { state: reducedLiftedState, action: action };
-                },
-                { state: liftedInitialState, action: null },
-            ],
-        ]).subscribe(function (_a) {
+        var /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
+        var /** @type {?} */ liftedAction$ = rxjs.merge(rxjs.merge(actions$.asObservable().pipe(operators.skip(1)), extension.actions$).pipe(operators.map(liftAction)), dispatcher, extension.liftedActions$).pipe(operators.observeOn(rxjs.queueScheduler));
+        var /** @type {?} */ liftedReducer$ = reducers$.pipe(operators.map(liftReducer));
+        var /** @type {?} */ liftedStateSubject = new rxjs.ReplaySubject(1);
+        var /** @type {?} */ liftedStateSubscription = liftedAction$
+            .pipe(operators.withLatestFrom(liftedReducer$), operators.scan(function (_a, _b) {
+            var liftedState = _a.state;
+            var action = _b[0], reducer = _b[1];
+            var /** @type {?} */ reducedLiftedState = reducer(liftedState, action);
+            // // Extension should be sent the sanitized lifted state
+            extension.notify(action, reducedLiftedState);
+            return { state: reducedLiftedState, action: action };
+        }, { state: liftedInitialState, action: /** @type {?} */ (null) }))
+            .subscribe(function (_a) {
             var state = _a.state, action = _a.action;
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
@@ -759,7 +735,7 @@ var StoreDevtools = /** @class */ (function () {
             }
         });
         var /** @type {?} */ liftedState$ = (liftedStateSubject.asObservable());
-        var /** @type {?} */ state$ = map.map.call(liftedState$, unliftState);
+        var /** @type {?} */ state$ = liftedState$.pipe(operators.map(unliftState));
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -793,25 +769,25 @@ var StoreDevtools = /** @class */ (function () {
      * @return {?}
      */
     StoreDevtools.prototype.performAction = function (action) {
-        this.dispatch(new PerformAction(action));
+        this.dispatch(new PerformAction(action, +Date.now()));
     };
     /**
      * @return {?}
      */
     StoreDevtools.prototype.reset = function () {
-        this.dispatch(new Reset());
+        this.dispatch(new Reset(+Date.now()));
     };
     /**
      * @return {?}
      */
     StoreDevtools.prototype.rollback = function () {
-        this.dispatch(new Rollback());
+        this.dispatch(new Rollback(+Date.now()));
     };
     /**
      * @return {?}
      */
     StoreDevtools.prototype.commit = function () {
-        this.dispatch(new Commit());
+        this.dispatch(new Commit(+Date.now()));
     };
     /**
      * @return {?}
@@ -859,6 +835,7 @@ StoreDevtools.ctorParameters = function () { return [
     { type: store.ReducerObservable, },
     { type: DevtoolsExtension, },
     { type: store.ScannedActionsSubject, },
+    { type: core.ErrorHandler, },
     { type: undefined, decorators: [{ type: core.Inject, args: [store.INITIAL_STATE,] },] },
     { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ]; };

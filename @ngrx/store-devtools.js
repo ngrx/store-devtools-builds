@@ -1,19 +1,7 @@
-import { Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
+import { ErrorHandler, Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
 import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, UPDATE } from '@ngrx/store';
-import { ReplaySubject as ReplaySubject$1 } from 'rxjs/ReplaySubject';
-import { map as map$1 } from 'rxjs/operator/map';
-import { merge as merge$1 } from 'rxjs/operator/merge';
-import { observeOn as observeOn$1 } from 'rxjs/operator/observeOn';
-import { scan as scan$1 } from 'rxjs/operator/scan';
-import { skip as skip$1 } from 'rxjs/operator/skip';
-import { withLatestFrom as withLatestFrom$1 } from 'rxjs/operator/withLatestFrom';
-import { queue as queue$1 } from 'rxjs/scheduler/queue';
-import { Observable as Observable$1 } from 'rxjs/Observable';
-import { empty as empty$1 } from 'rxjs/observable/empty';
-import { filter as filter$1 } from 'rxjs/operator/filter';
-import { share as share$1 } from 'rxjs/operator/share';
-import { switchMap as switchMap$1 } from 'rxjs/operator/switchMap';
-import { takeUntil as takeUntil$1 } from 'rxjs/operator/takeUntil';
+import { Observable, ReplaySubject, empty, merge, queueScheduler } from 'rxjs';
+import { filter, map, observeOn, scan, share, skip, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 /**
  * @fileoverview added by tsickle
@@ -41,7 +29,7 @@ const IMPORT_STATE = 'IMPORT_STATE';
 class PerformAction {
     /**
      * @param {?} action
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     constructor(action, timestamp) {
         this.action = action;
@@ -55,7 +43,7 @@ class PerformAction {
 }
 class Reset {
     /**
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     constructor(timestamp) {
         this.timestamp = timestamp;
@@ -64,7 +52,7 @@ class Reset {
 }
 class Rollback {
     /**
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     constructor(timestamp) {
         this.timestamp = timestamp;
@@ -73,7 +61,7 @@ class Rollback {
 }
 class Commit {
     /**
-     * @param {?=} timestamp
+     * @param {?} timestamp
      */
     constructor(timestamp) {
         this.timestamp = timestamp;
@@ -156,17 +144,7 @@ function unliftState(liftedState) {
  * @return {?}
  */
 function liftAction(action) {
-    return new PerformAction(action);
-}
-/**
- * @param {?} input$
- * @param {?} operators
- * @return {?}
- */
-function applyOperators(input$, operators) {
-    return operators.reduce((source$, [operator, ...args]) => {
-        return operator.apply(source$, args);
-    }, input$);
+    return new PerformAction(action, +Date.now());
 }
 /**
  * Sanitizes given actions with given function.
@@ -295,9 +273,9 @@ class DevtoolsExtension {
      */
     createChangesObservable() {
         if (!this.devtoolsExtension) {
-            return empty$1();
+            return empty();
         }
-        return new Observable$1(subscriber => {
+        return new Observable(subscriber => {
             const /** @type {?} */ connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.instanceId, this.config));
             this.extensionConnection = connection;
             connection.init();
@@ -310,26 +288,20 @@ class DevtoolsExtension {
      */
     createActionStreams() {
         // Listens to all changes based on our instanceId
-        const /** @type {?} */ changes$ = share$1.call(this.createChangesObservable());
+        const /** @type {?} */ changes$ = this.createChangesObservable().pipe(share());
         // Listen for the start action
-        const /** @type {?} */ start$ = filter$1.call(changes$, (change) => change.type === ExtensionActionTypes.START);
+        const /** @type {?} */ start$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.START));
         // Listen for the stop action
-        const /** @type {?} */ stop$ = filter$1.call(changes$, (change) => change.type === ExtensionActionTypes.STOP);
+        const /** @type {?} */ stop$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.STOP));
         // Listen for lifted actions
-        const /** @type {?} */ liftedActions$ = applyOperators(changes$, [
-            [filter$1, (change) => change.type === ExtensionActionTypes.DISPATCH],
-            [map$1, (change) => this.unwrapAction(change.payload)],
-        ]);
+        const /** @type {?} */ liftedActions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.DISPATCH), map(change => this.unwrapAction(change.payload)));
         // Listen for unlifted actions
-        const /** @type {?} */ actions$ = applyOperators(changes$, [
-            [filter$1, (change) => change.type === ExtensionActionTypes.ACTION],
-            [map$1, (change) => this.unwrapAction(change.payload)],
-        ]);
-        const /** @type {?} */ actionsUntilStop$ = takeUntil$1.call(actions$, stop$);
-        const /** @type {?} */ liftedUntilStop$ = takeUntil$1.call(liftedActions$, stop$);
+        const /** @type {?} */ actions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.ACTION), map(change => this.unwrapAction(change.payload)));
+        const /** @type {?} */ actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
+        const /** @type {?} */ liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
         // Only take the action sources between the start/stop events
-        this.actions$ = switchMap$1.call(start$, () => actionsUntilStop$);
-        this.liftedActions$ = switchMap$1.call(start$, () => liftedUntilStop$);
+        this.actions$ = start$.pipe(switchMap(() => actionsUntilStop$));
+        this.liftedActions$ = start$.pipe(switchMap(() => liftedUntilStop$));
     }
     /**
      * @param {?} action
@@ -392,9 +364,10 @@ const INIT_ACTION = { type: INIT };
  * @param {?} action
  * @param {?} state
  * @param {?} error
+ * @param {?} errorHandler
  * @return {?}
  */
-function computeNextEntry(reducer, action, state, error) {
+function computeNextEntry(reducer, action, state, error, errorHandler) {
     if (error) {
         return {
             state,
@@ -408,7 +381,7 @@ function computeNextEntry(reducer, action, state, error) {
     }
     catch (/** @type {?} */ err) {
         nextError = err.toString();
-        console.error(err.stack || err);
+        errorHandler.handleError(err.stack || err);
     }
     return {
         state: nextState,
@@ -424,9 +397,10 @@ function computeNextEntry(reducer, action, state, error) {
  * @param {?} actionsById
  * @param {?} stagedActionIds
  * @param {?} skippedActionIds
+ * @param {?} errorHandler
  * @return {?}
  */
-function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds) {
+function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler) {
     // Optimization: exit early and return the same reference
     // if we know nothing could have changed.
     if (minInvalidatedStateIndex >= computedStates.length &&
@@ -443,7 +417,7 @@ function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, comm
         const /** @type {?} */ shouldSkip = skippedActionIds.indexOf(actionId) > -1;
         const /** @type {?} */ entry = shouldSkip
             ? previousEntry
-            : computeNextEntry(reducer, action, previousState, previousError);
+            : computeNextEntry(reducer, action, previousState, previousError, errorHandler);
         nextComputedStates.push(entry);
     }
     return nextComputedStates;
@@ -469,11 +443,12 @@ function liftInitialState(initialCommittedState, monitorReducer) {
  * Creates a history state reducer from an app's reducer.
  * @param {?} initialCommittedState
  * @param {?} initialLiftedState
+ * @param {?} errorHandler
  * @param {?=} monitorReducer
  * @param {?=} options
  * @return {?}
  */
-function liftReducerWith(initialCommittedState, initialLiftedState, monitorReducer, options = {}) {
+function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler, monitorReducer, options = {}) {
     /**
        * Manages how the history actions modify the history state.
        */
@@ -640,7 +615,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 minInvalidatedStateIndex = 0;
                 if (options.maxAge && stagedActionIds.length > options.maxAge) {
                     // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
                     commitExcessActions(stagedActionIds.length - options.maxAge);
                     // Avoid double computation.
                     minInvalidatedStateIndex = Infinity;
@@ -654,7 +629,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     minInvalidatedStateIndex = 0;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         // States must be recomputed before committing excess.
-                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
                         commitExcessActions(stagedActionIds.length - options.maxAge);
                         // Avoid double computation.
                         minInvalidatedStateIndex = Infinity;
@@ -666,11 +641,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                     }
                     // Add a new action to only recompute state
                     const /** @type {?} */ actionId = nextActionId++;
-                    actionsById[actionId] = new PerformAction(liftedAction);
+                    actionsById[actionId] = new PerformAction(liftedAction, +Date.now());
                     stagedActionIds = [...stagedActionIds, actionId];
                     minInvalidatedStateIndex = stagedActionIds.length - 1;
                     // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
                     // Recompute state history with latest reducer and update action
                     computedStates = computedStates.map(cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, liftedAction) })));
                     currentStateIndex = minInvalidatedStateIndex;
@@ -689,7 +664,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, monitorReduc
                 break;
             }
         }
-        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds);
+        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
         monitorState = monitorReducer(monitorState, liftedAction);
         return {
             monitorState,
@@ -722,34 +697,24 @@ class StoreDevtools {
      * @param {?} reducers$
      * @param {?} extension
      * @param {?} scannedActions
+     * @param {?} errorHandler
      * @param {?} initialState
      * @param {?} config
      */
-    constructor(dispatcher, actions$, reducers$, extension, scannedActions, initialState, config) {
+    constructor(dispatcher, actions$, reducers$, extension, scannedActions, errorHandler, initialState, config) {
         const /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
-        const /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, config.monitor, config);
-        const /** @type {?} */ liftedAction$ = applyOperators(actions$.asObservable(), [
-            [skip$1, 1],
-            [merge$1, extension.actions$],
-            [map$1, liftAction],
-            [merge$1, dispatcher, extension.liftedActions$],
-            [observeOn$1, queue$1],
-        ]);
-        const /** @type {?} */ liftedReducer$ = map$1.call(reducers$, liftReducer);
-        const /** @type {?} */ liftedStateSubject = new ReplaySubject$1(1);
-        const /** @type {?} */ liftedStateSubscription = applyOperators(liftedAction$, [
-            [withLatestFrom$1, liftedReducer$],
-            [
-                scan$1,
-                ({ state: liftedState }, [action, reducer]) => {
-                    const /** @type {?} */ reducedLiftedState = reducer(liftedState, action);
-                    // Extension should be sent the sanitized lifted state
-                    extension.notify(action, reducedLiftedState);
-                    return { state: reducedLiftedState, action };
-                },
-                { state: liftedInitialState, action: null },
-            ],
-        ]).subscribe(({ state, action }) => {
+        const /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
+        const /** @type {?} */ liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
+        const /** @type {?} */ liftedReducer$ = reducers$.pipe(map(liftReducer));
+        const /** @type {?} */ liftedStateSubject = new ReplaySubject(1);
+        const /** @type {?} */ liftedStateSubscription = liftedAction$
+            .pipe(withLatestFrom(liftedReducer$), scan(({ state: liftedState }, [action, reducer]) => {
+            const /** @type {?} */ reducedLiftedState = reducer(liftedState, action);
+            // // Extension should be sent the sanitized lifted state
+            extension.notify(action, reducedLiftedState);
+            return { state: reducedLiftedState, action };
+        }, { state: liftedInitialState, action: /** @type {?} */ (null) }))
+            .subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
                 const /** @type {?} */ unliftedAction = (/** @type {?} */ (action)).action;
@@ -757,7 +722,7 @@ class StoreDevtools {
             }
         });
         const /** @type {?} */ liftedState$ = /** @type {?} */ (liftedStateSubject.asObservable());
-        const /** @type {?} */ state$ = map$1.call(liftedState$, unliftState);
+        const /** @type {?} */ state$ = liftedState$.pipe(map(unliftState));
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -791,25 +756,25 @@ class StoreDevtools {
      * @return {?}
      */
     performAction(action) {
-        this.dispatch(new PerformAction(action));
+        this.dispatch(new PerformAction(action, +Date.now()));
     }
     /**
      * @return {?}
      */
     reset() {
-        this.dispatch(new Reset());
+        this.dispatch(new Reset(+Date.now()));
     }
     /**
      * @return {?}
      */
     rollback() {
-        this.dispatch(new Rollback());
+        this.dispatch(new Rollback(+Date.now()));
     }
     /**
      * @return {?}
      */
     commit() {
-        this.dispatch(new Commit());
+        this.dispatch(new Commit(+Date.now()));
     }
     /**
      * @return {?}
@@ -856,6 +821,7 @@ StoreDevtools.ctorParameters = () => [
     { type: ReducerObservable, },
     { type: DevtoolsExtension, },
     { type: ScannedActionsSubject, },
+    { type: ErrorHandler, },
     { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] },] },
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
 ];
