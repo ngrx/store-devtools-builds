@@ -34,6 +34,7 @@ export declare class DevtoolsExtension {
     private extensionConnection;
     liftedActions$: Observable<any>;
     actions$: Observable<any>;
+    start$: Observable<any>;
     constructor(devtoolsExtension: ReduxDevtoolsExtension, config: StoreDevtoolsConfig);
     notify(action: LiftedAction, state: LiftedState): void;
     private createChangesObservable();

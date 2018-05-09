@@ -17,6 +17,7 @@ const INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
  * @suppress {checkTypes} checked by tsc
  */
 const PERFORM_ACTION = 'PERFORM_ACTION';
+const REFRESH = 'REFRESH';
 const RESET = 'RESET';
 const ROLLBACK = 'ROLLBACK';
 const COMMIT = 'COMMIT';
@@ -39,6 +40,11 @@ class PerformAction {
             throw new Error('Actions may not have an undefined "type" property. ' +
                 'Have you misspelled a constant?');
         }
+    }
+}
+class Refresh {
+    constructor() {
+        this.type = REFRESH;
     }
 }
 class Reset {
@@ -299,9 +305,10 @@ class DevtoolsExtension {
         const /** @type {?} */ actions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.ACTION), map(change => this.unwrapAction(change.payload)));
         const /** @type {?} */ actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
         const /** @type {?} */ liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
+        this.start$ = start$.pipe(takeUntil(stop$));
         // Only take the action sources between the start/stop events
-        this.actions$ = start$.pipe(switchMap(() => actionsUntilStop$));
-        this.liftedActions$ = start$.pipe(switchMap(() => liftedUntilStop$));
+        this.actions$ = this.start$.pipe(switchMap(() => actionsUntilStop$));
+        this.liftedActions$ = this.start$.pipe(switchMap(() => liftedUntilStop$));
     }
     /**
      * @param {?} action
@@ -688,8 +695,6 @@ class DevtoolsDispatcher extends ActionsSubject {
 DevtoolsDispatcher.decorators = [
     { type: Injectable },
 ];
-/** @nocollapse */
-DevtoolsDispatcher.ctorParameters = () => [];
 class StoreDevtools {
     /**
      * @param {?} dispatcher
@@ -721,8 +726,12 @@ class StoreDevtools {
                 scannedActions.next(unliftedAction);
             }
         });
+        const /** @type {?} */ extensionStartSubscription = extension.start$.subscribe(() => {
+            this.refresh();
+        });
         const /** @type {?} */ liftedState$ = /** @type {?} */ (liftedStateSubject.asObservable());
         const /** @type {?} */ state$ = liftedState$.pipe(map(unliftState));
+        this.extensionStartSubscription = extensionStartSubscription;
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -757,6 +766,12 @@ class StoreDevtools {
      */
     performAction(action) {
         this.dispatch(new PerformAction(action, +Date.now()));
+    }
+    /**
+     * @return {?}
+     */
+    refresh() {
+        this.dispatch(new Refresh());
     }
     /**
      * @return {?}
@@ -938,8 +953,6 @@ class StoreDevtoolsModule {
 StoreDevtoolsModule.decorators = [
     { type: NgModule, args: [{},] },
 ];
-/** @nocollapse */
-StoreDevtoolsModule.ctorParameters = () => [];
 
 /**
  * @fileoverview added by tsickle

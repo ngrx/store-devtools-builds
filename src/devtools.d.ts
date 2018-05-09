@@ -8,6 +8,7 @@ export declare class DevtoolsDispatcher extends ActionsSubject {
 }
 export declare class StoreDevtools implements Observer<any> {
     private stateSubscription;
+    private extensionStartSubscription;
     dispatcher: ActionsSubject;
     liftedState: Observable<LiftedState>;
     state: Observable<any>;
@@ -17,6 +18,7 @@ export declare class StoreDevtools implements Observer<any> {
     error(error: any): void;
     complete(): void;
     performAction(action: any): void;
+    refresh(): void;
     reset(): void;
     rollback(): void;
     commit(): void;

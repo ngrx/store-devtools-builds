@@ -28,6 +28,7 @@ var INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
  * @suppress {checkTypes} checked by tsc
  */
 var PERFORM_ACTION = 'PERFORM_ACTION';
+var REFRESH = 'REFRESH';
 var RESET = 'RESET';
 var ROLLBACK = 'ROLLBACK';
 var COMMIT = 'COMMIT';
@@ -52,6 +53,12 @@ var PerformAction = /** @class */ (function () {
         }
     }
     return PerformAction;
+}());
+var Refresh = /** @class */ (function () {
+    function Refresh() {
+        this.type = REFRESH;
+    }
+    return Refresh;
 }());
 var Reset = /** @class */ (function () {
     /**
@@ -314,9 +321,10 @@ var DevtoolsExtension = /** @class */ (function () {
         var /** @type {?} */ actions$ = changes$.pipe(filter(function (change) { return change.type === ExtensionActionTypes.ACTION; }), map(function (change) { return _this.unwrapAction(change.payload); }));
         var /** @type {?} */ actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
         var /** @type {?} */ liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
+        this.start$ = start$.pipe(takeUntil(stop$));
         // Only take the action sources between the start/stop events
-        this.actions$ = start$.pipe(switchMap(function () { return actionsUntilStop$; }));
-        this.liftedActions$ = start$.pipe(switchMap(function () { return liftedUntilStop$; }));
+        this.actions$ = this.start$.pipe(switchMap(function () { return actionsUntilStop$; }));
+        this.liftedActions$ = this.start$.pipe(switchMap(function () { return liftedUntilStop$; }));
     };
     /**
      * @param {?} action
@@ -696,8 +704,6 @@ var DevtoolsDispatcher = /** @class */ (function (_super) {
 DevtoolsDispatcher.decorators = [
     { type: Injectable },
 ];
-/** @nocollapse */
-DevtoolsDispatcher.ctorParameters = function () { return []; };
 var StoreDevtools = /** @class */ (function () {
     /**
      * @param {?} dispatcher
@@ -710,6 +716,7 @@ var StoreDevtools = /** @class */ (function () {
      * @param {?} config
      */
     function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, errorHandler, initialState, config) {
+        var _this = this;
         var /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
         var /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
         var /** @type {?} */ liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
@@ -732,8 +739,12 @@ var StoreDevtools = /** @class */ (function () {
                 scannedActions.next(unliftedAction);
             }
         });
+        var /** @type {?} */ extensionStartSubscription = extension.start$.subscribe(function () {
+            _this.refresh();
+        });
         var /** @type {?} */ liftedState$ = (liftedStateSubject.asObservable());
         var /** @type {?} */ state$ = liftedState$.pipe(map(unliftState));
+        this.extensionStartSubscription = extensionStartSubscription;
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
@@ -768,6 +779,12 @@ var StoreDevtools = /** @class */ (function () {
      */
     StoreDevtools.prototype.performAction = function (action) {
         this.dispatch(new PerformAction(action, +Date.now()));
+    };
+    /**
+     * @return {?}
+     */
+    StoreDevtools.prototype.refresh = function () {
+        this.dispatch(new Refresh());
     };
     /**
      * @return {?}
@@ -953,8 +970,6 @@ var StoreDevtoolsModule = /** @class */ (function () {
 StoreDevtoolsModule.decorators = [
     { type: NgModule, args: [{},] },
 ];
-/** @nocollapse */
-StoreDevtoolsModule.ctorParameters = function () { return []; };
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc

@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
 export declare const PERFORM_ACTION = "PERFORM_ACTION";
+export declare const REFRESH = "REFRESH";
 export declare const RESET = "RESET";
 export declare const ROLLBACK = "ROLLBACK";
 export declare const COMMIT = "COMMIT";
@@ -14,6 +15,9 @@ export declare class PerformAction implements Action {
     timestamp: number;
     readonly type: string;
     constructor(action: Action, timestamp: number);
+}
+export declare class Refresh implements Action {
+    readonly type: string;
 }
 export declare class Reset implements Action {
     timestamp: number;
@@ -60,4 +64,4 @@ export declare class ImportState implements Action {
     readonly type: string;
     constructor(nextLiftedState: any);
 }
-export declare type All = PerformAction | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState;
+export declare type All = PerformAction | Refresh | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState;
