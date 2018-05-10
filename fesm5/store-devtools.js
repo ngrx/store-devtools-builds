@@ -3,19 +3,18 @@
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@ngrx/store'), require('rxjs'), require('rxjs/operators')) :
-	typeof define === 'function' && define.amd ? define('@ngrx/store-devtools', ['exports', '@angular/core', '@ngrx/store', 'rxjs', 'rxjs/operators'], factory) :
-	(factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}),global.ng.core,global['@ngrx/store'],global.rxjs,global.rxjs.operators));
-}(this, (function (exports,core,store,rxjs,operators) { 'use strict';
+import { ErrorHandler, Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
+import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, UPDATE } from '@ngrx/store';
+import { Observable, ReplaySubject, empty, merge, queueScheduler } from 'rxjs';
+import { filter, map, observeOn, scan, share, skip, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 var StoreDevtoolsConfig = /** @class */ (function () {
     function StoreDevtoolsConfig() {
     }
     return StoreDevtoolsConfig;
 }());
-var STORE_DEVTOOLS_CONFIG = new core.InjectionToken('@ngrx/devtools Options');
-var INITIAL_OPTIONS = new core.InjectionToken('@ngrx/devtools Initial Config');
+var STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
+var INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
 
 var PERFORM_ACTION = 'PERFORM_ACTION';
 var REFRESH = 'REFRESH';
@@ -176,7 +175,7 @@ var ExtensionActionTypes = {
     STOP: 'STOP',
     ACTION: 'ACTION',
 };
-var REDUX_DEVTOOLS_EXTENSION = new core.InjectionToken('Redux Devtools Extension');
+var REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
 var DevtoolsExtension = /** @class */ (function () {
     function DevtoolsExtension(devtoolsExtension, config) {
         this.config = config;
@@ -224,9 +223,9 @@ var DevtoolsExtension = /** @class */ (function () {
     DevtoolsExtension.prototype.createChangesObservable = function () {
         var _this = this;
         if (!this.devtoolsExtension) {
-            return rxjs.empty();
+            return empty();
         }
-        return new rxjs.Observable(function (subscriber) {
+        return new Observable(function (subscriber) {
             var connection = _this.devtoolsExtension.connect(_this.getExtensionConfig(_this.instanceId, _this.config));
             _this.extensionConnection = connection;
             connection.init();
@@ -237,21 +236,21 @@ var DevtoolsExtension = /** @class */ (function () {
     DevtoolsExtension.prototype.createActionStreams = function () {
         var _this = this;
         // Listens to all changes based on our instanceId
-        var changes$ = this.createChangesObservable().pipe(operators.share());
+        var changes$ = this.createChangesObservable().pipe(share());
         // Listen for the start action
-        var start$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.START; }));
+        var start$ = changes$.pipe(filter(function (change) { return change.type === ExtensionActionTypes.START; }));
         // Listen for the stop action
-        var stop$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.STOP; }));
+        var stop$ = changes$.pipe(filter(function (change) { return change.type === ExtensionActionTypes.STOP; }));
         // Listen for lifted actions
-        var liftedActions$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.DISPATCH; }), operators.map(function (change) { return _this.unwrapAction(change.payload); }));
+        var liftedActions$ = changes$.pipe(filter(function (change) { return change.type === ExtensionActionTypes.DISPATCH; }), map(function (change) { return _this.unwrapAction(change.payload); }));
         // Listen for unlifted actions
-        var actions$ = changes$.pipe(operators.filter(function (change) { return change.type === ExtensionActionTypes.ACTION; }), operators.map(function (change) { return _this.unwrapAction(change.payload); }));
-        var actionsUntilStop$ = actions$.pipe(operators.takeUntil(stop$));
-        var liftedUntilStop$ = liftedActions$.pipe(operators.takeUntil(stop$));
-        this.start$ = start$.pipe(operators.takeUntil(stop$));
+        var actions$ = changes$.pipe(filter(function (change) { return change.type === ExtensionActionTypes.ACTION; }), map(function (change) { return _this.unwrapAction(change.payload); }));
+        var actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
+        var liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
+        this.start$ = start$.pipe(takeUntil(stop$));
         // Only take the action sources between the start/stop events
-        this.actions$ = this.start$.pipe(operators.switchMap(function () { return actionsUntilStop$; }));
-        this.liftedActions$ = this.start$.pipe(operators.switchMap(function () { return liftedUntilStop$; }));
+        this.actions$ = this.start$.pipe(switchMap(function () { return actionsUntilStop$; }));
+        this.liftedActions$ = this.start$.pipe(switchMap(function () { return liftedUntilStop$; }));
     };
     DevtoolsExtension.prototype.unwrapAction = function (action) {
         return typeof action === 'string' ? eval("(" + action + ")") : action;
@@ -269,12 +268,12 @@ var DevtoolsExtension = /** @class */ (function () {
         return extensionOptions;
     };
     DevtoolsExtension.decorators = [
-        { type: core.Injectable }
+        { type: Injectable }
     ];
     /** @nocollapse */
     DevtoolsExtension.ctorParameters = function () { return [
-        { type: undefined, decorators: [{ type: core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
-        { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+        { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
+        { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
     ]; };
     return DevtoolsExtension;
 }());
@@ -307,7 +306,7 @@ var __spread = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1(arguments[i]));
     return ar;
 };
-var INIT_ACTION = { type: store.INIT };
+var INIT_ACTION = { type: INIT };
 /**
  * Computes the next entry in the log by applying an action.
  */
@@ -523,7 +522,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                     (_b = liftedAction.nextLiftedState, monitorState = _b.monitorState, actionsById = _b.actionsById, nextActionId = _b.nextActionId, stagedActionIds = _b.stagedActionIds, skippedActionIds = _b.skippedActionIds, committedState = _b.committedState, currentStateIndex = _b.currentStateIndex, computedStates = _b.computedStates);
                     break;
                 }
-                case store.INIT: {
+                case INIT: {
                     // Always recompute states on hot reload and init.
                     minInvalidatedStateIndex = 0;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
@@ -535,7 +534,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                     }
                     break;
                 }
-                case store.UPDATE: {
+                case UPDATE: {
                     var stateHasErrors = computedStates.filter(function (state) { return state.error; }).length > 0;
                     if (stateHasErrors) {
                         // Recompute all states
@@ -628,20 +627,20 @@ var DevtoolsDispatcher = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     DevtoolsDispatcher.decorators = [
-        { type: core.Injectable }
+        { type: Injectable }
     ];
     return DevtoolsDispatcher;
-}(store.ActionsSubject));
+}(ActionsSubject));
 var StoreDevtools = /** @class */ (function () {
     function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, errorHandler, initialState, config) {
         var _this = this;
         var liftedInitialState = liftInitialState(initialState, config.monitor);
         var liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
-        var liftedAction$ = rxjs.merge(rxjs.merge(actions$.asObservable().pipe(operators.skip(1)), extension.actions$).pipe(operators.map(liftAction)), dispatcher, extension.liftedActions$).pipe(operators.observeOn(rxjs.queueScheduler));
-        var liftedReducer$ = reducers$.pipe(operators.map(liftReducer));
-        var liftedStateSubject = new rxjs.ReplaySubject(1);
+        var liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
+        var liftedReducer$ = reducers$.pipe(map(liftReducer));
+        var liftedStateSubject = new ReplaySubject(1);
         var liftedStateSubscription = liftedAction$
-            .pipe(operators.withLatestFrom(liftedReducer$), operators.scan(function (_a, _b) {
+            .pipe(withLatestFrom(liftedReducer$), scan(function (_a, _b) {
             var liftedState = _a.state;
             var _c = __read(_b, 2), action = _c[0], reducer = _c[1];
             var reducedLiftedState = reducer(liftedState, action);
@@ -661,7 +660,7 @@ var StoreDevtools = /** @class */ (function () {
             _this.refresh();
         });
         var liftedState$ = liftedStateSubject.asObservable();
-        var state$ = liftedState$.pipe(operators.map(unliftState));
+        var state$ = liftedState$.pipe(map(unliftState));
         this.extensionStartSubscription = extensionStartSubscription;
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
@@ -707,23 +706,23 @@ var StoreDevtools = /** @class */ (function () {
         this.dispatch(new ImportState(nextLiftedState));
     };
     StoreDevtools.decorators = [
-        { type: core.Injectable }
+        { type: Injectable }
     ];
     /** @nocollapse */
     StoreDevtools.ctorParameters = function () { return [
         { type: DevtoolsDispatcher, },
-        { type: store.ActionsSubject, },
-        { type: store.ReducerObservable, },
+        { type: ActionsSubject, },
+        { type: ReducerObservable, },
         { type: DevtoolsExtension, },
-        { type: store.ScannedActionsSubject, },
-        { type: core.ErrorHandler, },
-        { type: undefined, decorators: [{ type: core.Inject, args: [store.INITIAL_STATE,] },] },
-        { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+        { type: ScannedActionsSubject, },
+        { type: ErrorHandler, },
+        { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] },] },
+        { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
     ]; };
     return StoreDevtools;
 }());
 
-var IS_EXTENSION_OR_MONITOR_PRESENT = new core.InjectionToken('Is Devtools Extension or Monitor Present');
+var IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
 function createIsExtensionOrMonitorPresent(extension, config) {
     return Boolean(extension) || config.monitor !== noMonitor;
 }
@@ -796,19 +795,19 @@ var StoreDevtoolsModule = /** @class */ (function () {
                     useFactory: createConfig,
                 },
                 {
-                    provide: store.StateObservable,
+                    provide: StateObservable,
                     deps: [StoreDevtools],
                     useFactory: createStateObservable,
                 },
                 {
-                    provide: store.ReducerManagerDispatcher,
+                    provide: ReducerManagerDispatcher,
                     useExisting: DevtoolsDispatcher,
                 },
             ],
         };
     };
     StoreDevtoolsModule.decorators = [
-        { type: core.NgModule, args: [{},] }
+        { type: NgModule, args: [{},] }
     ];
     return StoreDevtoolsModule;
 }());
@@ -823,22 +822,5 @@ var StoreDevtoolsModule = /** @class */ (function () {
  * Generated bundle index. Do not edit.
  */
 
-exports.ɵngrx_modules_store_devtools_store_devtools_i = INITIAL_OPTIONS;
-exports.ɵngrx_modules_store_devtools_store_devtools_h = STORE_DEVTOOLS_CONFIG;
-exports.ɵngrx_modules_store_devtools_store_devtools_g = DevtoolsDispatcher;
-exports.ɵngrx_modules_store_devtools_store_devtools_k = DevtoolsExtension;
-exports.ɵngrx_modules_store_devtools_store_devtools_j = REDUX_DEVTOOLS_EXTENSION;
-exports.ɵngrx_modules_store_devtools_store_devtools_a = IS_EXTENSION_OR_MONITOR_PRESENT;
-exports.ɵngrx_modules_store_devtools_store_devtools_f = createConfig;
-exports.ɵngrx_modules_store_devtools_store_devtools_b = createIsExtensionOrMonitorPresent;
-exports.ɵngrx_modules_store_devtools_store_devtools_c = createReduxDevtoolsExtension;
-exports.ɵngrx_modules_store_devtools_store_devtools_d = createStateObservable;
-exports.ɵngrx_modules_store_devtools_store_devtools_e = noMonitor;
-exports.StoreDevtoolsModule = StoreDevtoolsModule;
-exports.StoreDevtools = StoreDevtools;
-exports.StoreDevtoolsConfig = StoreDevtoolsConfig;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
-//# sourceMappingURL=store-devtools.umd.js.map
+export { INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_i, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_h, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_g, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_k, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_j, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createConfig as ɵngrx_modules_store_devtools_store_devtools_f, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, noMonitor as ɵngrx_modules_store_devtools_store_devtools_e, StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig };
+//# sourceMappingURL=store-devtools.js.map
