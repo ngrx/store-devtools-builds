@@ -1,6 +1,6 @@
 {
   "name": "@ngrx/store-devtools",
-  "version": "v6.0.0-beta.1+41.sha-92c13fd",
+  "version": "v6.0.0-beta.2+1.sha-355b12f",
   "description": "Developer tools for @ngrx/store",
   "repository": {
     "type": "git",
@@ -20,18 +20,19 @@
   },
   "homepage": "https://github.com/ngrx/platform#readme",
   "peerDependencies": {
-    "@ngrx/store": "v6.0.0-beta.1+41.sha-92c13fd",
+    "@ngrx/store": "v6.0.0-beta.2+1.sha-355b12f",
     "rxjs": "^5.6.0-forward-compat.0 || ^6.0.0"
   },
   "ng-update": {
     "packageGroup": [
+      "@ngrx/store",
       "@ngrx/effects",
       "@ngrx/entity",
       "@ngrx/router-store",
       "@ngrx/schematics",
-      "@ngrx/store",
       "@ngrx/store-devtools"
-    ]
+    ],
+    "migrations": "./migrations/migration.json"
   },
   "sideEffects": false,
   "main": "./bundles/store-devtools.umd.js",
