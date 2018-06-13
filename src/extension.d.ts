@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { StoreDevtoolsConfig } from './config';
+import { SerializationOptions, StoreDevtoolsConfig } from './config';
 import { LiftedAction, LiftedState } from './reducer';
 export declare const ExtensionActionTypes: {
     START: string;
@@ -21,7 +21,7 @@ export interface ReduxDevtoolsExtensionConfig {
     name: string | undefined;
     instanceId: string;
     maxAge?: number;
-    serialize?: boolean;
+    serialize?: boolean | SerializationOptions;
 }
 export interface ReduxDevtoolsExtension {
     connect(options: ReduxDevtoolsExtensionConfig): ReduxDevtoolsExtensionConnection;
