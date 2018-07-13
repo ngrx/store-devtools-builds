@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.0.1+37.sha-03db76f
+ * @license NgRx 6.0.1+39.sha-de78141
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -618,6 +618,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                     skippedActionIds,
                     committedState,
                     currentStateIndex,
+                    // prettier-ignore
                     computedStates
                 } = liftedAction.nextLiftedState);
                 break;
