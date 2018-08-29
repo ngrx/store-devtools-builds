@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SerializationOptions, StoreDevtoolsConfig } from './config';
 import { LiftedAction, LiftedState } from './reducer';
+import { DevtoolsDispatcher } from './devtools-dispatcher';
 export declare const ExtensionActionTypes: {
     START: string;
     DISPATCH: string;
@@ -19,26 +20,25 @@ export interface ReduxDevtoolsExtensionConnection {
 export interface ReduxDevtoolsExtensionConfig {
     features?: object | boolean;
     name: string | undefined;
-    instanceId: string;
     maxAge?: number;
     serialize?: boolean | SerializationOptions;
 }
 export interface ReduxDevtoolsExtension {
     connect(options: ReduxDevtoolsExtensionConfig): ReduxDevtoolsExtensionConnection;
-    send(action: any, state: any, options: ReduxDevtoolsExtensionConfig, instanceId?: string): void;
+    send(action: any, state: any, options: ReduxDevtoolsExtensionConfig): void;
 }
 export declare class DevtoolsExtension {
     private config;
-    private instanceId;
+    private dispatcher;
     private devtoolsExtension;
     private extensionConnection;
     liftedActions$: Observable<any>;
     actions$: Observable<any>;
     start$: Observable<any>;
-    constructor(devtoolsExtension: ReduxDevtoolsExtension, config: StoreDevtoolsConfig);
+    constructor(devtoolsExtension: ReduxDevtoolsExtension, config: StoreDevtoolsConfig, dispatcher: DevtoolsDispatcher);
     notify(action: LiftedAction, state: LiftedState): void;
     private createChangesObservable();
     private createActionStreams();
     private unwrapAction(action);
-    private getExtensionConfig(instanceId, config);
+    private getExtensionConfig(config);
 }

@@ -4,8 +4,7 @@ import { Observable, Observer } from 'rxjs';
 import { StoreDevtoolsConfig } from './config';
 import { DevtoolsExtension } from './extension';
 import { LiftedState } from './reducer';
-export declare class DevtoolsDispatcher extends ActionsSubject {
-}
+import { DevtoolsDispatcher } from './devtools-dispatcher';
 export declare class StoreDevtools implements Observer<any> {
     private stateSubscription;
     private extensionStartSubscription;
@@ -27,4 +26,6 @@ export declare class StoreDevtools implements Observer<any> {
     jumpToAction(actionId: number): void;
     jumpToState(index: number): void;
     importState(nextLiftedState: any): void;
+    lockChanges(status: boolean): void;
+    pauseRecording(status: boolean): void;
 }

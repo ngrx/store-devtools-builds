@@ -1,37 +1,115 @@
 /**
- * @license NgRx 6.0.1+42.sha-8f05f1f
+ * @license NgRx 6.0.1+104.sha-de1198f
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
-import { ErrorHandler, Inject, Injectable, InjectionToken, NgModule } from '@angular/core';
-import { ActionsSubject, INIT, INITIAL_STATE, ReducerManagerDispatcher, ReducerObservable, ScannedActionsSubject, StateObservable, UPDATE } from '@ngrx/store';
-import { Observable, ReplaySubject, empty, merge, queueScheduler } from 'rxjs';
-import { filter, map, observeOn, scan, share, skip, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { InjectionToken, Injectable, Inject, ErrorHandler, NgModule } from '@angular/core';
+import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, ReducerObservable, ScannedActionsSubject, ReducerManagerDispatcher, StateObservable } from '@ngrx/store';
+import { empty, of, Observable, merge, queueScheduler, ReplaySubject } from 'rxjs';
+import { filter, map, share, switchMap, takeUntil, concatMap, debounceTime, timeout, catchError, take, observeOn, scan, skip, withLatestFrom } from 'rxjs/operators';
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 class StoreDevtoolsConfig {
 }
+/** @type {?} */
 const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
+/** @type {?} */
 const INITIAL_OPTIONS = new InjectionToken('@ngrx/devtools Initial Config');
+/**
+ * @return {?}
+ */
+function noMonitor() {
+    return null;
+}
+/** @type {?} */
+const DEFAULT_NAME = 'NgRx Store DevTools';
+/**
+ * @param {?} _options
+ * @return {?}
+ */
+function createConfig(_options) {
+    /** @type {?} */
+    const DEFAULT_OPTIONS = {
+        maxAge: false,
+        monitor: noMonitor,
+        actionSanitizer: undefined,
+        stateSanitizer: undefined,
+        name: DEFAULT_NAME,
+        serialize: false,
+        logOnly: false,
+        // Add all features explicitely. This prevent buggy behavior for
+        // options like "lock" which might otherwise not show up.
+        features: {
+            pause: true,
+            // start/pause recording of dispatched actions
+            lock: true,
+            // lock/unlock dispatching actions and side effects
+            persist: true,
+            // persist states on page reloading
+            export: true,
+            // export history of actions in a file
+            import: 'custom',
+            // import history of actions from a file
+            jump: true,
+            // jump back and forth (time travelling)
+            skip: true,
+            // skip (cancel) actions
+            reorder: true,
+            // drag and drop actions in the history list
+            dispatch: true,
+            // dispatch custom actions or action creators
+            test: true,
+        },
+    };
+    /** @type {?} */
+    let options = typeof _options === 'function' ? _options() : _options;
+    /** @type {?} */
+    const logOnly = options.logOnly
+        ? { pause: true, export: true, test: true }
+        : false;
+    /** @type {?} */
+    const features = options.features || logOnly || DEFAULT_OPTIONS.features;
+    /** @type {?} */
+    const config = Object.assign({}, DEFAULT_OPTIONS, { features }, options);
+    if (config.maxAge && config.maxAge < 2) {
+        throw new Error(`Devtools 'maxAge' cannot be less than 2, got ${config.maxAge}`);
+    }
+    return config;
+}
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+/** @type {?} */
 const PERFORM_ACTION = 'PERFORM_ACTION';
+/** @type {?} */
 const REFRESH = 'REFRESH';
+/** @type {?} */
 const RESET = 'RESET';
+/** @type {?} */
 const ROLLBACK = 'ROLLBACK';
+/** @type {?} */
 const COMMIT = 'COMMIT';
+/** @type {?} */
 const SWEEP = 'SWEEP';
+/** @type {?} */
 const TOGGLE_ACTION = 'TOGGLE_ACTION';
+/** @type {?} */
 const SET_ACTIONS_ACTIVE = 'SET_ACTIONS_ACTIVE';
+/** @type {?} */
 const JUMP_TO_STATE = 'JUMP_TO_STATE';
+/** @type {?} */
 const JUMP_TO_ACTION = 'JUMP_TO_ACTION';
+/** @type {?} */
 const IMPORT_STATE = 'IMPORT_STATE';
+/** @type {?} */
+const LOCK_CHANGES = 'LOCK_CHANGES';
+/** @type {?} */
+const PAUSE_RECORDING = 'PAUSE_RECORDING';
 class PerformAction {
     /**
      * @param {?} action
@@ -93,7 +171,6 @@ class ToggleAction {
         this.type = TOGGLE_ACTION;
     }
 }
-
 class JumpToState {
     /**
      * @param {?} index
@@ -121,10 +198,28 @@ class ImportState {
         this.type = IMPORT_STATE;
     }
 }
+class LockChanges {
+    /**
+     * @param {?} status
+     */
+    constructor(status) {
+        this.status = status;
+        this.type = LOCK_CHANGES;
+    }
+}
+class PauseRecording {
+    /**
+     * @param {?} status
+     */
+    constructor(status) {
+        this.status = status;
+        this.type = PAUSE_RECORDING;
+    }
+}
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 /**
  * @param {?} first
@@ -145,11 +240,6 @@ function unliftState(liftedState) {
     return state;
 }
 /**
- * @param {?} liftedState
- * @return {?}
- */
-
-/**
  * Lifts an app's action into an action on the lifted store.
  * @param {?} action
  * @return {?}
@@ -165,7 +255,8 @@ function liftAction(action) {
  */
 function sanitizeActions(actionSanitizer, actions) {
     return Object.keys(actions).reduce((sanitizedActions, actionIdx) => {
-        const /** @type {?} */ idx = Number(actionIdx);
+        /** @type {?} */
+        const idx = Number(actionIdx);
         sanitizedActions[idx] = sanitizeAction(actionSanitizer, actions[idx], idx);
         return sanitizedActions;
     }, /** @type {?} */ ({}));
@@ -205,35 +296,36 @@ function sanitizeState(stateSanitizer, state, stateIdx) {
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+class DevtoolsDispatcher extends ActionsSubject {
+}
+DevtoolsDispatcher.decorators = [
+    { type: Injectable }
+];
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ */
+/** @type {?} */
 const ExtensionActionTypes = {
     START: 'START',
     DISPATCH: 'DISPATCH',
     STOP: 'STOP',
     ACTION: 'ACTION',
 };
+/** @type {?} */
 const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
-/**
- * @record
- */
-
-/**
- * @record
- */
-
-/**
- * @record
- */
-
 class DevtoolsExtension {
     /**
      * @param {?} devtoolsExtension
      * @param {?} config
+     * @param {?} dispatcher
      */
-    constructor(devtoolsExtension, config) {
+    constructor(devtoolsExtension, config, dispatcher) {
         this.config = config;
-        this.instanceId = `ngrx-store-${Date.now()}`;
+        this.dispatcher = dispatcher;
         this.devtoolsExtension = devtoolsExtension;
         this.createActionStreams();
     }
@@ -247,8 +339,8 @@ class DevtoolsExtension {
             return;
         }
         // Check to see if the action requires a full update of the liftedState.
-        // If it is a simple action generated by the user's app, only send the
-        // action and the current state (fast).
+        // If it is a simple action generated by the user's app and the recording
+        // is not locked/paused, only send the action and the current state (fast).
         //
         // A full liftedState update (slow: serializes the entire liftedState) is
         // only required when:
@@ -260,23 +352,29 @@ class DevtoolsExtension {
         //   d) any action that is not a PerformAction to err on the side of
         //      caution.
         if (action.type === PERFORM_ACTION) {
-            const /** @type {?} */ currentState = unliftState(state);
-            const /** @type {?} */ sanitizedState = this.config.stateSanitizer
+            if (state.isLocked || state.isPaused) {
+                return;
+            }
+            /** @type {?} */
+            const currentState = unliftState(state);
+            /** @type {?} */
+            const sanitizedState = this.config.stateSanitizer
                 ? sanitizeState(this.config.stateSanitizer, currentState, state.currentStateIndex)
                 : currentState;
-            const /** @type {?} */ sanitizedAction = this.config.actionSanitizer
+            /** @type {?} */
+            const sanitizedAction = this.config.actionSanitizer
                 ? sanitizeAction(this.config.actionSanitizer, action, state.nextActionId)
                 : action;
             this.extensionConnection.send(sanitizedAction, sanitizedState);
         }
         else {
-            // Requires full state update
-            const /** @type {?} */ sanitizedLiftedState = Object.assign({}, state, { actionsById: this.config.actionSanitizer
+            /** @type {?} */
+            const sanitizedLiftedState = Object.assign({}, state, { actionsById: this.config.actionSanitizer
                     ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                     : state.actionsById, computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
                     : state.computedStates });
-            this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.instanceId, this.config), this.instanceId);
+            this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config));
         }
     }
     /**
@@ -287,7 +385,8 @@ class DevtoolsExtension {
             return empty();
         }
         return new Observable(subscriber => {
-            const /** @type {?} */ connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.instanceId, this.config));
+            /** @type {?} */
+            const connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.config));
             this.extensionConnection = connection;
             connection.init();
             connection.subscribe((change) => subscriber.next(change));
@@ -298,18 +397,35 @@ class DevtoolsExtension {
      * @return {?}
      */
     createActionStreams() {
-        // Listens to all changes based on our instanceId
-        const /** @type {?} */ changes$ = this.createChangesObservable().pipe(share());
-        // Listen for the start action
-        const /** @type {?} */ start$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.START));
-        // Listen for the stop action
-        const /** @type {?} */ stop$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.STOP));
-        // Listen for lifted actions
-        const /** @type {?} */ liftedActions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.DISPATCH), map(change => this.unwrapAction(change.payload)));
-        // Listen for unlifted actions
-        const /** @type {?} */ actions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.ACTION), map(change => this.unwrapAction(change.payload)));
-        const /** @type {?} */ actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
-        const /** @type {?} */ liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
+        /** @type {?} */
+        const changes$ = this.createChangesObservable().pipe(share());
+        /** @type {?} */
+        const start$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.START));
+        /** @type {?} */
+        const stop$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.STOP));
+        /** @type {?} */
+        const liftedActions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.DISPATCH), map(change => this.unwrapAction(change.payload)), concatMap((action) => {
+            if (action.type === IMPORT_STATE) {
+                // State imports may happen in two situations:
+                // 1. Explicitly by user
+                // 2. User activated the "persist state accross reloads" option
+                //    and now the state is imported during reload.
+                // Because of option 2, we need to give possible
+                // lazy loaded reducers time to instantiate.
+                // As soon as there is no UPDATE action within 1 second,
+                // it is assumed that all reducers are loaded.
+                return this.dispatcher.pipe(filter(action => action.type === UPDATE), timeout(1000), debounceTime(1000), map(() => action), catchError(() => of(action)), take(1));
+            }
+            else {
+                return of(action);
+            }
+        }));
+        /** @type {?} */
+        const actions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.ACTION), map(change => this.unwrapAction(change.payload)));
+        /** @type {?} */
+        const actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
+        /** @type {?} */
+        const liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
         this.start$ = start$.pipe(takeUntil(stop$));
         // Only take the action sources between the start/stop events
         this.actions$ = this.start$.pipe(switchMap(() => actionsUntilStop$));
@@ -323,13 +439,12 @@ class DevtoolsExtension {
         return typeof action === 'string' ? eval(`(${action})`) : action;
     }
     /**
-     * @param {?} instanceId
      * @param {?} config
      * @return {?}
      */
-    getExtensionConfig(instanceId, config) {
-        const /** @type {?} */ extensionOptions = {
-            instanceId: instanceId,
+    getExtensionConfig(config) {
+        /** @type {?} */
+        const extensionOptions = {
             name: config.name,
             features: config.features,
             serialize: config.serialize,
@@ -345,31 +460,17 @@ DevtoolsExtension.decorators = [
 ];
 /** @nocollapse */
 DevtoolsExtension.ctorParameters = () => [
-    { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] },] },
-    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+    { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] }] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] }] },
+    { type: DevtoolsDispatcher }
 ];
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+/** @type {?} */
 const INIT_ACTION = { type: INIT };
-/**
- * @record
- */
-
-/**
- * @record
- */
-
-/**
- * @record
- */
-
-/**
- * @record
- */
-
 /**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
@@ -386,12 +487,14 @@ function computeNextEntry(reducer, action, state, error, errorHandler) {
             error: 'Interrupted by an error up the chain',
         };
     }
-    let /** @type {?} */ nextState = state;
-    let /** @type {?} */ nextError;
+    /** @type {?} */
+    let nextState = state;
+    /** @type {?} */
+    let nextError;
     try {
         nextState = reducer(state, action);
     }
-    catch (/** @type {?} */ err) {
+    catch (err) {
         nextError = err.toString();
         errorHandler.handleError(err.stack || err);
     }
@@ -410,27 +513,43 @@ function computeNextEntry(reducer, action, state, error, errorHandler) {
  * @param {?} stagedActionIds
  * @param {?} skippedActionIds
  * @param {?} errorHandler
+ * @param {?} isPaused
  * @return {?}
  */
-function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler) {
+function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused) {
     // Optimization: exit early and return the same reference
     // if we know nothing could have changed.
     if (minInvalidatedStateIndex >= computedStates.length &&
         computedStates.length === stagedActionIds.length) {
         return computedStates;
     }
-    const /** @type {?} */ nextComputedStates = computedStates.slice(0, minInvalidatedStateIndex);
-    for (let /** @type {?} */ i = minInvalidatedStateIndex; i < stagedActionIds.length; i++) {
-        const /** @type {?} */ actionId = stagedActionIds[i];
-        const /** @type {?} */ action = actionsById[actionId].action;
-        const /** @type {?} */ previousEntry = nextComputedStates[i - 1];
-        const /** @type {?} */ previousState = previousEntry ? previousEntry.state : committedState;
-        const /** @type {?} */ previousError = previousEntry ? previousEntry.error : undefined;
-        const /** @type {?} */ shouldSkip = skippedActionIds.indexOf(actionId) > -1;
-        const /** @type {?} */ entry = shouldSkip
+    /** @type {?} */
+    const nextComputedStates = computedStates.slice(0, minInvalidatedStateIndex);
+    /** @type {?} */
+    const lastIncludedActionId = stagedActionIds.length - (isPaused ? 1 : 0);
+    for (let i = minInvalidatedStateIndex; i < lastIncludedActionId; i++) {
+        /** @type {?} */
+        const actionId = stagedActionIds[i];
+        /** @type {?} */
+        const action = actionsById[actionId].action;
+        /** @type {?} */
+        const previousEntry = nextComputedStates[i - 1];
+        /** @type {?} */
+        const previousState = previousEntry ? previousEntry.state : committedState;
+        /** @type {?} */
+        const previousError = previousEntry ? previousEntry.error : undefined;
+        /** @type {?} */
+        const shouldSkip = skippedActionIds.indexOf(actionId) > -1;
+        /** @type {?} */
+        const entry = shouldSkip
             ? previousEntry
             : computeNextEntry(reducer, action, previousState, previousError, errorHandler);
         nextComputedStates.push(entry);
+    }
+    // If the recording is paused, the last state will not be recomputed,
+    // because it's essentially not part of the state history.
+    if (isPaused) {
+        nextComputedStates.push(computedStates[computedStates.length - 1]);
     }
     return nextComputedStates;
 }
@@ -449,6 +568,8 @@ function liftInitialState(initialCommittedState, monitorReducer) {
         committedState: initialCommittedState,
         currentStateIndex: 0,
         computedStates: [],
+        isLocked: false,
+        isPaused: false,
     };
 }
 /**
@@ -465,7 +586,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
        * Manages how the history actions modify the history state.
        */
     return (reducer) => (liftedState, liftedAction) => {
-        let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, } = liftedState || initialLiftedState;
+        let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, isLocked, isPaused, } = liftedState || initialLiftedState;
         if (!liftedState) {
             // Prevent mutating initialLiftedState
             actionsById = Object.create(actionsById);
@@ -475,10 +596,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
          * @return {?}
          */
         function commitExcessActions(n) {
-            // Auto-commits n-number of excess actions.
-            let /** @type {?} */ excess = n;
-            let /** @type {?} */ idsToDelete = stagedActionIds.slice(1, excess + 1);
-            for (let /** @type {?} */ i = 0; i < idsToDelete.length; i++) {
+            /** @type {?} */
+            let excess = n;
+            /** @type {?} */
+            let idsToDelete = stagedActionIds.slice(1, excess + 1);
+            for (let i = 0; i < idsToDelete.length; i++) {
                 if (computedStates[i + 1].error) {
                     // Stop if error is found. Commit actions up to error.
                     excess = i;
@@ -496,11 +618,51 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
             currentStateIndex =
                 currentStateIndex > excess ? currentStateIndex - excess : 0;
         }
-        // By default, aggressively recompute every state whatever happens.
-        // This has O(n) performance, so we'll override this to a sensible
-        // value whenever we feel like we don't have to recompute the states.
-        let /** @type {?} */ minInvalidatedStateIndex = 0;
+        /**
+         * @return {?}
+         */
+        function commitChanges() {
+            // Consider the last committed state the new starting point.
+            // Squash any staged actions into a single committed state.
+            actionsById = { 0: liftAction(INIT_ACTION) };
+            nextActionId = 1;
+            stagedActionIds = [0];
+            skippedActionIds = [];
+            committedState = computedStates[currentStateIndex].state;
+            currentStateIndex = 0;
+            computedStates = [];
+        }
+        /** @type {?} */
+        let minInvalidatedStateIndex = 0;
         switch (liftedAction.type) {
+            case LOCK_CHANGES: {
+                isLocked = liftedAction.status;
+                minInvalidatedStateIndex = Infinity;
+                break;
+            }
+            case PAUSE_RECORDING: {
+                isPaused = liftedAction.status;
+                if (isPaused) {
+                    // Add a pause action to signal the devtools-user the recording is paused.
+                    // The corresponding state will be overwritten on each update to always contain
+                    // the latest state (see Actions.PERFORM_ACTION).
+                    stagedActionIds = [...stagedActionIds, nextActionId];
+                    actionsById[nextActionId] = new PerformAction({
+                        type: '@ngrx/devtools/pause',
+                    }, +Date.now());
+                    nextActionId++;
+                    minInvalidatedStateIndex = stagedActionIds.length - 1;
+                    computedStates = computedStates.concat(computedStates[computedStates.length - 1]);
+                    if (currentStateIndex === stagedActionIds.length - 2) {
+                        currentStateIndex++;
+                    }
+                    minInvalidatedStateIndex = Infinity;
+                }
+                else {
+                    commitChanges();
+                }
+                break;
+            }
             case RESET: {
                 // Get back to the state the store was created with.
                 actionsById = { 0: liftAction(INIT_ACTION) };
@@ -513,15 +675,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case COMMIT: {
-                // Consider the last committed state the new starting point.
-                // Squash any staged actions into a single committed state.
-                actionsById = { 0: liftAction(INIT_ACTION) };
-                nextActionId = 1;
-                stagedActionIds = [0];
-                skippedActionIds = [];
-                committedState = computedStates[currentStateIndex].state;
-                currentStateIndex = 0;
-                computedStates = [];
+                commitChanges();
                 break;
             }
             case ROLLBACK: {
@@ -536,10 +690,9 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case TOGGLE_ACTION: {
-                // Toggle whether an action with given ID is skipped.
-                // Being skipped means it is a no-op during the computation.
                 const { id: actionId } = liftedAction;
-                const /** @type {?} */ index = skippedActionIds.indexOf(actionId);
+                /** @type {?} */
+                const index = skippedActionIds.indexOf(actionId);
                 if (index === -1) {
                     skippedActionIds = [actionId, ...skippedActionIds];
                 }
@@ -551,11 +704,10 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case SET_ACTIONS_ACTIVE: {
-                // Toggle whether an action with given ID is skipped.
-                // Being skipped means it is a no-op during the computation.
                 const { start, end, active } = liftedAction;
-                const /** @type {?} */ actionIds = [];
-                for (let /** @type {?} */ i = start; i < end; i++)
+                /** @type {?} */
+                const actionIds = [];
+                for (let i = start; i < end; i++)
                     actionIds.push(i);
                 if (active) {
                     skippedActionIds = difference(skippedActionIds, actionIds);
@@ -576,9 +728,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case JUMP_TO_ACTION: {
-                // Jumps to a corresponding state to a specific action.
-                // Useful when filtering actions.
-                const /** @type {?} */ index = stagedActionIds.indexOf(liftedAction.actionId);
+                /** @type {?} */
+                const index = stagedActionIds.indexOf(liftedAction.actionId);
                 if (index !== -1)
                     currentStateIndex = index;
                 minInvalidatedStateIndex = Infinity;
@@ -592,6 +743,20 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case PERFORM_ACTION: {
+                // Ignore action and return state as is if recording is locked
+                if (isLocked) {
+                    return liftedState || initialLiftedState;
+                }
+                if (isPaused) {
+                    /** @type {?} */
+                    const lastState = computedStates[computedStates.length - 1];
+                    computedStates = [
+                        ...computedStates.slice(0, -1),
+                        computeNextEntry(reducer, liftedAction.action, lastState.state, lastState.error, errorHandler),
+                    ];
+                    minInvalidatedStateIndex = Infinity;
+                    break;
+                }
                 // Auto-commit as new actions come in.
                 if (options.maxAge && stagedActionIds.length === options.maxAge) {
                     commitExcessActions(1);
@@ -599,7 +764,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 if (currentStateIndex === stagedActionIds.length - 1) {
                     currentStateIndex++;
                 }
-                const /** @type {?} */ actionId = nextActionId++;
+                /** @type {?} */
+                const actionId = nextActionId++;
                 // Mutation! This is the hottest path, and we optimize on purpose.
                 // It is safe because we set a new key in a cache dictionary.
                 actionsById[actionId] = liftedAction;
@@ -618,8 +784,10 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                     skippedActionIds,
                     committedState,
                     currentStateIndex,
+                    computedStates,
+                    isLocked,
                     // prettier-ignore
-                    computedStates
+                    isPaused
                 } = liftedAction.nextLiftedState);
                 break;
             }
@@ -628,7 +796,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 minInvalidatedStateIndex = 0;
                 if (options.maxAge && stagedActionIds.length > options.maxAge) {
                     // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
+                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     commitExcessActions(stagedActionIds.length - options.maxAge);
                     // Avoid double computation.
                     minInvalidatedStateIndex = Infinity;
@@ -636,32 +804,36 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case UPDATE: {
-                const /** @type {?} */ stateHasErrors = computedStates.filter(state => state.error).length > 0;
+                /** @type {?} */
+                const stateHasErrors = computedStates.filter(state => state.error).length > 0;
                 if (stateHasErrors) {
                     // Recompute all states
                     minInvalidatedStateIndex = 0;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         // States must be recomputed before committing excess.
-                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
+                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                         commitExcessActions(stagedActionIds.length - options.maxAge);
                         // Avoid double computation.
                         minInvalidatedStateIndex = Infinity;
                     }
                 }
                 else {
-                    if (currentStateIndex === stagedActionIds.length - 1) {
-                        currentStateIndex++;
+                    // If not paused/locked, add a new action to signal devtools-user
+                    // that there was a reducer update.
+                    if (!isPaused && !isLocked) {
+                        if (currentStateIndex === stagedActionIds.length - 1) {
+                            currentStateIndex++;
+                        }
+                        /** @type {?} */
+                        const actionId = nextActionId++;
+                        actionsById[actionId] = new PerformAction(liftedAction, +Date.now());
+                        stagedActionIds = [...stagedActionIds, actionId];
+                        minInvalidatedStateIndex = stagedActionIds.length - 1;
+                        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     }
-                    // Add a new action to only recompute state
-                    const /** @type {?} */ actionId = nextActionId++;
-                    actionsById[actionId] = new PerformAction(liftedAction, +Date.now());
-                    stagedActionIds = [...stagedActionIds, actionId];
-                    minInvalidatedStateIndex = stagedActionIds.length - 1;
-                    // States must be recomputed before committing excess.
-                    computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
                     // Recompute state history with latest reducer and update action
                     computedStates = computedStates.map(cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, liftedAction) })));
-                    currentStateIndex = minInvalidatedStateIndex;
+                    currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
                     }
@@ -677,7 +849,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
         }
-        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler);
+        computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
         monitorState = monitorReducer(monitorState, liftedAction);
         return {
             monitorState,
@@ -688,19 +860,16 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
             committedState,
             currentStateIndex,
             computedStates,
+            isLocked,
+            isPaused,
         };
     };
 }
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
-class DevtoolsDispatcher extends ActionsSubject {
-}
-DevtoolsDispatcher.decorators = [
-    { type: Injectable }
-];
 class StoreDevtools {
     /**
      * @param {?} dispatcher
@@ -713,14 +882,21 @@ class StoreDevtools {
      * @param {?} config
      */
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, errorHandler, initialState, config) {
-        const /** @type {?} */ liftedInitialState = liftInitialState(initialState, config.monitor);
-        const /** @type {?} */ liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
-        const /** @type {?} */ liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
-        const /** @type {?} */ liftedReducer$ = reducers$.pipe(map(liftReducer));
-        const /** @type {?} */ liftedStateSubject = new ReplaySubject(1);
-        const /** @type {?} */ liftedStateSubscription = liftedAction$
+        /** @type {?} */
+        const liftedInitialState = liftInitialState(initialState, config.monitor);
+        /** @type {?} */
+        const liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
+        /** @type {?} */
+        const liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
+        /** @type {?} */
+        const liftedReducer$ = reducers$.pipe(map(liftReducer));
+        /** @type {?} */
+        const liftedStateSubject = new ReplaySubject(1);
+        /** @type {?} */
+        const liftedStateSubscription = liftedAction$
             .pipe(withLatestFrom(liftedReducer$), scan(({ state: liftedState }, [action, reducer]) => {
-            const /** @type {?} */ reducedLiftedState = reducer(liftedState, action);
+            /** @type {?} */
+            const reducedLiftedState = reducer(liftedState, action);
             // // Extension should be sent the sanitized lifted state
             extension.notify(action, reducedLiftedState);
             return { state: reducedLiftedState, action };
@@ -728,15 +904,19 @@ class StoreDevtools {
             .subscribe(({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
-                const /** @type {?} */ unliftedAction = (/** @type {?} */ (action)).action;
+                /** @type {?} */
+                const unliftedAction = (/** @type {?} */ (action)).action;
                 scannedActions.next(unliftedAction);
             }
         });
-        const /** @type {?} */ extensionStartSubscription = extension.start$.subscribe(() => {
+        /** @type {?} */
+        const extensionStartSubscription = extension.start$.subscribe(() => {
             this.refresh();
         });
-        const /** @type {?} */ liftedState$ = /** @type {?} */ (liftedStateSubject.asObservable());
-        const /** @type {?} */ state$ = liftedState$.pipe(map(unliftState));
+        /** @type {?} */
+        const liftedState$ = /** @type {?} */ (liftedStateSubject.asObservable());
+        /** @type {?} */
+        const state$ = liftedState$.pipe(map(unliftState));
         this.extensionStartSubscription = extensionStartSubscription;
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
@@ -831,26 +1011,41 @@ class StoreDevtools {
     importState(nextLiftedState) {
         this.dispatch(new ImportState(nextLiftedState));
     }
+    /**
+     * @param {?} status
+     * @return {?}
+     */
+    lockChanges(status) {
+        this.dispatch(new LockChanges(status));
+    }
+    /**
+     * @param {?} status
+     * @return {?}
+     */
+    pauseRecording(status) {
+        this.dispatch(new PauseRecording(status));
+    }
 }
 StoreDevtools.decorators = [
     { type: Injectable }
 ];
 /** @nocollapse */
 StoreDevtools.ctorParameters = () => [
-    { type: DevtoolsDispatcher, },
-    { type: ActionsSubject, },
-    { type: ReducerObservable, },
-    { type: DevtoolsExtension, },
-    { type: ScannedActionsSubject, },
-    { type: ErrorHandler, },
-    { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] },] },
-    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] },] },
+    { type: DevtoolsDispatcher },
+    { type: ActionsSubject },
+    { type: ReducerObservable },
+    { type: DevtoolsExtension },
+    { type: ScannedActionsSubject },
+    { type: ErrorHandler },
+    { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] }] },
+    { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] }] }
 ];
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+/** @type {?} */
 const IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
 /**
  * @param {?} extension
@@ -864,7 +1059,8 @@ function createIsExtensionOrMonitorPresent(extension, config) {
  * @return {?}
  */
 function createReduxDevtoolsExtension() {
-    const /** @type {?} */ extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
+    /** @type {?} */
+    const extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
     if (typeof window === 'object' &&
         typeof (/** @type {?} */ (window))[extensionKey] !== 'undefined') {
         return (/** @type {?} */ (window))[extensionKey];
@@ -879,39 +1075,6 @@ function createReduxDevtoolsExtension() {
  */
 function createStateObservable(devtools) {
     return devtools.state;
-}
-/**
- * @return {?}
- */
-function noMonitor() {
-    return null;
-}
-const DEFAULT_NAME = 'NgRx Store DevTools';
-/**
- * @param {?} _options
- * @return {?}
- */
-function createConfig(_options) {
-    const /** @type {?} */ DEFAULT_OPTIONS = {
-        maxAge: false,
-        monitor: noMonitor,
-        actionSanitizer: undefined,
-        stateSanitizer: undefined,
-        name: DEFAULT_NAME,
-        serialize: false,
-        logOnly: false,
-        features: false,
-    };
-    let /** @type {?} */ options = typeof _options === 'function' ? _options() : _options;
-    const /** @type {?} */ logOnly = options.logOnly
-        ? { pause: true, export: true, test: true }
-        : false;
-    const /** @type {?} */ features = options.features || logOnly;
-    const /** @type {?} */ config = Object.assign({}, DEFAULT_OPTIONS, { features }, options);
-    if (config.maxAge && config.maxAge < 2) {
-        throw new Error(`Devtools 'maxAge' cannot be less than 2, got ${config.maxAge}`);
-    }
-    return config;
 }
 class StoreDevtoolsModule {
     /**
@@ -962,27 +1125,22 @@ StoreDevtoolsModule.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
- */
-/**
- * DO NOT EDIT
- *
- * This file is automatically generated at build
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 
 /**
  * Generated bundle index. Do not edit.
  */
 
-export { INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_i, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_h, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_g, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_k, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_j, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createConfig as ɵngrx_modules_store_devtools_store_devtools_f, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, noMonitor as ɵngrx_modules_store_devtools_store_devtools_e, StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig };
+export { INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig };
 //# sourceMappingURL=store-devtools.js.map

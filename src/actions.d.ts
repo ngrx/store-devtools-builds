@@ -10,6 +10,8 @@ export declare const SET_ACTIONS_ACTIVE = "SET_ACTIONS_ACTIVE";
 export declare const JUMP_TO_STATE = "JUMP_TO_STATE";
 export declare const JUMP_TO_ACTION = "JUMP_TO_ACTION";
 export declare const IMPORT_STATE = "IMPORT_STATE";
+export declare const LOCK_CHANGES = "LOCK_CHANGES";
+export declare const PAUSE_RECORDING = "PAUSE_RECORDING";
 export declare class PerformAction implements Action {
     action: Action;
     timestamp: number;
@@ -64,4 +66,14 @@ export declare class ImportState implements Action {
     readonly type: string;
     constructor(nextLiftedState: any);
 }
-export declare type All = PerformAction | Refresh | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState;
+export declare class LockChanges implements Action {
+    status: boolean;
+    readonly type: string;
+    constructor(status: boolean);
+}
+export declare class PauseRecording implements Action {
+    status: boolean;
+    readonly type: string;
+    constructor(status: boolean);
+}
+export declare type All = PerformAction | Refresh | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState | LockChanges | PauseRecording;

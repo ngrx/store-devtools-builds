@@ -1,6 +1,6 @@
 import { ErrorHandler } from '@angular/core';
 import { Action, ActionReducer, UPDATE, INIT } from '@ngrx/store';
-import * as Actions from './actions';
+import * as DevtoolsActions from './actions';
 import { StoreDevtoolsConfig } from './config';
 export declare type InitAction = {
     readonly type: typeof INIT;
@@ -9,7 +9,7 @@ export declare type UpdateReducerAction = {
     readonly type: typeof UPDATE;
 };
 export declare type CoreActions = InitAction | UpdateReducerAction;
-export declare type Actions = Actions.All | CoreActions;
+export declare type Actions = DevtoolsActions.All | CoreActions;
 export declare const INIT_ACTION: {
     type: "@ngrx/store/init";
 };
@@ -33,6 +33,8 @@ export interface LiftedState {
     committedState: any;
     currentStateIndex: number;
     computedStates: ComputedState[];
+    isLocked: boolean;
+    isPaused: boolean;
 }
 export declare function liftInitialState(initialCommittedState?: any, monitorReducer?: any): LiftedState;
 /**
