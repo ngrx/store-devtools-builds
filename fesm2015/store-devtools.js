@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.1.0+50.sha-0cd7460
+ * @license NgRx 6.1.0+51.sha-7ee46d2
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -293,6 +293,58 @@ function sanitizeStates(stateSanitizer, states) {
 function sanitizeState(stateSanitizer, state, stateIdx) {
     return stateSanitizer(state, stateIdx);
 }
+/**
+ * Read the config and tell if actions should be filtered
+ * @param {?} config
+ * @return {?}
+ */
+function shouldFilterActions(config) {
+    return config.predicate || config.actionsWhitelist || config.actionsBlacklist;
+}
+/**
+ * Return a full filtered lifted state
+ * @param {?} liftedState
+ * @param {?=} predicate
+ * @param {?=} whitelist
+ * @param {?=} blacklist
+ * @return {?}
+ */
+function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
+    /** @type {?} */
+    const filteredStagedActionIds = [];
+    /** @type {?} */
+    const filteredActionsById = {};
+    /** @type {?} */
+    const filteredComputedStates = [];
+    liftedState.stagedActionIds.forEach((id, idx) => {
+        /** @type {?} */
+        const liftedAction = liftedState.actionsById[id];
+        if (!liftedAction)
+            return;
+        if (idx &&
+            isActionFiltered(liftedState.computedStates[idx], liftedAction, predicate, whitelist, blacklist)) {
+            return;
+        }
+        filteredActionsById[id] = liftedAction;
+        filteredStagedActionIds.push(id);
+        filteredComputedStates.push(liftedState.computedStates[idx]);
+    });
+    return Object.assign({}, liftedState, { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
+}
+/**
+ * Return true is the action should be ignored
+ * @param {?} state
+ * @param {?} action
+ * @param {?=} predicate
+ * @param {?=} whitelist
+ * @param {?=} blacklist
+ * @return {?}
+ */
+function isActionFiltered(state, action, predicate, whitelist, blacklist) {
+    return ((predicate && !predicate(state, action.action)) ||
+        (whitelist && !action.action.type.match(whitelist.join('|'))) ||
+        (blacklist && action.action.type.match(blacklist.join('|'))));
+}
 
 /**
  * @fileoverview added by tsickle
@@ -357,6 +409,10 @@ class DevtoolsExtension {
             }
             /** @type {?} */
             const currentState = unliftState(state);
+            if (shouldFilterActions(this.config) &&
+                isActionFiltered(currentState, action, this.config.predicate, this.config.actionsWhitelist, this.config.actionsBlacklist)) {
+                return;
+            }
             /** @type {?} */
             const sanitizedState = this.config.stateSanitizer
                 ? sanitizeState(this.config.stateSanitizer, currentState, state.currentStateIndex)
@@ -369,7 +425,7 @@ class DevtoolsExtension {
         }
         else {
             /** @type {?} */
-            const sanitizedLiftedState = Object.assign({}, state, { actionsById: this.config.actionSanitizer
+            const sanitizedLiftedState = Object.assign({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                     ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                     : state.actionsById, computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
@@ -896,8 +952,13 @@ class StoreDevtools {
         const liftedStateSubscription = liftedAction$
             .pipe(withLatestFrom(liftedReducer$), scan(({ state: liftedState }, [action, reducer]) => {
             /** @type {?} */
-            const reducedLiftedState = reducer(liftedState, action);
-            // // Extension should be sent the sanitized lifted state
+            let reducedLiftedState = reducer(liftedState, action);
+            // On full state update
+            // If we have actions filters, we must filter completly our lifted state to be sync with the extension
+            if (action.type !== PERFORM_ACTION && shouldFilterActions(config)) {
+                reducedLiftedState = filterLiftedState(reducedLiftedState, config.predicate, config.actionsWhitelist, config.actionsBlacklist);
+            }
+            // Extension should be sent the sanitized lifted state
             extension.notify(action, reducedLiftedState);
             return { state: reducedLiftedState, action };
         }, { state: liftedInitialState, action: /** @type {?} */ (null) }))

@@ -9,6 +9,7 @@ export declare type SerializationOptions = {
     immutable?: any;
     refs?: Array<any>;
 };
+export declare type Predicate = (state: any, action: Action) => boolean;
 export declare class StoreDevtoolsConfig {
     maxAge: number | false;
     monitor: ActionReducer<any, any>;
@@ -18,6 +19,9 @@ export declare class StoreDevtoolsConfig {
     serialize?: boolean | SerializationOptions;
     logOnly?: boolean;
     features?: any;
+    actionsBlacklist?: string[];
+    actionsWhitelist?: string[];
+    predicate?: Predicate;
 }
 export declare const STORE_DEVTOOLS_CONFIG: InjectionToken<StoreDevtoolsConfig>;
 export declare const INITIAL_OPTIONS: InjectionToken<StoreDevtoolsConfig>;

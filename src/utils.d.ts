@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 import * as Actions from './actions';
-import { ActionSanitizer, StateSanitizer } from './config';
+import { ActionSanitizer, StateSanitizer, Predicate, StoreDevtoolsConfig } from './config';
 import { ComputedState, LiftedAction, LiftedActions, LiftedState } from './reducer';
 export declare function difference(first: any[], second: any[]): any[];
 /**
@@ -28,3 +28,15 @@ export declare function sanitizeStates(stateSanitizer: StateSanitizer, states: C
  * Sanitizes given state with given function.
  */
 export declare function sanitizeState(stateSanitizer: StateSanitizer, state: any, stateIdx: number): any;
+/**
+ * Read the config and tell if actions should be filtered
+ */
+export declare function shouldFilterActions(config: StoreDevtoolsConfig): string[] | Predicate | undefined;
+/**
+ * Return a full filtered lifted state
+ */
+export declare function filterLiftedState(liftedState: LiftedState, predicate?: Predicate, whitelist?: string[], blacklist?: string[]): LiftedState;
+/**
+ * Return true is the action should be ignored
+ */
+export declare function isActionFiltered(state: any, action: LiftedAction, predicate?: Predicate, whitelist?: string[], blacklist?: string[]): true | RegExpMatchArray | null | undefined;

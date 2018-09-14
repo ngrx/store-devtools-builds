@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.1.0+50.sha-0cd7460
+ * @license NgRx 6.1.0+51.sha-7ee46d2
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -213,6 +213,41 @@
     function sanitizeState(stateSanitizer, state, stateIdx) {
         return stateSanitizer(state, stateIdx);
     }
+    /**
+     * Read the config and tell if actions should be filtered
+     */
+    function shouldFilterActions(config) {
+        return config.predicate || config.actionsWhitelist || config.actionsBlacklist;
+    }
+    /**
+     * Return a full filtered lifted state
+     */
+    function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
+        var filteredStagedActionIds = [];
+        var filteredActionsById = {};
+        var filteredComputedStates = [];
+        liftedState.stagedActionIds.forEach(function (id, idx) {
+            var liftedAction = liftedState.actionsById[id];
+            if (!liftedAction)
+                return;
+            if (idx &&
+                isActionFiltered(liftedState.computedStates[idx], liftedAction, predicate, whitelist, blacklist)) {
+                return;
+            }
+            filteredActionsById[id] = liftedAction;
+            filteredStagedActionIds.push(id);
+            filteredComputedStates.push(liftedState.computedStates[idx]);
+        });
+        return __assign({}, liftedState, { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
+    }
+    /**
+     * Return true is the action should be ignored
+     */
+    function isActionFiltered(state, action, predicate, whitelist, blacklist) {
+        return ((predicate && !predicate(state, action.action)) ||
+            (whitelist && !action.action.type.match(whitelist.join('|'))) ||
+            (blacklist && action.action.type.match(blacklist.join('|'))));
+    }
 
     var __extends = (undefined && undefined.__extends) || (function () {
         var extendStatics = Object.setPrototypeOf ||
@@ -279,6 +314,10 @@
                     return;
                 }
                 var currentState = unliftState(state);
+                if (shouldFilterActions(this.config) &&
+                    isActionFiltered(currentState, action, this.config.predicate, this.config.actionsWhitelist, this.config.actionsBlacklist)) {
+                    return;
+                }
                 var sanitizedState = this.config.stateSanitizer
                     ? sanitizeState(this.config.stateSanitizer, currentState, state.currentStateIndex)
                     : currentState;
@@ -289,7 +328,7 @@
             }
             else {
                 // Requires full state update
-                var sanitizedLiftedState = __assign$1({}, state, { actionsById: this.config.actionSanitizer
+                var sanitizedLiftedState = __assign$1({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                         ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                         : state.actionsById, computedStates: this.config.stateSanitizer
                         ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
@@ -776,7 +815,12 @@
                 var liftedState = _a.state;
                 var _c = __read$1(_b, 2), action = _c[0], reducer = _c[1];
                 var reducedLiftedState = reducer(liftedState, action);
-                // // Extension should be sent the sanitized lifted state
+                // On full state update
+                // If we have actions filters, we must filter completly our lifted state to be sync with the extension
+                if (action.type !== PERFORM_ACTION && shouldFilterActions(config)) {
+                    reducedLiftedState = filterLiftedState(reducedLiftedState, config.predicate, config.actionsWhitelist, config.actionsBlacklist);
+                }
+                // Extension should be sent the sanitized lifted state
                 extension.notify(action, reducedLiftedState);
                 return { state: reducedLiftedState, action: action };
             }, { state: liftedInitialState, action: null }))
