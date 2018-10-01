@@ -8,5 +8,5 @@ export declare function createIsExtensionOrMonitorPresent(extension: ReduxDevtoo
 export declare function createReduxDevtoolsExtension(): any;
 export declare function createStateObservable(devtools: StoreDevtools): Observable<any>;
 export declare class StoreDevtoolsModule {
-    static instrument(options?: StoreDevtoolsOptions): ModuleWithProviders;
+    static instrument(options?: StoreDevtoolsOptions): ModuleWithProviders<StoreDevtoolsModule>;
 }
