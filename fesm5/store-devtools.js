@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.1.0+62.sha-41a0d45
+ * @license NgRx 6.1.0+63.sha-1448a0e
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -437,6 +437,8 @@ var __spread = (undefined && undefined.__spread) || function () {
     return ar;
 };
 var INIT_ACTION = { type: INIT };
+var RECOMPUTE_STATE = '@ngrx/devtools/recompute-state';
+var RECOMPUTE_STATE_ACTION = { type: RECOMPUTE_STATE };
 /**
  * Computes the next entry in the log by applying an action.
  */
@@ -750,7 +752,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                         computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     }
                     // Recompute state history with latest reducer and update action
-                    computedStates = computedStates.map(function (cmp) { return (__assign$2({}, cmp, { state: reducer(cmp.state, liftedAction) })); });
+                    computedStates = computedStates.map(function (cmp) { return (__assign$2({}, cmp, { state: reducer(cmp.state, RECOMPUTE_STATE_ACTION) })); });
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);

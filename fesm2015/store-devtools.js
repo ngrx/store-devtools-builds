@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.1.0+62.sha-41a0d45
+ * @license NgRx 6.1.0+63.sha-1448a0e
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -527,6 +527,10 @@ DevtoolsExtension.ctorParameters = () => [
  */
 /** @type {?} */
 const INIT_ACTION = { type: INIT };
+/** @type {?} */
+const RECOMPUTE_STATE = /** @type {?} */ ('@ngrx/devtools/recompute-state');
+/** @type {?} */
+const RECOMPUTE_STATE_ACTION = { type: RECOMPUTE_STATE };
 /**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
@@ -888,7 +892,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                         computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     }
                     // Recompute state history with latest reducer and update action
-                    computedStates = computedStates.map(cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, liftedAction) })));
+                    computedStates = computedStates.map(cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, RECOMPUTE_STATE_ACTION) })));
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);

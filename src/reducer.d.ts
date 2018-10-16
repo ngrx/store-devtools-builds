@@ -13,6 +13,10 @@ export declare type Actions = DevtoolsActions.All | CoreActions;
 export declare const INIT_ACTION: {
     type: "@ngrx/store/init";
 };
+export declare const RECOMPUTE_STATE: "@ngrx/devtools/recompute-state";
+export declare const RECOMPUTE_STATE_ACTION: {
+    type: "@ngrx/devtools/recompute-state";
+};
 export interface ComputedState {
     state: any;
     error: any;
