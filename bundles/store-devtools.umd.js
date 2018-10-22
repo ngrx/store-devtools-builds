@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.1.0+66.sha-c024776
+ * @license NgRx 6.1.0+68.sha-68390de
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -438,8 +438,8 @@
         return ar;
     };
     var INIT_ACTION = { type: store.INIT };
-    var RECOMPUTE_STATE = '@ngrx/devtools/recompute-state';
-    var RECOMPUTE_STATE_ACTION = { type: RECOMPUTE_STATE };
+    var RECOMPUTE = '@ngrx/store-devtools/recompute';
+    var RECOMPUTE_ACTION = { type: RECOMPUTE };
     /**
      * Computes the next entry in the log by applying an action.
      */
@@ -753,7 +753,7 @@
                             computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                         }
                         // Recompute state history with latest reducer and update action
-                        computedStates = computedStates.map(function (cmp) { return (__assign$2({}, cmp, { state: reducer(cmp.state, RECOMPUTE_STATE_ACTION) })); });
+                        computedStates = computedStates.map(function (cmp) { return (__assign$2({}, cmp, { state: reducer(cmp.state, RECOMPUTE_ACTION) })); });
                         currentStateIndex = stagedActionIds.length - 1;
                         if (options.maxAge && stagedActionIds.length > options.maxAge) {
                             commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -992,6 +992,7 @@
     exports.ɵngrx_modules_store_devtools_store_devtools_c = createReduxDevtoolsExtension;
     exports.ɵngrx_modules_store_devtools_store_devtools_d = createStateObservable;
     exports.StoreDevtoolsModule = StoreDevtoolsModule;
+    exports.RECOMPUTE = RECOMPUTE;
     exports.StoreDevtools = StoreDevtools;
     exports.StoreDevtoolsConfig = StoreDevtoolsConfig;
 

@@ -13,9 +13,9 @@ export declare type Actions = DevtoolsActions.All | CoreActions;
 export declare const INIT_ACTION: {
     type: "@ngrx/store/init";
 };
-export declare const RECOMPUTE_STATE: "@ngrx/devtools/recompute-state";
-export declare const RECOMPUTE_STATE_ACTION: {
-    type: "@ngrx/devtools/recompute-state";
+export declare const RECOMPUTE: "@ngrx/store-devtools/recompute";
+export declare const RECOMPUTE_ACTION: {
+    type: "@ngrx/store-devtools/recompute";
 };
 export interface ComputedState {
     state: any;

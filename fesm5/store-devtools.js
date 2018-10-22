@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.1.0+66.sha-c024776
+ * @license NgRx 6.1.0+68.sha-68390de
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -437,8 +437,8 @@ var __spread = (undefined && undefined.__spread) || function () {
     return ar;
 };
 var INIT_ACTION = { type: INIT };
-var RECOMPUTE_STATE = '@ngrx/devtools/recompute-state';
-var RECOMPUTE_STATE_ACTION = { type: RECOMPUTE_STATE };
+var RECOMPUTE = '@ngrx/store-devtools/recompute';
+var RECOMPUTE_ACTION = { type: RECOMPUTE };
 /**
  * Computes the next entry in the log by applying an action.
  */
@@ -752,7 +752,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                         computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     }
                     // Recompute state history with latest reducer and update action
-                    computedStates = computedStates.map(function (cmp) { return (__assign$2({}, cmp, { state: reducer(cmp.state, RECOMPUTE_STATE_ACTION) })); });
+                    computedStates = computedStates.map(function (cmp) { return (__assign$2({}, cmp, { state: reducer(cmp.state, RECOMPUTE_ACTION) })); });
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -979,5 +979,5 @@ var StoreDevtoolsModule = /** @class */ (function () {
  * Generated bundle index. Do not edit.
  */
 
-export { INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, StoreDevtoolsModule, StoreDevtools, StoreDevtoolsConfig };
+export { INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, StoreDevtoolsModule, RECOMPUTE, StoreDevtools, StoreDevtoolsConfig };
 //# sourceMappingURL=store-devtools.js.map
