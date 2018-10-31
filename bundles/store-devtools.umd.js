@@ -1,5 +1,5 @@
 /**
- * @license NgRx 6.1.0+85.sha-a9e7cbd
+ * @license NgRx 0.0.0-PLACEHOLDER
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -157,13 +157,16 @@
         return PauseRecording;
     }());
 
-    var __assign = (undefined && undefined.__assign) || Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
+    var __assign = (undefined && undefined.__assign) || function () {
+        __assign = Object.assign || function(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                    t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign.apply(this, arguments);
     };
     function difference(first, second) {
         return first.filter(function (item) { return second.indexOf(item) < 0; });
@@ -250,33 +253,57 @@
     }
 
     var __extends = (undefined && undefined.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
         return function (d, b) {
             extendStatics(d, b);
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     })();
+    var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
     var DevtoolsDispatcher = /** @class */ (function (_super) {
         __extends(DevtoolsDispatcher, _super);
         function DevtoolsDispatcher() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        DevtoolsDispatcher.decorators = [
-            { type: core.Injectable }
-        ];
+        DevtoolsDispatcher = __decorate([
+            core.Injectable()
+        ], DevtoolsDispatcher);
         return DevtoolsDispatcher;
     }(store.ActionsSubject));
 
-    var __assign$1 = (undefined && undefined.__assign) || Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
+    var __assign$1 = (undefined && undefined.__assign) || function () {
+        __assign$1 = Object.assign || function(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                    t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign$1.apply(this, arguments);
+    };
+    var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+        return function (target, key) { decorator(target, key, paramIndex); }
     };
     var ExtensionActionTypes = {
         START: 'START',
@@ -397,25 +424,26 @@
             }
             return extensionOptions;
         };
-        DevtoolsExtension.decorators = [
-            { type: core.Injectable }
-        ];
-        /** @nocollapse */
-        DevtoolsExtension.ctorParameters = function () { return [
-            { type: undefined, decorators: [{ type: core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] }] },
-            { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] }] },
-            { type: DevtoolsDispatcher }
-        ]; };
+        DevtoolsExtension = __decorate$1([
+            core.Injectable(),
+            __param(0, core.Inject(REDUX_DEVTOOLS_EXTENSION)),
+            __param(1, core.Inject(STORE_DEVTOOLS_CONFIG)),
+            __metadata("design:paramtypes", [Object, StoreDevtoolsConfig,
+                DevtoolsDispatcher])
+        ], DevtoolsExtension);
         return DevtoolsExtension;
     }());
 
-    var __assign$2 = (undefined && undefined.__assign) || Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
+    var __assign$2 = (undefined && undefined.__assign) || function () {
+        __assign$2 = Object.assign || function(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                    t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign$2.apply(this, arguments);
     };
     var __read = (undefined && undefined.__read) || function (o, n) {
         var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -520,7 +548,8 @@
          * Manages how the history actions modify the history state.
          */
         return function (reducer) { return function (liftedState, liftedAction) {
-            var _a = liftedState || initialLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates, isLocked = _a.isLocked, isPaused = _a.isPaused;
+            var _a;
+            var _b = liftedState || initialLiftedState, monitorState = _b.monitorState, actionsById = _b.actionsById, nextActionId = _b.nextActionId, stagedActionIds = _b.stagedActionIds, skippedActionIds = _b.skippedActionIds, committedState = _b.committedState, currentStateIndex = _b.currentStateIndex, computedStates = _b.computedStates, isLocked = _b.isLocked, isPaused = _b.isPaused;
             if (!liftedState) {
                 // Prevent mutating initialLiftedState
                 actionsById = Object.create(actionsById);
@@ -708,9 +737,9 @@
                 }
                 case IMPORT_STATE: {
                     // Completely replace everything.
-                    (_b = liftedAction.nextLiftedState, monitorState = _b.monitorState, actionsById = _b.actionsById, nextActionId = _b.nextActionId, stagedActionIds = _b.stagedActionIds, skippedActionIds = _b.skippedActionIds, committedState = _b.committedState, currentStateIndex = _b.currentStateIndex, computedStates = _b.computedStates, isLocked = _b.isLocked, 
+                    (_a = liftedAction.nextLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates, isLocked = _a.isLocked, 
                     // prettier-ignore
-                    isPaused = _b.isPaused);
+                    isPaused = _a.isPaused);
                     break;
                 }
                 case store.INIT: {
@@ -784,10 +813,21 @@
                 isLocked: isLocked,
                 isPaused: isPaused,
             };
-            var _b;
         }; };
     }
 
+    var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata$1 = (undefined && undefined.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __param$1 = (undefined && undefined.__param) || function (paramIndex, decorator) {
+        return function (target, key) { decorator(target, key, paramIndex); }
+    };
     var __read$1 = (undefined && undefined.__read) || function (o, n) {
         var m = typeof Symbol === "function" && o[Symbol.iterator];
         if (!m) return o;
@@ -889,23 +929,26 @@
         StoreDevtools.prototype.pauseRecording = function (status) {
             this.dispatch(new PauseRecording(status));
         };
-        StoreDevtools.decorators = [
-            { type: core.Injectable }
-        ];
-        /** @nocollapse */
-        StoreDevtools.ctorParameters = function () { return [
-            { type: DevtoolsDispatcher },
-            { type: store.ActionsSubject },
-            { type: store.ReducerObservable },
-            { type: DevtoolsExtension },
-            { type: store.ScannedActionsSubject },
-            { type: core.ErrorHandler },
-            { type: undefined, decorators: [{ type: core.Inject, args: [store.INITIAL_STATE,] }] },
-            { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] }] }
-        ]; };
+        StoreDevtools = __decorate$2([
+            core.Injectable(),
+            __param$1(6, core.Inject(store.INITIAL_STATE)),
+            __param$1(7, core.Inject(STORE_DEVTOOLS_CONFIG)),
+            __metadata$1("design:paramtypes", [DevtoolsDispatcher,
+                store.ActionsSubject,
+                store.ReducerObservable,
+                DevtoolsExtension,
+                store.ScannedActionsSubject,
+                core.ErrorHandler, Object, StoreDevtoolsConfig])
+        ], StoreDevtools);
         return StoreDevtools;
     }());
 
+    var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
     var IS_EXTENSION_OR_MONITOR_PRESENT = new core.InjectionToken('Is Devtools Extension or Monitor Present');
     function createIsExtensionOrMonitorPresent(extension, config) {
         return Boolean(extension) || config.monitor !== noMonitor;
@@ -926,10 +969,11 @@
     var StoreDevtoolsModule = /** @class */ (function () {
         function StoreDevtoolsModule() {
         }
+        StoreDevtoolsModule_1 = StoreDevtoolsModule;
         StoreDevtoolsModule.instrument = function (options) {
             if (options === void 0) { options = {}; }
             return {
-                ngModule: StoreDevtoolsModule,
+                ngModule: StoreDevtoolsModule_1,
                 providers: [
                     DevtoolsExtension,
                     DevtoolsDispatcher,
@@ -964,9 +1008,10 @@
                 ],
             };
         };
-        StoreDevtoolsModule.decorators = [
-            { type: core.NgModule, args: [{},] }
-        ];
+        var StoreDevtoolsModule_1;
+        StoreDevtoolsModule = StoreDevtoolsModule_1 = __decorate$3([
+            core.NgModule({})
+        ], StoreDevtoolsModule);
         return StoreDevtoolsModule;
     }());
 

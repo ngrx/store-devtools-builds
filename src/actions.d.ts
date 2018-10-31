@@ -15,65 +15,65 @@ export declare const PAUSE_RECORDING = "PAUSE_RECORDING";
 export declare class PerformAction implements Action {
     action: Action;
     timestamp: number;
-    readonly type: string;
+    readonly type = "PERFORM_ACTION";
     constructor(action: Action, timestamp: number);
 }
 export declare class Refresh implements Action {
-    readonly type: string;
+    readonly type = "REFRESH";
 }
 export declare class Reset implements Action {
     timestamp: number;
-    readonly type: string;
+    readonly type = "RESET";
     constructor(timestamp: number);
 }
 export declare class Rollback implements Action {
     timestamp: number;
-    readonly type: string;
+    readonly type = "ROLLBACK";
     constructor(timestamp: number);
 }
 export declare class Commit implements Action {
     timestamp: number;
-    readonly type: string;
+    readonly type = "COMMIT";
     constructor(timestamp: number);
 }
 export declare class Sweep implements Action {
-    readonly type: string;
+    readonly type = "SWEEP";
 }
 export declare class ToggleAction implements Action {
     id: number;
-    readonly type: string;
+    readonly type = "TOGGLE_ACTION";
     constructor(id: number);
 }
 export declare class SetActionsActive implements Action {
     start: number;
     end: number;
     active: boolean;
-    readonly type: string;
+    readonly type = "SET_ACTIONS_ACTIVE";
     constructor(start: number, end: number, active?: boolean);
 }
 export declare class JumpToState implements Action {
     index: number;
-    readonly type: string;
+    readonly type = "JUMP_TO_STATE";
     constructor(index: number);
 }
 export declare class JumpToAction implements Action {
     actionId: number;
-    readonly type: string;
+    readonly type = "JUMP_TO_ACTION";
     constructor(actionId: number);
 }
 export declare class ImportState implements Action {
     nextLiftedState: any;
-    readonly type: string;
+    readonly type = "IMPORT_STATE";
     constructor(nextLiftedState: any);
 }
 export declare class LockChanges implements Action {
     status: boolean;
-    readonly type: string;
+    readonly type = "LOCK_CHANGES";
     constructor(status: boolean);
 }
 export declare class PauseRecording implements Action {
     status: boolean;
-    readonly type: string;
+    readonly type = "PAUSE_RECORDING";
     constructor(status: boolean);
 }
 export declare type All = PerformAction | Refresh | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState | LockChanges | PauseRecording;
