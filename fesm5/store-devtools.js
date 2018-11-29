@@ -1,5 +1,5 @@
 /**
- * @license NgRx 7.0.0-beta.0+21.sha-80e3338.with-local-changes
+ * @license NgRx 7.0.0-beta.0+22.sha-4ed16cd.with-local-changes
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -319,6 +319,7 @@ var DevtoolsExtension = /** @class */ (function () {
         this.createActionStreams();
     }
     DevtoolsExtension.prototype.notify = function (action, state) {
+        var _this = this;
         if (!this.devtoolsExtension) {
             return;
         }
@@ -344,22 +345,26 @@ var DevtoolsExtension = /** @class */ (function () {
                 isActionFiltered(currentState, action, this.config.predicate, this.config.actionsWhitelist, this.config.actionsBlacklist)) {
                 return;
             }
-            var sanitizedState = this.config.stateSanitizer
+            var sanitizedState_1 = this.config.stateSanitizer
                 ? sanitizeState(this.config.stateSanitizer, currentState, state.currentStateIndex)
                 : currentState;
-            var sanitizedAction = this.config.actionSanitizer
+            var sanitizedAction_1 = this.config.actionSanitizer
                 ? sanitizeAction(this.config.actionSanitizer, action, state.nextActionId)
                 : action;
-            this.extensionConnection.send(sanitizedAction, sanitizedState);
+            this.sendToReduxDevtools(function () {
+                return _this.extensionConnection.send(sanitizedAction_1, sanitizedState_1);
+            });
         }
         else {
             // Requires full state update
-            var sanitizedLiftedState = __assign$1({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
+            var sanitizedLiftedState_1 = __assign$1({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                     ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                     : state.actionsById, computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
                     : state.computedStates });
-            this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config));
+            this.sendToReduxDevtools(function () {
+                return _this.devtoolsExtension.send(null, sanitizedLiftedState_1, _this.getExtensionConfig(_this.config));
+            });
         }
     };
     DevtoolsExtension.prototype.createChangesObservable = function () {
@@ -422,6 +427,14 @@ var DevtoolsExtension = /** @class */ (function () {
             extensionOptions.maxAge = config.maxAge;
         }
         return extensionOptions;
+    };
+    DevtoolsExtension.prototype.sendToReduxDevtools = function (send) {
+        try {
+            send();
+        }
+        catch (err) {
+            console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
+        }
     };
     DevtoolsExtension = __decorate$1([
         Injectable(),

@@ -1,5 +1,5 @@
 /**
- * @license NgRx 7.0.0-beta.0+21.sha-80e3338.with-local-changes
+ * @license NgRx 7.0.0-beta.0+22.sha-4ed16cd.with-local-changes
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -421,7 +421,7 @@ class DevtoolsExtension {
             const sanitizedAction = this.config.actionSanitizer
                 ? sanitizeAction(this.config.actionSanitizer, action, state.nextActionId)
                 : action;
-            this.extensionConnection.send(sanitizedAction, sanitizedState);
+            this.sendToReduxDevtools(() => this.extensionConnection.send(sanitizedAction, sanitizedState));
         }
         else {
             /** @type {?} */
@@ -430,7 +430,7 @@ class DevtoolsExtension {
                     : state.actionsById, computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
                     : state.computedStates });
-            this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config));
+            this.sendToReduxDevtools(() => this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config)));
         }
     }
     /**
@@ -509,6 +509,18 @@ class DevtoolsExtension {
             extensionOptions.maxAge = config.maxAge;
         }
         return extensionOptions;
+    }
+    /**
+     * @param {?} send
+     * @return {?}
+     */
+    sendToReduxDevtools(send) {
+        try {
+            send();
+        }
+        catch (err) {
+            console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
+        }
     }
 }
 DevtoolsExtension.decorators = [

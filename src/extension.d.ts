@@ -41,4 +41,5 @@ export declare class DevtoolsExtension {
     private createActionStreams;
     private unwrapAction;
     private getExtensionConfig;
+    private sendToReduxDevtools;
 }
