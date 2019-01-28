@@ -1,5 +1,5 @@
 /**
- * @license NgRx 7.1.0+8.sha-e17a787.with-local-changes
+ * @license NgRx 7.1.0+10.sha-ba79c89.with-local-changes
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -175,6 +175,14 @@ function difference(first, second) {
  */
 function unliftState(liftedState) {
     var computedStates = liftedState.computedStates, currentStateIndex = liftedState.currentStateIndex;
+    // At start up NgRx dispatches init actions,
+    // When these init actions are being filtered out by the predicate or black/white list options
+    // we don't have a complete computed states yet.
+    // At this point it could happen that we're out of bounds, when this happens we fall back to the last known state
+    if (currentStateIndex >= computedStates.length) {
+        var state_1 = computedStates[computedStates.length - 1].state;
+        return state_1;
+    }
     var state = computedStates[currentStateIndex].state;
     return state;
 }
@@ -246,9 +254,10 @@ function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
  * Return true is the action should be ignored
  */
 function isActionFiltered(state, action, predicate, whitelist, blacklist) {
-    return ((predicate && !predicate(state, action.action)) ||
-        (whitelist && !action.action.type.match(whitelist.join('|'))) ||
-        (blacklist && action.action.type.match(blacklist.join('|'))));
+    var predicateMatch = predicate && !predicate(state, action.action);
+    var whitelistMatch = whitelist && !action.action.type.match(whitelist.join('|'));
+    var blacklistMatch = blacklist && action.action.type.match(blacklist.join('|'));
+    return predicateMatch || whitelistMatch || blacklistMatch;
 }
 
 var __extends = (undefined && undefined.__extends) || (function () {
@@ -719,8 +728,10 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 if (isLocked) {
                     return liftedState || initialLiftedState;
                 }
-                if (isPaused) {
-                    // If recording is paused, overwrite the last state
+                if (isPaused ||
+                    (liftedState &&
+                        isActionFiltered(liftedState.computedStates[currentStateIndex], liftedAction, options.predicate, options.actionsWhitelist, options.actionsBlacklist))) {
+                    // If recording is paused or if the action should be ignored, overwrite the last state
                     // (corresponds to the pause action) and keep everything else as is.
                     // This way, the app gets the new current state while the devtools
                     // do not record another action.

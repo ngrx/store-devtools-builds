@@ -1,5 +1,5 @@
 /**
- * @license NgRx 7.1.0+8.sha-e17a787.with-local-changes
+ * @license NgRx 7.1.0+10.sha-ba79c89.with-local-changes
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -236,6 +236,14 @@ function difference(first, second) {
  */
 function unliftState(liftedState) {
     const { computedStates, currentStateIndex } = liftedState;
+    // At start up NgRx dispatches init actions,
+    // When these init actions are being filtered out by the predicate or black/white list options
+    // we don't have a complete computed states yet.
+    // At this point it could happen that we're out of bounds, when this happens we fall back to the last known state
+    if (currentStateIndex >= computedStates.length) {
+        const { state } = computedStates[computedStates.length - 1];
+        return state;
+    }
     const { state } = computedStates[currentStateIndex];
     return state;
 }
@@ -341,9 +349,13 @@ function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
  * @return {?}
  */
 function isActionFiltered(state, action, predicate, whitelist, blacklist) {
-    return ((predicate && !predicate(state, action.action)) ||
-        (whitelist && !action.action.type.match(whitelist.join('|'))) ||
-        (blacklist && action.action.type.match(blacklist.join('|'))));
+    /** @type {?} */
+    const predicateMatch = predicate && !predicate(state, action.action);
+    /** @type {?} */
+    const whitelistMatch = whitelist && !action.action.type.match(whitelist.join('|'));
+    /** @type {?} */
+    const blacklistMatch = blacklist && action.action.type.match(blacklist.join('|'));
+    return predicateMatch || whitelistMatch || blacklistMatch;
 }
 
 /**
@@ -819,7 +831,9 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 if (isLocked) {
                     return liftedState || initialLiftedState;
                 }
-                if (isPaused) {
+                if (isPaused ||
+                    (liftedState &&
+                        isActionFiltered(liftedState.computedStates[currentStateIndex], liftedAction, options.predicate, options.actionsWhitelist, options.actionsBlacklist))) {
                     /** @type {?} */
                     const lastState = computedStates[computedStates.length - 1];
                     computedStates = [
