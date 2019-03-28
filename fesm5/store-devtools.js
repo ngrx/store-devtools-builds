@@ -1,12 +1,12 @@
 /**
- * @license NgRx 7.2.0+36.sha-a7e6303
+ * @license NgRx 7.2.0+37.sha-4bdb66e
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
 import { InjectionToken, Injectable, Inject, ErrorHandler, NgModule } from '@angular/core';
-import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, ReducerObservable, ScannedActionsSubject, ReducerManagerDispatcher, StateObservable } from '@ngrx/store';
-import { empty, of, Observable, merge, queueScheduler, ReplaySubject } from 'rxjs';
-import { filter, map, share, switchMap, takeUntil, concatMap, debounceTime, timeout, catchError, take, observeOn, scan, skip, withLatestFrom } from 'rxjs/operators';
+import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, ReducerObservable, ScannedActionsSubject, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
+import { empty, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
+import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
 
 var StoreDevtoolsConfig = /** @class */ (function () {
     function StoreDevtoolsConfig() {

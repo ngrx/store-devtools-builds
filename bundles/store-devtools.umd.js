@@ -1,13 +1,13 @@
 /**
- * @license NgRx 7.2.0+36.sha-a7e6303
+ * @license NgRx 7.2.0+37.sha-4bdb66e
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@ngrx/store'), require('rxjs'), require('rxjs/operators')) :
     typeof define === 'function' && define.amd ? define('@ngrx/store-devtools', ['exports', '@angular/core', '@ngrx/store', 'rxjs', 'rxjs/operators'], factory) :
-    (factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}),global.ng.core,global['@ngrx/store'],global.rxjs,global.rxjs.operators));
-}(this, (function (exports,core,store,rxjs,operators) { 'use strict';
+    (global = global || self, factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}), global.ng.core, global['@ngrx/store'], global.rxjs, global.rxjs.operators));
+}(this, function (exports, core, store, rxjs, operators) { 'use strict';
 
     var StoreDevtoolsConfig = /** @class */ (function () {
         function StoreDevtoolsConfig() {
@@ -1067,5 +1067,5 @@
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=store-devtools.umd.js.map

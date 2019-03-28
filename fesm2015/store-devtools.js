@@ -1,16 +1,16 @@
 /**
- * @license NgRx 7.2.0+36.sha-a7e6303
+ * @license NgRx 7.2.0+37.sha-4bdb66e
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
 import { InjectionToken, Injectable, Inject, ErrorHandler, NgModule } from '@angular/core';
-import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, ReducerObservable, ScannedActionsSubject, ReducerManagerDispatcher, StateObservable } from '@ngrx/store';
-import { empty, of, Observable, merge, queueScheduler, ReplaySubject } from 'rxjs';
-import { filter, map, share, switchMap, takeUntil, concatMap, debounceTime, timeout, catchError, take, observeOn, scan, skip, withLatestFrom } from 'rxjs/operators';
+import { ActionsSubject, UPDATE, INIT, ReducerObservable, ScannedActionsSubject, INITIAL_STATE, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
+import { empty, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
+import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class StoreDevtoolsConfig {
 }
@@ -82,7 +82,7 @@ function createConfig(_options) {
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const PERFORM_ACTION = 'PERFORM_ACTION';
@@ -219,7 +219,7 @@ class PauseRecording {
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /**
  * @param {?} first
@@ -227,7 +227,11 @@ class PauseRecording {
  * @return {?}
  */
 function difference(first, second) {
-    return first.filter(item => second.indexOf(item) < 0);
+    return first.filter((/**
+     * @param {?} item
+     * @return {?}
+     */
+    item => second.indexOf(item) < 0));
 }
 /**
  * Provides an app's view into the state of the lifted store.
@@ -262,12 +266,17 @@ function liftAction(action) {
  * @return {?}
  */
 function sanitizeActions(actionSanitizer, actions) {
-    return Object.keys(actions).reduce((sanitizedActions, actionIdx) => {
+    return Object.keys(actions).reduce((/**
+     * @param {?} sanitizedActions
+     * @param {?} actionIdx
+     * @return {?}
+     */
+    (sanitizedActions, actionIdx) => {
         /** @type {?} */
         const idx = Number(actionIdx);
         sanitizedActions[idx] = sanitizeAction(actionSanitizer, actions[idx], idx);
         return sanitizedActions;
-    }, /** @type {?} */ ({}));
+    }), (/** @type {?} */ ({})));
 }
 /**
  * Sanitizes given action with given function.
@@ -286,10 +295,15 @@ function sanitizeAction(actionSanitizer, action, actionIdx) {
  * @return {?}
  */
 function sanitizeStates(stateSanitizer, states) {
-    return states.map((computedState, idx) => ({
+    return states.map((/**
+     * @param {?} computedState
+     * @param {?} idx
+     * @return {?}
+     */
+    (computedState, idx) => ({
         state: sanitizeState(stateSanitizer, computedState.state, idx),
         error: computedState.error,
-    }));
+    })));
 }
 /**
  * Sanitizes given state with given function.
@@ -324,7 +338,12 @@ function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
     const filteredActionsById = {};
     /** @type {?} */
     const filteredComputedStates = [];
-    liftedState.stagedActionIds.forEach((id, idx) => {
+    liftedState.stagedActionIds.forEach((/**
+     * @param {?} id
+     * @param {?} idx
+     * @return {?}
+     */
+    (id, idx) => {
         /** @type {?} */
         const liftedAction = liftedState.actionsById[id];
         if (!liftedAction)
@@ -336,7 +355,7 @@ function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
         filteredActionsById[id] = liftedAction;
         filteredStagedActionIds.push(id);
         filteredComputedStates.push(liftedState.computedStates[idx]);
-    });
+    }));
     return Object.assign({}, liftedState, { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
 }
 /**
@@ -360,7 +379,7 @@ function isActionFiltered(state, action, predicate, whitelist, blacklist) {
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class DevtoolsDispatcher extends ActionsSubject {
 }
@@ -370,7 +389,7 @@ DevtoolsDispatcher.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const ExtensionActionTypes = {
@@ -433,46 +452,87 @@ class DevtoolsExtension {
             const sanitizedAction = this.config.actionSanitizer
                 ? sanitizeAction(this.config.actionSanitizer, action, state.nextActionId)
                 : action;
-            this.sendToReduxDevtools(() => this.extensionConnection.send(sanitizedAction, sanitizedState));
+            this.sendToReduxDevtools((/**
+             * @return {?}
+             */
+            () => this.extensionConnection.send(sanitizedAction, sanitizedState)));
         }
         else {
+            // Requires full state update
             /** @type {?} */
             const sanitizedLiftedState = Object.assign({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                     ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                     : state.actionsById, computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
                     : state.computedStates });
-            this.sendToReduxDevtools(() => this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config)));
+            this.sendToReduxDevtools((/**
+             * @return {?}
+             */
+            () => this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config))));
         }
     }
     /**
+     * @private
      * @return {?}
      */
     createChangesObservable() {
         if (!this.devtoolsExtension) {
             return empty();
         }
-        return new Observable(subscriber => {
+        return new Observable((/**
+         * @param {?} subscriber
+         * @return {?}
+         */
+        subscriber => {
             /** @type {?} */
             const connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.config));
             this.extensionConnection = connection;
             connection.init();
-            connection.subscribe((change) => subscriber.next(change));
+            connection.subscribe((/**
+             * @param {?} change
+             * @return {?}
+             */
+            (change) => subscriber.next(change)));
             return connection.unsubscribe;
-        });
+        }));
     }
     /**
+     * @private
      * @return {?}
      */
     createActionStreams() {
+        // Listens to all changes
         /** @type {?} */
         const changes$ = this.createChangesObservable().pipe(share());
+        // Listen for the start action
         /** @type {?} */
-        const start$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.START));
+        const start$ = changes$.pipe(filter((/**
+         * @param {?} change
+         * @return {?}
+         */
+        (change) => change.type === ExtensionActionTypes.START)));
+        // Listen for the stop action
         /** @type {?} */
-        const stop$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.STOP));
+        const stop$ = changes$.pipe(filter((/**
+         * @param {?} change
+         * @return {?}
+         */
+        (change) => change.type === ExtensionActionTypes.STOP)));
+        // Listen for lifted actions
         /** @type {?} */
-        const liftedActions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.DISPATCH), map(change => this.unwrapAction(change.payload)), concatMap((action) => {
+        const liftedActions$ = changes$.pipe(filter((/**
+         * @param {?} change
+         * @return {?}
+         */
+        change => change.type === ExtensionActionTypes.DISPATCH)), map((/**
+         * @param {?} change
+         * @return {?}
+         */
+        change => this.unwrapAction(change.payload))), concatMap((/**
+         * @param {?} action
+         * @return {?}
+         */
+        (action) => {
             if (action.type === IMPORT_STATE) {
                 // State imports may happen in two situations:
                 // 1. Explicitly by user
@@ -482,24 +542,50 @@ class DevtoolsExtension {
                 // lazy loaded reducers time to instantiate.
                 // As soon as there is no UPDATE action within 1 second,
                 // it is assumed that all reducers are loaded.
-                return this.dispatcher.pipe(filter(action => action.type === UPDATE), timeout(1000), debounceTime(1000), map(() => action), catchError(() => of(action)), take(1));
+                return this.dispatcher.pipe(filter((/**
+                 * @param {?} action
+                 * @return {?}
+                 */
+                action => action.type === UPDATE)), timeout(1000), debounceTime(1000), map((/**
+                 * @return {?}
+                 */
+                () => action)), catchError((/**
+                 * @return {?}
+                 */
+                () => of(action))), take(1));
             }
             else {
                 return of(action);
             }
-        }));
+        })));
+        // Listen for unlifted actions
         /** @type {?} */
-        const actions$ = changes$.pipe(filter(change => change.type === ExtensionActionTypes.ACTION), map(change => this.unwrapAction(change.payload)));
+        const actions$ = changes$.pipe(filter((/**
+         * @param {?} change
+         * @return {?}
+         */
+        change => change.type === ExtensionActionTypes.ACTION)), map((/**
+         * @param {?} change
+         * @return {?}
+         */
+        change => this.unwrapAction(change.payload))));
         /** @type {?} */
         const actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
         /** @type {?} */
         const liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
         this.start$ = start$.pipe(takeUntil(stop$));
         // Only take the action sources between the start/stop events
-        this.actions$ = this.start$.pipe(switchMap(() => actionsUntilStop$));
-        this.liftedActions$ = this.start$.pipe(switchMap(() => liftedUntilStop$));
+        this.actions$ = this.start$.pipe(switchMap((/**
+         * @return {?}
+         */
+        () => actionsUntilStop$)));
+        this.liftedActions$ = this.start$.pipe(switchMap((/**
+         * @return {?}
+         */
+        () => liftedUntilStop$)));
     }
     /**
+     * @private
      * @param {?} action
      * @return {?}
      */
@@ -507,6 +593,7 @@ class DevtoolsExtension {
         return typeof action === 'string' ? eval(`(${action})`) : action;
     }
     /**
+     * @private
      * @param {?} config
      * @return {?}
      */
@@ -523,6 +610,7 @@ class DevtoolsExtension {
         return extensionOptions;
     }
     /**
+     * @private
      * @param {?} send
      * @return {?}
      */
@@ -547,12 +635,12 @@ DevtoolsExtension.ctorParameters = () => [
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const INIT_ACTION = { type: INIT };
 /** @type {?} */
-const RECOMPUTE = /** @type {?} */ ('@ngrx/store-devtools/recompute');
+const RECOMPUTE = (/** @type {?} */ ('@ngrx/store-devtools/recompute'));
 /** @type {?} */
 const RECOMPUTE_ACTION = { type: RECOMPUTE };
 /**
@@ -609,6 +697,8 @@ function recomputeStates(computedStates, minInvalidatedStateIndex, reducer, comm
     }
     /** @type {?} */
     const nextComputedStates = computedStates.slice(0, minInvalidatedStateIndex);
+    // If the recording is paused, recompute all states up until the pause state,
+    // else recompute all states.
     /** @type {?} */
     const lastIncludedActionId = stagedActionIds.length - (isPaused ? 1 : 0);
     for (let i = minInvalidatedStateIndex; i < lastIncludedActionId; i++) {
@@ -667,9 +757,18 @@ function liftInitialState(initialCommittedState, monitorReducer) {
  */
 function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler, monitorReducer, options = {}) {
     /**
-       * Manages how the history actions modify the history state.
-       */
-    return (reducer) => (liftedState, liftedAction) => {
+     * Manages how the history actions modify the history state.
+     */
+    return (/**
+     * @param {?} reducer
+     * @return {?}
+     */
+    (reducer) => (/**
+     * @param {?} liftedState
+     * @param {?} liftedAction
+     * @return {?}
+     */
+    (liftedState, liftedAction) => {
         let { monitorState, actionsById, nextActionId, stagedActionIds, skippedActionIds, committedState, currentStateIndex, computedStates, isLocked, isPaused, } = liftedState || initialLiftedState;
         if (!liftedState) {
             // Prevent mutating initialLiftedState
@@ -680,6 +779,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
          * @return {?}
          */
         function commitExcessActions(n) {
+            // Auto-commits n-number of excess actions.
             /** @type {?} */
             let excess = n;
             /** @type {?} */
@@ -695,7 +795,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                     delete actionsById[idsToDelete[i]];
                 }
             }
-            skippedActionIds = skippedActionIds.filter(id => idsToDelete.indexOf(id) === -1);
+            skippedActionIds = skippedActionIds.filter((/**
+             * @param {?} id
+             * @return {?}
+             */
+            id => idsToDelete.indexOf(id) === -1));
             stagedActionIds = [0, ...stagedActionIds.slice(excess + 1)];
             committedState = computedStates[excess].state;
             computedStates = computedStates.slice(excess);
@@ -716,6 +820,9 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
             currentStateIndex = 0;
             computedStates = [];
         }
+        // By default, aggressively recompute every state whatever happens.
+        // This has O(n) performance, so we'll override this to a sensible
+        // value whenever we feel like we don't have to recompute the states.
         /** @type {?} */
         let minInvalidatedStateIndex = 0;
         switch (liftedAction.type) {
@@ -774,6 +881,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case TOGGLE_ACTION: {
+                // Toggle whether an action with given ID is skipped.
+                // Being skipped means it is a no-op during the computation.
                 const { id: actionId } = liftedAction;
                 /** @type {?} */
                 const index = skippedActionIds.indexOf(actionId);
@@ -781,13 +890,19 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                     skippedActionIds = [actionId, ...skippedActionIds];
                 }
                 else {
-                    skippedActionIds = skippedActionIds.filter(id => id !== actionId);
+                    skippedActionIds = skippedActionIds.filter((/**
+                     * @param {?} id
+                     * @return {?}
+                     */
+                    id => id !== actionId));
                 }
                 // Optimization: we know history before this action hasn't changed
                 minInvalidatedStateIndex = stagedActionIds.indexOf(actionId);
                 break;
             }
             case SET_ACTIONS_ACTIVE: {
+                // Toggle whether an action with given ID is skipped.
+                // Being skipped means it is a no-op during the computation.
                 const { start, end, active } = liftedAction;
                 /** @type {?} */
                 const actionIds = [];
@@ -812,6 +927,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 break;
             }
             case JUMP_TO_ACTION: {
+                // Jumps to a corresponding state to a specific action.
+                // Useful when filtering actions.
                 /** @type {?} */
                 const index = stagedActionIds.indexOf(liftedAction.actionId);
                 if (index !== -1)
@@ -834,6 +951,10 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 if (isPaused ||
                     (liftedState &&
                         isActionFiltered(liftedState.computedStates[currentStateIndex], liftedAction, options.predicate, options.actionsWhitelist, options.actionsBlacklist))) {
+                    // If recording is paused or if the action should be ignored, overwrite the last state
+                    // (corresponds to the pause action) and keep everything else as is.
+                    // This way, the app gets the new current state while the devtools
+                    // do not record another action.
                     /** @type {?} */
                     const lastState = computedStates[computedStates.length - 1];
                     computedStates = [
@@ -891,7 +1012,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
             }
             case UPDATE: {
                 /** @type {?} */
-                const stateHasErrors = computedStates.filter(state => state.error).length > 0;
+                const stateHasErrors = computedStates.filter((/**
+                 * @param {?} state
+                 * @return {?}
+                 */
+                state => state.error)).length > 0;
                 if (stateHasErrors) {
                     // Recompute all states
                     minInvalidatedStateIndex = 0;
@@ -910,6 +1035,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                         if (currentStateIndex === stagedActionIds.length - 1) {
                             currentStateIndex++;
                         }
+                        // Add a new action to only recompute state
                         /** @type {?} */
                         const actionId = nextActionId++;
                         actionsById[actionId] = new PerformAction(liftedAction, +Date.now());
@@ -918,7 +1044,11 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                         computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     }
                     // Recompute state history with latest reducer and update action
-                    computedStates = computedStates.map(cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, RECOMPUTE_ACTION) })));
+                    computedStates = computedStates.map((/**
+                     * @param {?} cmp
+                     * @return {?}
+                     */
+                    cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, RECOMPUTE_ACTION) }))));
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -949,12 +1079,12 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
             isLocked,
             isPaused,
         };
-    };
+    }));
 }
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class StoreDevtools {
     /**
@@ -980,7 +1110,12 @@ class StoreDevtools {
         const liftedStateSubject = new ReplaySubject(1);
         /** @type {?} */
         const liftedStateSubscription = liftedAction$
-            .pipe(withLatestFrom(liftedReducer$), scan(({ state: liftedState }, [action, reducer]) => {
+            .pipe(withLatestFrom(liftedReducer$), scan((/**
+         * @param {?} __0
+         * @param {?} __1
+         * @return {?}
+         */
+        ({ state: liftedState }, [action, reducer]) => {
             /** @type {?} */
             let reducedLiftedState = reducer(liftedState, action);
             // On full state update
@@ -991,21 +1126,28 @@ class StoreDevtools {
             // Extension should be sent the sanitized lifted state
             extension.notify(action, reducedLiftedState);
             return { state: reducedLiftedState, action };
-        }, { state: liftedInitialState, action: /** @type {?} */ (null) }))
-            .subscribe(({ state, action }) => {
+        }), { state: liftedInitialState, action: (/** @type {?} */ (null)) }))
+            .subscribe((/**
+         * @param {?} __0
+         * @return {?}
+         */
+        ({ state, action }) => {
             liftedStateSubject.next(state);
             if (action.type === PERFORM_ACTION) {
                 /** @type {?} */
-                const unliftedAction = (/** @type {?} */ (action)).action;
+                const unliftedAction = ((/** @type {?} */ (action))).action;
                 scannedActions.next(unliftedAction);
             }
-        });
+        }));
         /** @type {?} */
-        const extensionStartSubscription = extension.start$.subscribe(() => {
+        const extensionStartSubscription = extension.start$.subscribe((/**
+         * @return {?}
+         */
+        () => {
             this.refresh();
-        });
+        }));
         /** @type {?} */
-        const liftedState$ = /** @type {?} */ (liftedStateSubject.asObservable());
+        const liftedState$ = (/** @type {?} */ (liftedStateSubject.asObservable()));
         /** @type {?} */
         const state$ = liftedState$.pipe(map(unliftState));
         this.extensionStartSubscription = extensionStartSubscription;
@@ -1134,7 +1276,7 @@ StoreDevtools.ctorParameters = () => [
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
@@ -1153,8 +1295,8 @@ function createReduxDevtoolsExtension() {
     /** @type {?} */
     const extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
     if (typeof window === 'object' &&
-        typeof (/** @type {?} */ (window))[extensionKey] !== 'undefined') {
-        return (/** @type {?} */ (window))[extensionKey];
+        typeof ((/** @type {?} */ (window)))[extensionKey] !== 'undefined') {
+        return ((/** @type {?} */ (window)))[extensionKey];
     }
     else {
         return null;
@@ -1216,17 +1358,17 @@ StoreDevtoolsModule.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
