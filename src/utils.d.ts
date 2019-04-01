@@ -35,8 +35,8 @@ export declare function shouldFilterActions(config: StoreDevtoolsConfig): string
 /**
  * Return a full filtered lifted state
  */
-export declare function filterLiftedState(liftedState: LiftedState, predicate?: Predicate, whitelist?: string[], blacklist?: string[]): LiftedState;
+export declare function filterLiftedState(liftedState: LiftedState, predicate?: Predicate, safelist?: string[], blocklist?: string[]): LiftedState;
 /**
  * Return true is the action should be ignored
  */
-export declare function isActionFiltered(state: any, action: LiftedAction, predicate?: Predicate, whitelist?: string[], blacklist?: string[]): true | RegExpMatchArray | null | undefined;
+export declare function isActionFiltered(state: any, action: LiftedAction, predicate?: Predicate, safelist?: string[], blockedlist?: string[]): true | RegExpMatchArray | null | undefined;

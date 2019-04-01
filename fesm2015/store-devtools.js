@@ -1,5 +1,5 @@
 /**
- * @license NgRx 7.4.0+1.sha-78e237c
+ * @license NgRx 7.4.0+13.sha-7f42917
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -241,7 +241,7 @@ function difference(first, second) {
 function unliftState(liftedState) {
     const { computedStates, currentStateIndex } = liftedState;
     // At start up NgRx dispatches init actions,
-    // When these init actions are being filtered out by the predicate or black/white list options
+    // When these init actions are being filtered out by the predicate or safe/block list options
     // we don't have a complete computed states yet.
     // At this point it could happen that we're out of bounds, when this happens we fall back to the last known state
     if (currentStateIndex >= computedStates.length) {
@@ -321,17 +321,17 @@ function sanitizeState(stateSanitizer, state, stateIdx) {
  * @return {?}
  */
 function shouldFilterActions(config) {
-    return config.predicate || config.actionsWhitelist || config.actionsBlacklist;
+    return config.predicate || config.actionsSafelist || config.actionsBlocklist;
 }
 /**
  * Return a full filtered lifted state
  * @param {?} liftedState
  * @param {?=} predicate
- * @param {?=} whitelist
- * @param {?=} blacklist
+ * @param {?=} safelist
+ * @param {?=} blocklist
  * @return {?}
  */
-function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
+function filterLiftedState(liftedState, predicate, safelist, blocklist) {
     /** @type {?} */
     const filteredStagedActionIds = [];
     /** @type {?} */
@@ -349,7 +349,7 @@ function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
         if (!liftedAction)
             return;
         if (idx &&
-            isActionFiltered(liftedState.computedStates[idx], liftedAction, predicate, whitelist, blacklist)) {
+            isActionFiltered(liftedState.computedStates[idx], liftedAction, predicate, safelist, blocklist)) {
             return;
         }
         filteredActionsById[id] = liftedAction;
@@ -363,18 +363,18 @@ function filterLiftedState(liftedState, predicate, whitelist, blacklist) {
  * @param {?} state
  * @param {?} action
  * @param {?=} predicate
- * @param {?=} whitelist
- * @param {?=} blacklist
+ * @param {?=} safelist
+ * @param {?=} blockedlist
  * @return {?}
  */
-function isActionFiltered(state, action, predicate, whitelist, blacklist) {
+function isActionFiltered(state, action, predicate, safelist, blockedlist) {
     /** @type {?} */
     const predicateMatch = predicate && !predicate(state, action.action);
     /** @type {?} */
-    const whitelistMatch = whitelist && !action.action.type.match(whitelist.join('|'));
+    const safelistMatch = safelist && !action.action.type.match(safelist.join('|'));
     /** @type {?} */
-    const blacklistMatch = blacklist && action.action.type.match(blacklist.join('|'));
-    return predicateMatch || whitelistMatch || blacklistMatch;
+    const blocklistMatch = blockedlist && action.action.type.match(blockedlist.join('|'));
+    return predicateMatch || safelistMatch || blocklistMatch;
 }
 
 /**
@@ -441,7 +441,7 @@ class DevtoolsExtension {
             /** @type {?} */
             const currentState = unliftState(state);
             if (shouldFilterActions(this.config) &&
-                isActionFiltered(currentState, action, this.config.predicate, this.config.actionsWhitelist, this.config.actionsBlacklist)) {
+                isActionFiltered(currentState, action, this.config.predicate, this.config.actionsSafelist, this.config.actionsBlocklist)) {
                 return;
             }
             /** @type {?} */
@@ -950,7 +950,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                 }
                 if (isPaused ||
                     (liftedState &&
-                        isActionFiltered(liftedState.computedStates[currentStateIndex], liftedAction, options.predicate, options.actionsWhitelist, options.actionsBlacklist))) {
+                        isActionFiltered(liftedState.computedStates[currentStateIndex], liftedAction, options.predicate, options.actionsSafelist, options.actionsBlocklist))) {
                     // If recording is paused or if the action should be ignored, overwrite the last state
                     // (corresponds to the pause action) and keep everything else as is.
                     // This way, the app gets the new current state while the devtools
@@ -1121,7 +1121,7 @@ class StoreDevtools {
             // On full state update
             // If we have actions filters, we must filter completly our lifted state to be sync with the extension
             if (action.type !== PERFORM_ACTION && shouldFilterActions(config)) {
-                reducedLiftedState = filterLiftedState(reducedLiftedState, config.predicate, config.actionsWhitelist, config.actionsBlacklist);
+                reducedLiftedState = filterLiftedState(reducedLiftedState, config.predicate, config.actionsSafelist, config.actionsBlocklist);
             }
             // Extension should be sent the sanitized lifted state
             extension.notify(action, reducedLiftedState);

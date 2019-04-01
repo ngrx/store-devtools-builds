@@ -19,8 +19,8 @@ export declare class StoreDevtoolsConfig {
     serialize?: boolean | SerializationOptions;
     logOnly?: boolean;
     features?: any;
-    actionsBlacklist?: string[];
-    actionsWhitelist?: string[];
+    actionsBlocklist?: string[];
+    actionsSafelist?: string[];
     predicate?: Predicate;
 }
 export declare const STORE_DEVTOOLS_CONFIG: InjectionToken<StoreDevtoolsConfig>;
