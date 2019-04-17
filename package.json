@@ -1,6 +1,6 @@
 {
   "name": "@ngrx/store-devtools",
-  "version": "7.4.0+49.sha-b52b573",
+  "version": "7.4.0+50.sha-876f80a",
   "description": "Developer tools for @ngrx/store",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/ngrx/platform#readme",
   "peerDependencies": {
-    "@ngrx/store": "7.4.0+49.sha-b52b573",
+    "@ngrx/store": "7.4.0+50.sha-876f80a",
     "rxjs": "^6.4.0"
   },
   "schematics": "./schematics/collection.json",
