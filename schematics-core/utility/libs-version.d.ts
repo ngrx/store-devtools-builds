@@ -1,2 +1,2 @@
 /// <amd-module name="@ngrx/store-devtools/schematics-core/utility/libs-version" />
-export declare const platformVersion = "^8.0.0-beta.0";
+export declare const platformVersion = "^8.0.0";
