@@ -1,5 +1,5 @@
 /**
- * @license NgRx 8.5.1+2.sha-2fdfe17
+ * @license NgRx 8.5.1+3.sha-e888977
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -371,10 +371,29 @@ function isActionFiltered(state, action, predicate, safelist, blockedlist) {
     /** @type {?} */
     const predicateMatch = predicate && !predicate(state, action.action);
     /** @type {?} */
-    const safelistMatch = safelist && !action.action.type.match(safelist.join('|'));
+    const safelistMatch = safelist &&
+        !action.action.type.match(safelist.map((/**
+         * @param {?} s
+         * @return {?}
+         */
+        s => escapeRegExp(s))).join('|'));
     /** @type {?} */
-    const blocklistMatch = blockedlist && action.action.type.match(blockedlist.join('|'));
+    const blocklistMatch = blockedlist &&
+        action.action.type.match(blockedlist.map((/**
+         * @param {?} s
+         * @return {?}
+         */
+        s => escapeRegExp(s))).join('|'));
     return predicateMatch || safelistMatch || blocklistMatch;
+}
+/**
+ * Return string with escaped RegExp special characters
+ * https://stackoverflow.com/a/6969486/1337347
+ * @param {?} s
+ * @return {?}
+ */
+function escapeRegExp(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**

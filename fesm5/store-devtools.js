@@ -1,5 +1,5 @@
 /**
- * @license NgRx 8.5.1+2.sha-2fdfe17
+ * @license NgRx 8.5.1+3.sha-e888977
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -245,9 +245,18 @@ function filterLiftedState(liftedState, predicate, safelist, blocklist) {
  */
 function isActionFiltered(state, action, predicate, safelist, blockedlist) {
     var predicateMatch = predicate && !predicate(state, action.action);
-    var safelistMatch = safelist && !action.action.type.match(safelist.join('|'));
-    var blocklistMatch = blockedlist && action.action.type.match(blockedlist.join('|'));
+    var safelistMatch = safelist &&
+        !action.action.type.match(safelist.map(function (s) { return escapeRegExp(s); }).join('|'));
+    var blocklistMatch = blockedlist &&
+        action.action.type.match(blockedlist.map(function (s) { return escapeRegExp(s); }).join('|'));
     return predicateMatch || safelistMatch || blocklistMatch;
+}
+/**
+ * Return string with escaped RegExp special characters
+ * https://stackoverflow.com/a/6969486/1337347
+ */
+function escapeRegExp(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 var DevtoolsDispatcher = /** @class */ (function (_super) {
