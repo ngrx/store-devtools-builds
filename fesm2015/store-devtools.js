@@ -1,5 +1,5 @@
 /**
- * @license NgRx 8.5.2+1.sha-cf8b038
+ * @license NgRx 8.5.2+2.sha-dc97342
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -40,7 +40,7 @@ function createConfig(_options) {
         name: DEFAULT_NAME,
         serialize: false,
         logOnly: false,
-        // Add all features explicitely. This prevent buggy behavior for
+        // Add all features explicitly. This prevent buggy behavior for
         // options like "lock" which might otherwise not show up.
         features: {
             pause: true,
@@ -221,6 +221,16 @@ class PauseRecording {
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
+class DevtoolsDispatcher extends ActionsSubject {
+}
+DevtoolsDispatcher.decorators = [
+    { type: Injectable }
+];
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
 /**
  * @param {?} first
  * @param {?} second
@@ -395,16 +405,6 @@ function isActionFiltered(state, action, predicate, safelist, blockedlist) {
 function escapeRegExp(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
- */
-class DevtoolsDispatcher extends ActionsSubject {
-}
-DevtoolsDispatcher.decorators = [
-    { type: Injectable }
-];
 
 /**
  * @fileoverview added by tsickle
@@ -1138,7 +1138,7 @@ class StoreDevtools {
             /** @type {?} */
             let reducedLiftedState = reducer(liftedState, action);
             // On full state update
-            // If we have actions filters, we must filter completly our lifted state to be sync with the extension
+            // If we have actions filters, we must filter completely our lifted state to be sync with the extension
             if (action.type !== PERFORM_ACTION && shouldFilterActions(config)) {
                 reducedLiftedState = filterLiftedState(reducedLiftedState, config.predicate, config.actionsSafelist, config.actionsBlocklist);
             }

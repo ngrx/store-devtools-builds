@@ -1,8 +1,8 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SerializationOptions, StoreDevtoolsConfig } from './config';
-import { LiftedAction, LiftedState } from './reducer';
 import { DevtoolsDispatcher } from './devtools-dispatcher';
+import { LiftedAction, LiftedState } from './reducer';
 export declare const ExtensionActionTypes: {
     START: string;
     DISPATCH: string;

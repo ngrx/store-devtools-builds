@@ -1,5 +1,5 @@
 /**
- * @license NgRx 8.5.2+1.sha-cf8b038
+ * @license NgRx 8.5.2+2.sha-dc97342
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -29,7 +29,7 @@
             name: DEFAULT_NAME,
             serialize: false,
             logOnly: false,
-            // Add all features explicitely. This prevent buggy behavior for
+            // Add all features explicitly. This prevent buggy behavior for
             // options like "lock" which might otherwise not show up.
             features: {
                 pause: true,
@@ -157,6 +157,17 @@
         return PauseRecording;
     }());
 
+    var DevtoolsDispatcher = /** @class */ (function (_super) {
+        tslib_1.__extends(DevtoolsDispatcher, _super);
+        function DevtoolsDispatcher() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        DevtoolsDispatcher = tslib_1.__decorate([
+            core.Injectable()
+        ], DevtoolsDispatcher);
+        return DevtoolsDispatcher;
+    }(store.ActionsSubject));
+
     function difference(first, second) {
         return first.filter(function (item) { return second.indexOf(item) < 0; });
     }
@@ -258,17 +269,6 @@
     function escapeRegExp(s) {
         return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
-
-    var DevtoolsDispatcher = /** @class */ (function (_super) {
-        tslib_1.__extends(DevtoolsDispatcher, _super);
-        function DevtoolsDispatcher() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        DevtoolsDispatcher = tslib_1.__decorate([
-            core.Injectable()
-        ], DevtoolsDispatcher);
-        return DevtoolsDispatcher;
-    }(store.ActionsSubject));
 
     var ExtensionActionTypes = {
         START: 'START',
@@ -779,7 +779,7 @@
                 var _c = tslib_1.__read(_b, 2), action = _c[0], reducer = _c[1];
                 var reducedLiftedState = reducer(liftedState, action);
                 // On full state update
-                // If we have actions filters, we must filter completly our lifted state to be sync with the extension
+                // If we have actions filters, we must filter completely our lifted state to be sync with the extension
                 if (action.type !== PERFORM_ACTION && shouldFilterActions(config)) {
                     reducedLiftedState = filterLiftedState(reducedLiftedState, config.predicate, config.actionsSafelist, config.actionsBlocklist);
                 }
