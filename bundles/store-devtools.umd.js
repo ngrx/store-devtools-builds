@@ -1,12 +1,12 @@
 /**
- * @license NgRx 8.5.2+4.sha-e870514
+ * @license NgRx 8.5.2+6.sha-98defed
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('tslib'), require('@angular/core'), require('@ngrx/store'), require('rxjs'), require('rxjs/operators')) :
     typeof define === 'function' && define.amd ? define('@ngrx/store-devtools', ['exports', 'tslib', '@angular/core', '@ngrx/store', 'rxjs', 'rxjs/operators'], factory) :
-    (global = global || self, factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}), global.tslib, global.ng.core, global['@ngrx/store'], global.rxjs, global.rxjs.operators));
+    (global = global || self, factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}), global.tslib, global.ng.core, global.ngrx.store, global.rxjs, global.rxjs.operators));
 }(this, function (exports, tslib_1, core, store, rxjs, operators) { 'use strict';
 
     var StoreDevtoolsConfig = /** @class */ (function () {
