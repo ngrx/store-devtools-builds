@@ -1,4 +1,4 @@
-import * as tslib_1 from "tslib";
+import { __decorate } from "tslib";
 import { InjectionToken, NgModule } from '@angular/core';
 import { ReducerManagerDispatcher, StateObservable } from '@ngrx/store';
 import { INITIAL_OPTIONS, STORE_DEVTOOLS_CONFIG, noMonitor, createConfig, } from './config';
@@ -65,7 +65,7 @@ var StoreDevtoolsModule = /** @class */ (function () {
         };
     };
     var StoreDevtoolsModule_1;
-    StoreDevtoolsModule = StoreDevtoolsModule_1 = tslib_1.__decorate([
+    StoreDevtoolsModule = StoreDevtoolsModule_1 = __decorate([
         NgModule({})
     ], StoreDevtoolsModule);
     return StoreDevtoolsModule;

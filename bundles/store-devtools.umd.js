@@ -1,5 +1,5 @@
 /**
- * @license NgRx 8.6.0+3.sha-fe6bfa7
+ * @license NgRx 8.6.0+4.sha-b146af5
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -7,7 +7,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('tslib'), require('@angular/core'), require('@ngrx/store'), require('rxjs'), require('rxjs/operators')) :
     typeof define === 'function' && define.amd ? define('@ngrx/store-devtools', ['exports', 'tslib', '@angular/core', '@ngrx/store', 'rxjs', 'rxjs/operators'], factory) :
     (global = global || self, factory((global.ngrx = global.ngrx || {}, global.ngrx.storeDevtools = {}), global.tslib, global.ng.core, global.ngrx.store, global.rxjs, global.rxjs.operators));
-}(this, function (exports, tslib_1, core, store, rxjs, operators) { 'use strict';
+}(this, (function (exports, tslib, core, store, rxjs, operators) { 'use strict';
 
     var StoreDevtoolsConfig = /** @class */ (function () {
         function StoreDevtoolsConfig() {
@@ -121,6 +121,16 @@
         }
         return ToggleAction;
     }());
+    var SetActionsActive = /** @class */ (function () {
+        function SetActionsActive(start, end, active) {
+            if (active === void 0) { active = true; }
+            this.start = start;
+            this.end = end;
+            this.active = active;
+            this.type = SET_ACTIONS_ACTIVE;
+        }
+        return SetActionsActive;
+    }());
     var JumpToState = /** @class */ (function () {
         function JumpToState(index) {
             this.index = index;
@@ -158,11 +168,11 @@
     }());
 
     var DevtoolsDispatcher = /** @class */ (function (_super) {
-        tslib_1.__extends(DevtoolsDispatcher, _super);
+        tslib.__extends(DevtoolsDispatcher, _super);
         function DevtoolsDispatcher() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        DevtoolsDispatcher = tslib_1.__decorate([
+        DevtoolsDispatcher = tslib.__decorate([
             core.Injectable()
         ], DevtoolsDispatcher);
         return DevtoolsDispatcher;
@@ -187,6 +197,9 @@
         var state = computedStates[currentStateIndex].state;
         return state;
     }
+    function unliftAction(liftedState) {
+        return liftedState.actionsById[liftedState.nextActionId - 1];
+    }
     /**
      * Lifts an app's action into an action on the lifted store.
      */
@@ -207,7 +220,7 @@
      * Sanitizes given action with given function.
      */
     function sanitizeAction(actionSanitizer, action, actionIdx) {
-        return tslib_1.__assign({}, action, { action: actionSanitizer(action.action, actionIdx) });
+        return tslib.__assign(tslib.__assign({}, action), { action: actionSanitizer(action.action, actionIdx) });
     }
     /**
      * Sanitizes given states with given function.
@@ -249,7 +262,7 @@
             filteredStagedActionIds.push(id);
             filteredComputedStates.push(liftedState.computedStates[idx]);
         });
-        return tslib_1.__assign({}, liftedState, { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
+        return tslib.__assign(tslib.__assign({}, liftedState), { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
     }
     /**
      * Return true is the action should be ignored
@@ -323,7 +336,7 @@
             }
             else {
                 // Requires full state update
-                var sanitizedLiftedState_1 = tslib_1.__assign({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
+                var sanitizedLiftedState_1 = tslib.__assign(tslib.__assign({}, state), { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                         ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                         : state.actionsById, computedStates: this.config.stateSanitizer
                         ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
@@ -402,11 +415,11 @@
                 console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
             }
         };
-        DevtoolsExtension = tslib_1.__decorate([
+        DevtoolsExtension = tslib.__decorate([
             core.Injectable(),
-            tslib_1.__param(0, core.Inject(REDUX_DEVTOOLS_EXTENSION)),
-            tslib_1.__param(1, core.Inject(STORE_DEVTOOLS_CONFIG)),
-            tslib_1.__metadata("design:paramtypes", [Object, StoreDevtoolsConfig,
+            tslib.__param(0, core.Inject(REDUX_DEVTOOLS_EXTENSION)),
+            tslib.__param(1, core.Inject(STORE_DEVTOOLS_CONFIG)),
+            tslib.__metadata("design:paramtypes", [Object, StoreDevtoolsConfig,
                 DevtoolsDispatcher])
         ], DevtoolsExtension);
         return DevtoolsExtension;
@@ -517,7 +530,7 @@
                     }
                 }
                 skippedActionIds = skippedActionIds.filter(function (id) { return idsToDelete.indexOf(id) === -1; });
-                stagedActionIds = tslib_1.__spread([0], stagedActionIds.slice(excess + 1));
+                stagedActionIds = tslib.__spread([0], stagedActionIds.slice(excess + 1));
                 committedState = computedStates[excess].state;
                 computedStates = computedStates.slice(excess);
                 currentStateIndex =
@@ -550,7 +563,7 @@
                         // Add a pause action to signal the devtools-user the recording is paused.
                         // The corresponding state will be overwritten on each update to always contain
                         // the latest state (see Actions.PERFORM_ACTION).
-                        stagedActionIds = tslib_1.__spread(stagedActionIds, [nextActionId]);
+                        stagedActionIds = tslib.__spread(stagedActionIds, [nextActionId]);
                         actionsById[nextActionId] = new PerformAction({
                             type: '@ngrx/devtools/pause',
                         }, +Date.now());
@@ -599,7 +612,7 @@
                     var actionId_1 = liftedAction.id;
                     var index = skippedActionIds.indexOf(actionId_1);
                     if (index === -1) {
-                        skippedActionIds = tslib_1.__spread([actionId_1], skippedActionIds);
+                        skippedActionIds = tslib.__spread([actionId_1], skippedActionIds);
                     }
                     else {
                         skippedActionIds = skippedActionIds.filter(function (id) { return id !== actionId_1; });
@@ -619,7 +632,7 @@
                         skippedActionIds = difference(skippedActionIds, actionIds);
                     }
                     else {
-                        skippedActionIds = tslib_1.__spread(skippedActionIds, actionIds);
+                        skippedActionIds = tslib.__spread(skippedActionIds, actionIds);
                     }
                     // Optimization: we know history before this action hasn't changed
                     minInvalidatedStateIndex = stagedActionIds.indexOf(start);
@@ -662,7 +675,7 @@
                         // This way, the app gets the new current state while the devtools
                         // do not record another action.
                         var lastState = computedStates[computedStates.length - 1];
-                        computedStates = tslib_1.__spread(computedStates.slice(0, -1), [
+                        computedStates = tslib.__spread(computedStates.slice(0, -1), [
                             computeNextEntry(reducer, liftedAction.action, lastState.state, lastState.error, errorHandler),
                         ]);
                         minInvalidatedStateIndex = Infinity;
@@ -679,7 +692,7 @@
                     // Mutation! This is the hottest path, and we optimize on purpose.
                     // It is safe because we set a new key in a cache dictionary.
                     actionsById[actionId] = liftedAction;
-                    stagedActionIds = tslib_1.__spread(stagedActionIds, [actionId]);
+                    stagedActionIds = tslib.__spread(stagedActionIds, [actionId]);
                     // Optimization: we know that only the new action needs computing.
                     minInvalidatedStateIndex = stagedActionIds.length - 1;
                     break;
@@ -726,12 +739,12 @@
                             // Add a new action to only recompute state
                             var actionId = nextActionId++;
                             actionsById[actionId] = new PerformAction(liftedAction, +Date.now());
-                            stagedActionIds = tslib_1.__spread(stagedActionIds, [actionId]);
+                            stagedActionIds = tslib.__spread(stagedActionIds, [actionId]);
                             minInvalidatedStateIndex = stagedActionIds.length - 1;
                             computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                         }
                         // Recompute state history with latest reducer and update action
-                        computedStates = computedStates.map(function (cmp) { return (tslib_1.__assign({}, cmp, { state: reducer(cmp.state, RECOMPUTE_ACTION) })); });
+                        computedStates = computedStates.map(function (cmp) { return (tslib.__assign(tslib.__assign({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) })); });
                         currentStateIndex = stagedActionIds.length - 1;
                         if (options.maxAge && stagedActionIds.length > options.maxAge) {
                             commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -776,7 +789,7 @@
             var liftedStateSubscription = liftedAction$
                 .pipe(operators.withLatestFrom(liftedReducer$), operators.scan(function (_a, _b) {
                 var liftedState = _a.state;
-                var _c = tslib_1.__read(_b, 2), action = _c[0], reducer = _c[1];
+                var _c = tslib.__read(_b, 2), action = _c[0], reducer = _c[1];
                 var reducedLiftedState = reducer(liftedState, action);
                 // On full state update
                 // If we have actions filters, we must filter completely our lifted state to be sync with the extension
@@ -850,11 +863,11 @@
         StoreDevtools.prototype.pauseRecording = function (status) {
             this.dispatch(new PauseRecording(status));
         };
-        StoreDevtools = tslib_1.__decorate([
+        StoreDevtools = tslib.__decorate([
             core.Injectable(),
-            tslib_1.__param(6, core.Inject(store.INITIAL_STATE)),
-            tslib_1.__param(7, core.Inject(STORE_DEVTOOLS_CONFIG)),
-            tslib_1.__metadata("design:paramtypes", [DevtoolsDispatcher,
+            tslib.__param(6, core.Inject(store.INITIAL_STATE)),
+            tslib.__param(7, core.Inject(STORE_DEVTOOLS_CONFIG)),
+            tslib.__metadata("design:paramtypes", [DevtoolsDispatcher,
                 store.ActionsSubject,
                 store.ReducerObservable,
                 DevtoolsExtension,
@@ -924,7 +937,7 @@
             };
         };
         var StoreDevtoolsModule_1;
-        StoreDevtoolsModule = StoreDevtoolsModule_1 = tslib_1.__decorate([
+        StoreDevtoolsModule = StoreDevtoolsModule_1 = tslib.__decorate([
             core.NgModule({})
         ], StoreDevtoolsModule);
         return StoreDevtoolsModule;
@@ -940,23 +953,23 @@
      * Generated bundle index. Do not edit.
      */
 
-    exports.ɵngrx_modules_store_devtools_store_devtools_f = INITIAL_OPTIONS;
-    exports.ɵngrx_modules_store_devtools_store_devtools_e = STORE_DEVTOOLS_CONFIG;
-    exports.ɵngrx_modules_store_devtools_store_devtools_h = createConfig;
-    exports.ɵngrx_modules_store_devtools_store_devtools_g = noMonitor;
-    exports.ɵngrx_modules_store_devtools_store_devtools_k = DevtoolsDispatcher;
-    exports.ɵngrx_modules_store_devtools_store_devtools_j = DevtoolsExtension;
-    exports.ɵngrx_modules_store_devtools_store_devtools_i = REDUX_DEVTOOLS_EXTENSION;
+    exports.RECOMPUTE = RECOMPUTE;
+    exports.StoreDevtools = StoreDevtools;
+    exports.StoreDevtoolsConfig = StoreDevtoolsConfig;
+    exports.StoreDevtoolsModule = StoreDevtoolsModule;
     exports.ɵngrx_modules_store_devtools_store_devtools_a = IS_EXTENSION_OR_MONITOR_PRESENT;
     exports.ɵngrx_modules_store_devtools_store_devtools_b = createIsExtensionOrMonitorPresent;
     exports.ɵngrx_modules_store_devtools_store_devtools_c = createReduxDevtoolsExtension;
     exports.ɵngrx_modules_store_devtools_store_devtools_d = createStateObservable;
-    exports.StoreDevtoolsModule = StoreDevtoolsModule;
-    exports.RECOMPUTE = RECOMPUTE;
-    exports.StoreDevtools = StoreDevtools;
-    exports.StoreDevtoolsConfig = StoreDevtoolsConfig;
+    exports.ɵngrx_modules_store_devtools_store_devtools_e = STORE_DEVTOOLS_CONFIG;
+    exports.ɵngrx_modules_store_devtools_store_devtools_f = INITIAL_OPTIONS;
+    exports.ɵngrx_modules_store_devtools_store_devtools_g = noMonitor;
+    exports.ɵngrx_modules_store_devtools_store_devtools_h = createConfig;
+    exports.ɵngrx_modules_store_devtools_store_devtools_i = REDUX_DEVTOOLS_EXTENSION;
+    exports.ɵngrx_modules_store_devtools_store_devtools_j = DevtoolsExtension;
+    exports.ɵngrx_modules_store_devtools_store_devtools_k = DevtoolsDispatcher;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=store-devtools.umd.js.map

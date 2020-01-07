@@ -1,5 +1,5 @@
 /**
- * @license NgRx 8.6.0+3.sha-fe6bfa7
+ * @license NgRx 8.6.0+4.sha-b146af5
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -10,9 +10,60 @@ import { share, filter, map, concatMap, timeout, debounceTime, catchError, take,
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/config.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
+/**
+ * @record
+ */
+function DevToolsFeatureOptions() { }
+if (false) {
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.pause;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.lock;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.persist;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.export;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.import;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.jump;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.skip;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.reorder;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.dispatch;
+    /** @type {?|undefined} */
+    DevToolsFeatureOptions.prototype.test;
+}
 class StoreDevtoolsConfig {
+}
+if (false) {
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.maxAge;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.monitor;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.actionSanitizer;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.stateSanitizer;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.name;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.serialize;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.logOnly;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.features;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.actionsBlocklist;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.actionsSafelist;
+    /** @type {?} */
+    StoreDevtoolsConfig.prototype.predicate;
 }
 /** @type {?} */
 const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/devtools Options');
@@ -82,7 +133,8 @@ function createConfig(_options) {
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/actions.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const PERFORM_ACTION = 'PERFORM_ACTION';
@@ -125,10 +177,22 @@ class PerformAction {
         }
     }
 }
+if (false) {
+    /** @type {?} */
+    PerformAction.prototype.type;
+    /** @type {?} */
+    PerformAction.prototype.action;
+    /** @type {?} */
+    PerformAction.prototype.timestamp;
+}
 class Refresh {
     constructor() {
         this.type = REFRESH;
     }
+}
+if (false) {
+    /** @type {?} */
+    Refresh.prototype.type;
 }
 class Reset {
     /**
@@ -139,6 +203,12 @@ class Reset {
         this.type = RESET;
     }
 }
+if (false) {
+    /** @type {?} */
+    Reset.prototype.type;
+    /** @type {?} */
+    Reset.prototype.timestamp;
+}
 class Rollback {
     /**
      * @param {?} timestamp
@@ -147,6 +217,12 @@ class Rollback {
         this.timestamp = timestamp;
         this.type = ROLLBACK;
     }
+}
+if (false) {
+    /** @type {?} */
+    Rollback.prototype.type;
+    /** @type {?} */
+    Rollback.prototype.timestamp;
 }
 class Commit {
     /**
@@ -157,10 +233,20 @@ class Commit {
         this.type = COMMIT;
     }
 }
+if (false) {
+    /** @type {?} */
+    Commit.prototype.type;
+    /** @type {?} */
+    Commit.prototype.timestamp;
+}
 class Sweep {
     constructor() {
         this.type = SWEEP;
     }
+}
+if (false) {
+    /** @type {?} */
+    Sweep.prototype.type;
 }
 class ToggleAction {
     /**
@@ -171,6 +257,35 @@ class ToggleAction {
         this.type = TOGGLE_ACTION;
     }
 }
+if (false) {
+    /** @type {?} */
+    ToggleAction.prototype.type;
+    /** @type {?} */
+    ToggleAction.prototype.id;
+}
+class SetActionsActive {
+    /**
+     * @param {?} start
+     * @param {?} end
+     * @param {?=} active
+     */
+    constructor(start, end, active = true) {
+        this.start = start;
+        this.end = end;
+        this.active = active;
+        this.type = SET_ACTIONS_ACTIVE;
+    }
+}
+if (false) {
+    /** @type {?} */
+    SetActionsActive.prototype.type;
+    /** @type {?} */
+    SetActionsActive.prototype.start;
+    /** @type {?} */
+    SetActionsActive.prototype.end;
+    /** @type {?} */
+    SetActionsActive.prototype.active;
+}
 class JumpToState {
     /**
      * @param {?} index
@@ -179,6 +294,12 @@ class JumpToState {
         this.index = index;
         this.type = JUMP_TO_STATE;
     }
+}
+if (false) {
+    /** @type {?} */
+    JumpToState.prototype.type;
+    /** @type {?} */
+    JumpToState.prototype.index;
 }
 class JumpToAction {
     /**
@@ -189,6 +310,12 @@ class JumpToAction {
         this.type = JUMP_TO_ACTION;
     }
 }
+if (false) {
+    /** @type {?} */
+    JumpToAction.prototype.type;
+    /** @type {?} */
+    JumpToAction.prototype.actionId;
+}
 class ImportState {
     /**
      * @param {?} nextLiftedState
@@ -197,6 +324,12 @@ class ImportState {
         this.nextLiftedState = nextLiftedState;
         this.type = IMPORT_STATE;
     }
+}
+if (false) {
+    /** @type {?} */
+    ImportState.prototype.type;
+    /** @type {?} */
+    ImportState.prototype.nextLiftedState;
 }
 class LockChanges {
     /**
@@ -207,6 +340,12 @@ class LockChanges {
         this.type = LOCK_CHANGES;
     }
 }
+if (false) {
+    /** @type {?} */
+    LockChanges.prototype.type;
+    /** @type {?} */
+    LockChanges.prototype.status;
+}
 class PauseRecording {
     /**
      * @param {?} status
@@ -216,10 +355,17 @@ class PauseRecording {
         this.type = PAUSE_RECORDING;
     }
 }
+if (false) {
+    /** @type {?} */
+    PauseRecording.prototype.type;
+    /** @type {?} */
+    PauseRecording.prototype.status;
+}
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/devtools-dispatcher.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class DevtoolsDispatcher extends ActionsSubject {
 }
@@ -229,7 +375,8 @@ DevtoolsDispatcher.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/utils.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /**
  * @param {?} first
@@ -260,6 +407,13 @@ function unliftState(liftedState) {
     }
     const { state } = computedStates[currentStateIndex];
     return state;
+}
+/**
+ * @param {?} liftedState
+ * @return {?}
+ */
+function unliftAction(liftedState) {
+    return liftedState.actionsById[liftedState.nextActionId - 1];
 }
 /**
  * Lifts an app's action into an action on the lifted store.
@@ -296,7 +450,7 @@ function sanitizeActions(actionSanitizer, actions) {
  * @return {?}
  */
 function sanitizeAction(actionSanitizer, action, actionIdx) {
-    return Object.assign({}, action, { action: actionSanitizer(action.action, actionIdx) });
+    return Object.assign(Object.assign({}, action), { action: actionSanitizer(action.action, actionIdx) });
 }
 /**
  * Sanitizes given states with given function.
@@ -366,7 +520,7 @@ function filterLiftedState(liftedState, predicate, safelist, blocklist) {
         filteredStagedActionIds.push(id);
         filteredComputedStates.push(liftedState.computedStates[idx]);
     }));
-    return Object.assign({}, liftedState, { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
+    return Object.assign(Object.assign({}, liftedState), { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
 }
 /**
  * Return true is the action should be ignored
@@ -408,7 +562,8 @@ function escapeRegExp(s) {
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/extension.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const ExtensionActionTypes = {
@@ -419,6 +574,69 @@ const ExtensionActionTypes = {
 };
 /** @type {?} */
 const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('Redux Devtools Extension');
+/**
+ * @record
+ */
+function ReduxDevtoolsExtensionConnection() { }
+if (false) {
+    /**
+     * @param {?} listener
+     * @return {?}
+     */
+    ReduxDevtoolsExtensionConnection.prototype.subscribe = function (listener) { };
+    /**
+     * @return {?}
+     */
+    ReduxDevtoolsExtensionConnection.prototype.unsubscribe = function () { };
+    /**
+     * @param {?} action
+     * @param {?} state
+     * @return {?}
+     */
+    ReduxDevtoolsExtensionConnection.prototype.send = function (action, state) { };
+    /**
+     * @param {?=} state
+     * @return {?}
+     */
+    ReduxDevtoolsExtensionConnection.prototype.init = function (state) { };
+    /**
+     * @param {?} anyErr
+     * @return {?}
+     */
+    ReduxDevtoolsExtensionConnection.prototype.error = function (anyErr) { };
+}
+/**
+ * @record
+ */
+function ReduxDevtoolsExtensionConfig() { }
+if (false) {
+    /** @type {?|undefined} */
+    ReduxDevtoolsExtensionConfig.prototype.features;
+    /** @type {?} */
+    ReduxDevtoolsExtensionConfig.prototype.name;
+    /** @type {?|undefined} */
+    ReduxDevtoolsExtensionConfig.prototype.maxAge;
+    /** @type {?|undefined} */
+    ReduxDevtoolsExtensionConfig.prototype.serialize;
+}
+/**
+ * @record
+ */
+function ReduxDevtoolsExtension() { }
+if (false) {
+    /**
+     * @param {?} options
+     * @return {?}
+     */
+    ReduxDevtoolsExtension.prototype.connect = function (options) { };
+    /**
+     * @param {?} action
+     * @param {?} state
+     * @param {?} options
+     * @return {?}
+     */
+    ReduxDevtoolsExtension.prototype.send = function (action, state, options) { };
+}
 class DevtoolsExtension {
     /**
      * @param {?} devtoolsExtension
@@ -479,7 +697,7 @@ class DevtoolsExtension {
         else {
             // Requires full state update
             /** @type {?} */
-            const sanitizedLiftedState = Object.assign({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
+            const sanitizedLiftedState = Object.assign(Object.assign({}, state), { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                     ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                     : state.actionsById, computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
@@ -651,10 +869,39 @@ DevtoolsExtension.ctorParameters = () => [
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] }] },
     { type: DevtoolsDispatcher }
 ];
+if (false) {
+    /**
+     * @type {?}
+     * @private
+     */
+    DevtoolsExtension.prototype.devtoolsExtension;
+    /**
+     * @type {?}
+     * @private
+     */
+    DevtoolsExtension.prototype.extensionConnection;
+    /** @type {?} */
+    DevtoolsExtension.prototype.liftedActions$;
+    /** @type {?} */
+    DevtoolsExtension.prototype.actions$;
+    /** @type {?} */
+    DevtoolsExtension.prototype.start$;
+    /**
+     * @type {?}
+     * @private
+     */
+    DevtoolsExtension.prototype.config;
+    /**
+     * @type {?}
+     * @private
+     */
+    DevtoolsExtension.prototype.dispatcher;
+}
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/reducer.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const INIT_ACTION = { type: INIT };
@@ -662,6 +909,56 @@ const INIT_ACTION = { type: INIT };
 const RECOMPUTE = (/** @type {?} */ ('@ngrx/store-devtools/recompute'));
 /** @type {?} */
 const RECOMPUTE_ACTION = { type: RECOMPUTE };
+/**
+ * @record
+ */
+function ComputedState() { }
+if (false) {
+    /** @type {?} */
+    ComputedState.prototype.state;
+    /** @type {?} */
+    ComputedState.prototype.error;
+}
+/**
+ * @record
+ */
+function LiftedAction() { }
+if (false) {
+    /** @type {?} */
+    LiftedAction.prototype.type;
+    /** @type {?} */
+    LiftedAction.prototype.action;
+}
+/**
+ * @record
+ */
+function LiftedActions() { }
+/**
+ * @record
+ */
+function LiftedState() { }
+if (false) {
+    /** @type {?} */
+    LiftedState.prototype.monitorState;
+    /** @type {?} */
+    LiftedState.prototype.nextActionId;
+    /** @type {?} */
+    LiftedState.prototype.actionsById;
+    /** @type {?} */
+    LiftedState.prototype.stagedActionIds;
+    /** @type {?} */
+    LiftedState.prototype.skippedActionIds;
+    /** @type {?} */
+    LiftedState.prototype.committedState;
+    /** @type {?} */
+    LiftedState.prototype.currentStateIndex;
+    /** @type {?} */
+    LiftedState.prototype.computedStates;
+    /** @type {?} */
+    LiftedState.prototype.isLocked;
+    /** @type {?} */
+    LiftedState.prototype.isPaused;
+}
 /**
  * Computes the next entry in the log by applying an action.
  * @param {?} reducer
@@ -1067,7 +1364,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                      * @param {?} cmp
                      * @return {?}
                      */
-                    cmp => (Object.assign({}, cmp, { state: reducer(cmp.state, RECOMPUTE_ACTION) }))));
+                    cmp => (Object.assign(Object.assign({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) }))));
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -1103,7 +1400,8 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/devtools.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class StoreDevtools {
     /**
@@ -1292,10 +1590,29 @@ StoreDevtools.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [INITIAL_STATE,] }] },
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] }] }
 ];
+if (false) {
+    /**
+     * @type {?}
+     * @private
+     */
+    StoreDevtools.prototype.stateSubscription;
+    /**
+     * @type {?}
+     * @private
+     */
+    StoreDevtools.prototype.extensionStartSubscription;
+    /** @type {?} */
+    StoreDevtools.prototype.dispatcher;
+    /** @type {?} */
+    StoreDevtools.prototype.liftedState;
+    /** @type {?} */
+    StoreDevtools.prototype.state;
+}
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/instrument.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
 const IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('Is Devtools Extension or Monitor Present');
@@ -1377,22 +1694,25 @@ StoreDevtoolsModule.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/src/index.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/public_api.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ * Generated from: modules/store-devtools/index.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * Generated bundle index. Do not edit.
  */
 
-export { INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, StoreDevtoolsModule, RECOMPUTE, StoreDevtools, StoreDevtoolsConfig };
+export { RECOMPUTE, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k };
 //# sourceMappingURL=store-devtools.js.map

@@ -1,5 +1,5 @@
 /**
- * @license NgRx 8.6.0+3.sha-fe6bfa7
+ * @license NgRx 8.6.0+4.sha-b146af5
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -121,6 +121,16 @@ var ToggleAction = /** @class */ (function () {
     }
     return ToggleAction;
 }());
+var SetActionsActive = /** @class */ (function () {
+    function SetActionsActive(start, end, active) {
+        if (active === void 0) { active = true; }
+        this.start = start;
+        this.end = end;
+        this.active = active;
+        this.type = SET_ACTIONS_ACTIVE;
+    }
+    return SetActionsActive;
+}());
 var JumpToState = /** @class */ (function () {
     function JumpToState(index) {
         this.index = index;
@@ -187,6 +197,9 @@ function unliftState(liftedState) {
     var state = computedStates[currentStateIndex].state;
     return state;
 }
+function unliftAction(liftedState) {
+    return liftedState.actionsById[liftedState.nextActionId - 1];
+}
 /**
  * Lifts an app's action into an action on the lifted store.
  */
@@ -207,7 +220,7 @@ function sanitizeActions(actionSanitizer, actions) {
  * Sanitizes given action with given function.
  */
 function sanitizeAction(actionSanitizer, action, actionIdx) {
-    return __assign({}, action, { action: actionSanitizer(action.action, actionIdx) });
+    return __assign(__assign({}, action), { action: actionSanitizer(action.action, actionIdx) });
 }
 /**
  * Sanitizes given states with given function.
@@ -249,7 +262,7 @@ function filterLiftedState(liftedState, predicate, safelist, blocklist) {
         filteredStagedActionIds.push(id);
         filteredComputedStates.push(liftedState.computedStates[idx]);
     });
-    return __assign({}, liftedState, { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
+    return __assign(__assign({}, liftedState), { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
 }
 /**
  * Return true is the action should be ignored
@@ -323,7 +336,7 @@ var DevtoolsExtension = /** @class */ (function () {
         }
         else {
             // Requires full state update
-            var sanitizedLiftedState_1 = __assign({}, state, { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
+            var sanitizedLiftedState_1 = __assign(__assign({}, state), { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                     ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                     : state.actionsById, computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
@@ -731,7 +744,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                         computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     }
                     // Recompute state history with latest reducer and update action
-                    computedStates = computedStates.map(function (cmp) { return (__assign({}, cmp, { state: reducer(cmp.state, RECOMPUTE_ACTION) })); });
+                    computedStates = computedStates.map(function (cmp) { return (__assign(__assign({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) })); });
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -940,5 +953,5 @@ var StoreDevtoolsModule = /** @class */ (function () {
  * Generated bundle index. Do not edit.
  */
 
-export { INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, StoreDevtoolsModule, RECOMPUTE, StoreDevtools, StoreDevtoolsConfig };
+export { RECOMPUTE, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k };
 //# sourceMappingURL=store-devtools.js.map
