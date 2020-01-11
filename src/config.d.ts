@@ -24,7 +24,7 @@ export interface DevToolsFeatureOptions {
 }
 export declare class StoreDevtoolsConfig {
     maxAge: number | false;
-    monitor: ActionReducer<any, any>;
+    monitor?: ActionReducer<any, any>;
     actionSanitizer?: ActionSanitizer;
     stateSanitizer?: StateSanitizer;
     name?: string;
