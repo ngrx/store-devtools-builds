@@ -1,5 +1,5 @@
 /**
- * @license NgRx 9.0.0-beta.1+6.sha-23574ae
+ * @license NgRx 9.0.0-beta.1+7.sha-37f91db
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -1717,5 +1717,5 @@ StoreDevtoolsModule.decorators = [
  * Generated bundle index. Do not edit.
  */
 
-export { RECOMPUTE, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, INITIAL_OPTIONS as ɵngrx_modules_store_devtools_store_devtools_f, noMonitor as ɵngrx_modules_store_devtools_store_devtools_g, createConfig as ɵngrx_modules_store_devtools_store_devtools_h, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_i, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_j, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_k };
+export { INITIAL_OPTIONS, RECOMPUTE, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule, IS_EXTENSION_OR_MONITOR_PRESENT as ɵngrx_modules_store_devtools_store_devtools_a, createIsExtensionOrMonitorPresent as ɵngrx_modules_store_devtools_store_devtools_b, createReduxDevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_c, createStateObservable as ɵngrx_modules_store_devtools_store_devtools_d, STORE_DEVTOOLS_CONFIG as ɵngrx_modules_store_devtools_store_devtools_e, noMonitor as ɵngrx_modules_store_devtools_store_devtools_f, createConfig as ɵngrx_modules_store_devtools_store_devtools_g, REDUX_DEVTOOLS_EXTENSION as ɵngrx_modules_store_devtools_store_devtools_h, DevtoolsExtension as ɵngrx_modules_store_devtools_store_devtools_i, DevtoolsDispatcher as ɵngrx_modules_store_devtools_store_devtools_j };
 //# sourceMappingURL=store-devtools.js.map

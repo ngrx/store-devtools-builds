@@ -1,5 +1,5 @@
 /**
- * @license NgRx 9.0.0-beta.1+6.sha-23574ae
+ * @license NgRx 9.0.0-beta.1+7.sha-37f91db
  * (c) 2015-2018 Brandon Roberts, Mike Ryan, Rob Wormald, Victor Savkin
  * License: MIT
  */
@@ -954,6 +954,7 @@
      * Generated bundle index. Do not edit.
      */
 
+    exports.INITIAL_OPTIONS = INITIAL_OPTIONS;
     exports.RECOMPUTE = RECOMPUTE;
     exports.StoreDevtools = StoreDevtools;
     exports.StoreDevtoolsConfig = StoreDevtoolsConfig;
@@ -963,12 +964,11 @@
     exports.ɵngrx_modules_store_devtools_store_devtools_c = createReduxDevtoolsExtension;
     exports.ɵngrx_modules_store_devtools_store_devtools_d = createStateObservable;
     exports.ɵngrx_modules_store_devtools_store_devtools_e = STORE_DEVTOOLS_CONFIG;
-    exports.ɵngrx_modules_store_devtools_store_devtools_f = INITIAL_OPTIONS;
-    exports.ɵngrx_modules_store_devtools_store_devtools_g = noMonitor;
-    exports.ɵngrx_modules_store_devtools_store_devtools_h = createConfig;
-    exports.ɵngrx_modules_store_devtools_store_devtools_i = REDUX_DEVTOOLS_EXTENSION;
-    exports.ɵngrx_modules_store_devtools_store_devtools_j = DevtoolsExtension;
-    exports.ɵngrx_modules_store_devtools_store_devtools_k = DevtoolsDispatcher;
+    exports.ɵngrx_modules_store_devtools_store_devtools_f = noMonitor;
+    exports.ɵngrx_modules_store_devtools_store_devtools_g = createConfig;
+    exports.ɵngrx_modules_store_devtools_store_devtools_h = REDUX_DEVTOOLS_EXTENSION;
+    exports.ɵngrx_modules_store_devtools_store_devtools_i = DevtoolsExtension;
+    exports.ɵngrx_modules_store_devtools_store_devtools_j = DevtoolsDispatcher;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
