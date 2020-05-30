@@ -1,6 +1,6 @@
 {
   "name": "@ngrx/store-devtools",
-  "version": "9.2.0+2.sha-aba7368",
+  "version": "9.2.0",
   "description": "Developer tools for @ngrx/store",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/ngrx/platform#readme",
   "peerDependencies": {
-    "@ngrx/store": "9.2.0+2.sha-aba7368",
+    "@ngrx/store": "9.2.0",
     "rxjs": "^6.5.3"
   },
   "schematics": "./schematics/collection.json",
@@ -31,20 +31,24 @@
       "@ngrx/entity",
       "@ngrx/router-store",
       "@ngrx/data",
-      "@ngrx/component",
-      "@ngrx/component-store",
       "@ngrx/schematics",
       "@ngrx/store-devtools"
     ],
     "migrations": "./migrations/migration.json"
   },
   "sideEffects": false,
-  "main": "./bundles/store-devtools.umd.js",
-  "fesm5": "./fesm5/store-devtools.js",
-  "fesm2015": "./fesm2015/store-devtools.js",
-  "esm5": "./esm5/store-devtools.js",
-  "esm2015": "./esm2015/store-devtools.js",
-  "typings": "./store-devtools.d.ts",
-  "module": "./fesm5/store-devtools.js",
-  "es2015": "./fesm2015/store-devtools.js"
+  "main": "bundles/ngrx-store-devtools.umd.js",
+  "module": "fesm5/ngrx-store-devtools.js",
+  "es2015": "fesm2015/ngrx-store-devtools.js",
+  "esm5": "esm5/ngrx-store-devtools.js",
+  "esm2015": "esm2015/ngrx-store-devtools.js",
+  "fesm5": "fesm5/ngrx-store-devtools.js",
+  "fesm2015": "fesm2015/ngrx-store-devtools.js",
+  "typings": "ngrx-store-devtools.d.ts",
+  "metadata": "ngrx-store-devtools.metadata.json",
+  "dependencies": {
+    "tslib": "^1.10.0",
+    "@angular/core": "^9.1.0",
+    "@angular/platform-browser": "^9.1.0"
+  }
 }

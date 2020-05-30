@@ -1,5 +1,10 @@
+/**
+ * @fileoverview added by tsickle
+ * Generated from: src/index.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
 export { StoreDevtoolsModule } from './instrument';
 export { RECOMPUTE } from './reducer';
 export { StoreDevtools } from './devtools';
 export { StoreDevtoolsConfig, INITIAL_OPTIONS, } from './config';
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi8uLi8uLi8uLi8uLi9tb2R1bGVzL3N0b3JlLWRldnRvb2xzL3NyYy9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQUUsbUJBQW1CLEVBQUUsTUFBTSxjQUFjLENBQUM7QUFDbkQsT0FBTyxFQUFlLFNBQVMsRUFBRSxNQUFNLFdBQVcsQ0FBQztBQUNuRCxPQUFPLEVBQUUsYUFBYSxFQUFFLE1BQU0sWUFBWSxDQUFDO0FBQzNDLE9BQU8sRUFDTCxtQkFBbUIsRUFHbkIsZUFBZSxHQUNoQixNQUFNLFVBQVUsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCB7IFN0b3JlRGV2dG9vbHNNb2R1bGUgfSBmcm9tICcuL2luc3RydW1lbnQnO1xuZXhwb3J0IHsgTGlmdGVkU3RhdGUsIFJFQ09NUFVURSB9IGZyb20gJy4vcmVkdWNlcic7XG5leHBvcnQgeyBTdG9yZURldnRvb2xzIH0gZnJvbSAnLi9kZXZ0b29scyc7XG5leHBvcnQge1xuICBTdG9yZURldnRvb2xzQ29uZmlnLFxuICBTdG9yZURldnRvb2xzT3B0aW9ucyxcbiAgRGV2VG9vbHNGZWF0dXJlT3B0aW9ucyxcbiAgSU5JVElBTF9PUFRJT05TLFxufSBmcm9tICcuL2NvbmZpZyc7XG4iXX0=
+//# sourceMappingURL=index.js.map
