@@ -368,7 +368,7 @@ if (false) {
 class DevtoolsDispatcher extends ActionsSubject {
 }
 DevtoolsDispatcher.decorators = [
-    { type: Injectable },
+    { type: Injectable }
 ];
 
 /**
@@ -859,7 +859,7 @@ class DevtoolsExtension {
     }
 }
 DevtoolsExtension.decorators = [
-    { type: Injectable },
+    { type: Injectable }
 ];
 /** @nocollapse */
 DevtoolsExtension.ctorParameters = () => [
@@ -1575,7 +1575,7 @@ class StoreDevtools {
     }
 }
 StoreDevtools.decorators = [
-    { type: Injectable },
+    { type: Injectable }
 ];
 /** @nocollapse */
 StoreDevtools.ctorParameters = () => [
@@ -1687,7 +1687,7 @@ class StoreDevtoolsModule {
     }
 }
 StoreDevtoolsModule.decorators = [
-    { type: NgModule, args: [{},] },
+    { type: NgModule, args: [{},] }
 ];
 
 /**

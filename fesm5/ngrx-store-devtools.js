@@ -358,7 +358,7 @@ var DevtoolsDispatcher = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     DevtoolsDispatcher.decorators = [
-        { type: Injectable },
+        { type: Injectable }
     ];
     return DevtoolsDispatcher;
 }(ActionsSubject));
@@ -892,7 +892,7 @@ var DevtoolsExtension = /** @class */ (function () {
         }
     };
     DevtoolsExtension.decorators = [
-        { type: Injectable },
+        { type: Injectable }
     ];
     /** @nocollapse */
     DevtoolsExtension.ctorParameters = function () { return [
@@ -1689,7 +1689,7 @@ var StoreDevtools = /** @class */ (function () {
         this.dispatch(new PauseRecording(status));
     };
     StoreDevtools.decorators = [
-        { type: Injectable },
+        { type: Injectable }
     ];
     /** @nocollapse */
     StoreDevtools.ctorParameters = function () { return [
@@ -1809,7 +1809,7 @@ var StoreDevtoolsModule = /** @class */ (function () {
         };
     };
     StoreDevtoolsModule.decorators = [
-        { type: NgModule, args: [{},] },
+        { type: NgModule, args: [{},] }
     ];
     return StoreDevtoolsModule;
 }());

@@ -24,9 +24,9 @@ var DevtoolsDispatcher = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     DevtoolsDispatcher.decorators = [
-        { type: Injectable },
+        { type: Injectable }
     ];
     return DevtoolsDispatcher;
 }(ActionsSubject));
 export { DevtoolsDispatcher };
-//# sourceMappingURL=devtools-dispatcher.js.map
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGV2dG9vbHMtZGlzcGF0Y2hlci5qcyIsInNvdXJjZVJvb3QiOiJuZzovL0BuZ3J4L3N0b3JlLWRldnRvb2xzLyIsInNvdXJjZXMiOlsic3JjL2RldnRvb2xzLWRpc3BhdGNoZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUEsT0FBTyxFQUFFLGNBQWMsRUFBRSxNQUFNLGFBQWEsQ0FBQztBQUM3QyxPQUFPLEVBQUUsVUFBVSxFQUFFLE1BQU0sZUFBZSxDQUFDO0FBRTNDO0lBQ3dDLHNDQUFjO0lBRHREOztJQUN3RCxDQUFDOztnQkFEeEQsVUFBVTs7SUFDNkMseUJBQUM7Q0FBQSxBQUR6RCxDQUN3QyxjQUFjLEdBQUc7U0FBNUMsa0JBQWtCIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQWN0aW9uc1N1YmplY3QgfSBmcm9tICdAbmdyeC9zdG9yZSc7XG5pbXBvcnQgeyBJbmplY3RhYmxlIH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5cbkBJbmplY3RhYmxlKClcbmV4cG9ydCBjbGFzcyBEZXZ0b29sc0Rpc3BhdGNoZXIgZXh0ZW5kcyBBY3Rpb25zU3ViamVjdCB7fVxuIl19

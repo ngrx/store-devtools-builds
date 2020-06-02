@@ -359,7 +359,7 @@
             return _super !== null && _super.apply(this, arguments) || this;
         }
         DevtoolsDispatcher.decorators = [
-            { type: core.Injectable },
+            { type: core.Injectable }
         ];
         return DevtoolsDispatcher;
     }(store.ActionsSubject));
@@ -893,7 +893,7 @@
             }
         };
         DevtoolsExtension.decorators = [
-            { type: core.Injectable },
+            { type: core.Injectable }
         ];
         /** @nocollapse */
         DevtoolsExtension.ctorParameters = function () { return [
@@ -1690,7 +1690,7 @@
             this.dispatch(new PauseRecording(status));
         };
         StoreDevtools.decorators = [
-            { type: core.Injectable },
+            { type: core.Injectable }
         ];
         /** @nocollapse */
         StoreDevtools.ctorParameters = function () { return [
@@ -1810,7 +1810,7 @@
             };
         };
         StoreDevtoolsModule.decorators = [
-            { type: core.NgModule, args: [{},] },
+            { type: core.NgModule, args: [{},] }
         ];
         return StoreDevtoolsModule;
     }());
