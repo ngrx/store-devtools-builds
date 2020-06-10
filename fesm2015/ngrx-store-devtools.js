@@ -386,7 +386,7 @@ function difference(first, second) {
      * @param {?} item
      * @return {?}
      */
-    item => second.indexOf(item) < 0));
+    (item) => second.indexOf(item) < 0));
 }
 /**
  * Provides an app's view into the state of the lifted store.
@@ -538,14 +538,14 @@ function isActionFiltered(state, action, predicate, safelist, blockedlist) {
          * @param {?} s
          * @return {?}
          */
-        s => escapeRegExp(s))).join('|'));
+        (s) => escapeRegExp(s))).join('|'));
     /** @type {?} */
     const blocklistMatch = blockedlist &&
         action.action.type.match(blockedlist.map((/**
          * @param {?} s
          * @return {?}
          */
-        s => escapeRegExp(s))).join('|'));
+        (s) => escapeRegExp(s))).join('|'));
     return predicateMatch || safelistMatch || blocklistMatch;
 }
 /**
@@ -718,7 +718,7 @@ class DevtoolsExtension {
          * @param {?} subscriber
          * @return {?}
          */
-        subscriber => {
+        (subscriber) => {
             /** @type {?} */
             const connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.config));
             this.extensionConnection = connection;
@@ -759,11 +759,11 @@ class DevtoolsExtension {
          * @param {?} change
          * @return {?}
          */
-        change => change.type === ExtensionActionTypes.DISPATCH)), map((/**
+        (change) => change.type === ExtensionActionTypes.DISPATCH)), map((/**
          * @param {?} change
          * @return {?}
          */
-        change => this.unwrapAction(change.payload))), concatMap((/**
+        (change) => this.unwrapAction(change.payload))), concatMap((/**
          * @param {?} action
          * @return {?}
          */
@@ -781,7 +781,7 @@ class DevtoolsExtension {
                  * @param {?} action
                  * @return {?}
                  */
-                action => action.type === UPDATE)), timeout(1000), debounceTime(1000), map((/**
+                (action) => action.type === UPDATE)), timeout(1000), debounceTime(1000), map((/**
                  * @return {?}
                  */
                 () => action)), catchError((/**
@@ -799,11 +799,11 @@ class DevtoolsExtension {
          * @param {?} change
          * @return {?}
          */
-        change => change.type === ExtensionActionTypes.ACTION)), map((/**
+        (change) => change.type === ExtensionActionTypes.ACTION)), map((/**
          * @param {?} change
          * @return {?}
          */
-        change => this.unwrapAction(change.payload))));
+        (change) => this.unwrapAction(change.payload))));
         /** @type {?} */
         const actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
         /** @type {?} */
@@ -1113,7 +1113,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
              * @param {?} id
              * @return {?}
              */
-            id => idsToDelete.indexOf(id) === -1));
+            (id) => idsToDelete.indexOf(id) === -1));
             stagedActionIds = [0, ...stagedActionIds.slice(excess + 1)];
             committedState = computedStates[excess].state;
             computedStates = computedStates.slice(excess);
@@ -1208,7 +1208,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                      * @param {?} id
                      * @return {?}
                      */
-                    id => id !== actionId));
+                    (id) => id !== actionId));
                 }
                 // Optimization: we know history before this action hasn't changed
                 minInvalidatedStateIndex = stagedActionIds.indexOf(actionId);
@@ -1330,7 +1330,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                  * @param {?} state
                  * @return {?}
                  */
-                state => state.error)).length > 0;
+                (state) => state.error)).length > 0;
                 if (stateHasErrors) {
                     // Recompute all states
                     minInvalidatedStateIndex = 0;
@@ -1362,7 +1362,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                      * @param {?} cmp
                      * @return {?}
                      */
-                    cmp => (Object.assign(Object.assign({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) }))));
+                    (cmp) => (Object.assign(Object.assign({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) }))));
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
