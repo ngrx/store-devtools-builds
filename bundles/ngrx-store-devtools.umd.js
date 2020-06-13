@@ -131,6 +131,298 @@
         return config;
     }
 
+    /*! *****************************************************************************
+    Copyright (c) Microsoft Corporation.
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
+    ***************************************************************************** */
+    /* global Reflect, Promise */
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    function __extends(d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    }
+    var __assign = function () {
+        __assign = Object.assign || function __assign(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s)
+                    if (Object.prototype.hasOwnProperty.call(s, p))
+                        t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign.apply(this, arguments);
+    };
+    function __rest(s, e) {
+        var t = {};
+        for (var p in s)
+            if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+                t[p] = s[p];
+        if (s != null && typeof Object.getOwnPropertySymbols === "function")
+            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+                if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                    t[p[i]] = s[p[i]];
+            }
+        return t;
+    }
+    function __decorate(decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+            r = Reflect.decorate(decorators, target, key, desc);
+        else
+            for (var i = decorators.length - 1; i >= 0; i--)
+                if (d = decorators[i])
+                    r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    }
+    function __param(paramIndex, decorator) {
+        return function (target, key) { decorator(target, key, paramIndex); };
+    }
+    function __metadata(metadataKey, metadataValue) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+            return Reflect.metadata(metadataKey, metadataValue);
+    }
+    function __awaiter(thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try {
+                step(generator.next(value));
+            }
+            catch (e) {
+                reject(e);
+            } }
+            function rejected(value) { try {
+                step(generator["throw"](value));
+            }
+            catch (e) {
+                reject(e);
+            } }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    }
+    function __generator(thisArg, body) {
+        var _ = { label: 0, sent: function () { if (t[0] & 1)
+                throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+            if (f)
+                throw new TypeError("Generator is already executing.");
+            while (_)
+                try {
+                    if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
+                        return t;
+                    if (y = 0, t)
+                        op = [op[0] & 2, t.value];
+                    switch (op[0]) {
+                        case 0:
+                        case 1:
+                            t = op;
+                            break;
+                        case 4:
+                            _.label++;
+                            return { value: op[1], done: false };
+                        case 5:
+                            _.label++;
+                            y = op[1];
+                            op = [0];
+                            continue;
+                        case 7:
+                            op = _.ops.pop();
+                            _.trys.pop();
+                            continue;
+                        default:
+                            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                                _ = 0;
+                                continue;
+                            }
+                            if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
+                                _.label = op[1];
+                                break;
+                            }
+                            if (op[0] === 6 && _.label < t[1]) {
+                                _.label = t[1];
+                                t = op;
+                                break;
+                            }
+                            if (t && _.label < t[2]) {
+                                _.label = t[2];
+                                _.ops.push(op);
+                                break;
+                            }
+                            if (t[2])
+                                _.ops.pop();
+                            _.trys.pop();
+                            continue;
+                    }
+                    op = body.call(thisArg, _);
+                }
+                catch (e) {
+                    op = [6, e];
+                    y = 0;
+                }
+                finally {
+                    f = t = 0;
+                }
+            if (op[0] & 5)
+                throw op[1];
+            return { value: op[0] ? op[1] : void 0, done: true };
+        }
+    }
+    function __createBinding(o, m, k, k2) {
+        if (k2 === undefined)
+            k2 = k;
+        o[k2] = m[k];
+    }
+    function __exportStar(m, exports) {
+        for (var p in m)
+            if (p !== "default" && !exports.hasOwnProperty(p))
+                exports[p] = m[p];
+    }
+    function __values(o) {
+        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+        if (m)
+            return m.call(o);
+        if (o && typeof o.length === "number")
+            return {
+                next: function () {
+                    if (o && i >= o.length)
+                        o = void 0;
+                    return { value: o && o[i++], done: !o };
+                }
+            };
+        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+    }
+    function __read(o, n) {
+        var m = typeof Symbol === "function" && o[Symbol.iterator];
+        if (!m)
+            return o;
+        var i = m.call(o), r, ar = [], e;
+        try {
+            while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
+                ar.push(r.value);
+        }
+        catch (error) {
+            e = { error: error };
+        }
+        finally {
+            try {
+                if (r && !r.done && (m = i["return"]))
+                    m.call(i);
+            }
+            finally {
+                if (e)
+                    throw e.error;
+            }
+        }
+        return ar;
+    }
+    function __spread() {
+        for (var ar = [], i = 0; i < arguments.length; i++)
+            ar = ar.concat(__read(arguments[i]));
+        return ar;
+    }
+    function __spreadArrays() {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++)
+            s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    }
+    ;
+    function __await(v) {
+        return this instanceof __await ? (this.v = v, this) : new __await(v);
+    }
+    function __asyncGenerator(thisArg, _arguments, generator) {
+        if (!Symbol.asyncIterator)
+            throw new TypeError("Symbol.asyncIterator is not defined.");
+        var g = generator.apply(thisArg, _arguments || []), i, q = [];
+        return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+        function verb(n) { if (g[n])
+            i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+        function resume(n, v) { try {
+            step(g[n](v));
+        }
+        catch (e) {
+            settle(q[0][3], e);
+        } }
+        function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
+        function fulfill(value) { resume("next", value); }
+        function reject(value) { resume("throw", value); }
+        function settle(f, v) { if (f(v), q.shift(), q.length)
+            resume(q[0][0], q[0][1]); }
+    }
+    function __asyncDelegator(o) {
+        var i, p;
+        return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
+        function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
+    }
+    function __asyncValues(o) {
+        if (!Symbol.asyncIterator)
+            throw new TypeError("Symbol.asyncIterator is not defined.");
+        var m = o[Symbol.asyncIterator], i;
+        return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+        function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function (v) { resolve({ value: v, done: d }); }, reject); }
+    }
+    function __makeTemplateObject(cooked, raw) {
+        if (Object.defineProperty) {
+            Object.defineProperty(cooked, "raw", { value: raw });
+        }
+        else {
+            cooked.raw = raw;
+        }
+        return cooked;
+    }
+    ;
+    function __importStar(mod) {
+        if (mod && mod.__esModule)
+            return mod;
+        var result = {};
+        if (mod != null)
+            for (var k in mod)
+                if (Object.hasOwnProperty.call(mod, k))
+                    result[k] = mod[k];
+        result.default = mod;
+        return result;
+    }
+    function __importDefault(mod) {
+        return (mod && mod.__esModule) ? mod : { default: mod };
+    }
+    function __classPrivateFieldGet(receiver, privateMap) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to get private field on non-instance");
+        }
+        return privateMap.get(receiver);
+    }
+    function __classPrivateFieldSet(receiver, privateMap, value) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to set private field on non-instance");
+        }
+        privateMap.set(receiver, value);
+        return value;
+    }
+
     /**
      * @fileoverview added by tsickle
      * Generated from: src/actions.ts
@@ -163,6 +455,10 @@
     /** @type {?} */
     var PAUSE_RECORDING = 'PAUSE_RECORDING';
     var PerformAction = /** @class */ (function () {
+        /**
+         * @param {?} action
+         * @param {?} timestamp
+         */
         function PerformAction(action, timestamp) {
             this.action = action;
             this.timestamp = timestamp;
@@ -193,6 +489,9 @@
         Refresh.prototype.type;
     }
     var Reset = /** @class */ (function () {
+        /**
+         * @param {?} timestamp
+         */
         function Reset(timestamp) {
             this.timestamp = timestamp;
             this.type = RESET;
@@ -206,6 +505,9 @@
         Reset.prototype.timestamp;
     }
     var Rollback = /** @class */ (function () {
+        /**
+         * @param {?} timestamp
+         */
         function Rollback(timestamp) {
             this.timestamp = timestamp;
             this.type = ROLLBACK;
@@ -219,6 +521,9 @@
         Rollback.prototype.timestamp;
     }
     var Commit = /** @class */ (function () {
+        /**
+         * @param {?} timestamp
+         */
         function Commit(timestamp) {
             this.timestamp = timestamp;
             this.type = COMMIT;
@@ -242,6 +547,9 @@
         Sweep.prototype.type;
     }
     var ToggleAction = /** @class */ (function () {
+        /**
+         * @param {?} id
+         */
         function ToggleAction(id) {
             this.id = id;
             this.type = TOGGLE_ACTION;
@@ -255,6 +563,11 @@
         ToggleAction.prototype.id;
     }
     var SetActionsActive = /** @class */ (function () {
+        /**
+         * @param {?} start
+         * @param {?} end
+         * @param {?=} active
+         */
         function SetActionsActive(start, end, active) {
             if (active === void 0) { active = true; }
             this.start = start;
@@ -275,6 +588,9 @@
         SetActionsActive.prototype.active;
     }
     var JumpToState = /** @class */ (function () {
+        /**
+         * @param {?} index
+         */
         function JumpToState(index) {
             this.index = index;
             this.type = JUMP_TO_STATE;
@@ -288,6 +604,9 @@
         JumpToState.prototype.index;
     }
     var JumpToAction = /** @class */ (function () {
+        /**
+         * @param {?} actionId
+         */
         function JumpToAction(actionId) {
             this.actionId = actionId;
             this.type = JUMP_TO_ACTION;
@@ -301,6 +620,9 @@
         JumpToAction.prototype.actionId;
     }
     var ImportState = /** @class */ (function () {
+        /**
+         * @param {?} nextLiftedState
+         */
         function ImportState(nextLiftedState) {
             this.nextLiftedState = nextLiftedState;
             this.type = IMPORT_STATE;
@@ -314,6 +636,9 @@
         ImportState.prototype.nextLiftedState;
     }
     var LockChanges = /** @class */ (function () {
+        /**
+         * @param {?} status
+         */
         function LockChanges(status) {
             this.status = status;
             this.type = LOCK_CHANGES;
@@ -327,6 +652,9 @@
         LockChanges.prototype.status;
     }
     var PauseRecording = /** @class */ (function () {
+        /**
+         * @param {?} status
+         */
         function PauseRecording(status) {
             this.status = status;
             this.type = PAUSE_RECORDING;
@@ -340,52 +668,32 @@
         PauseRecording.prototype.status;
     }
 
-    var __extends = (this && this.__extends) || (function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf ||
-                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    })();
     var DevtoolsDispatcher = /** @class */ (function (_super) {
         __extends(DevtoolsDispatcher, _super);
         function DevtoolsDispatcher() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        DevtoolsDispatcher.decorators = [
-            { type: core.Injectable }
-        ];
         return DevtoolsDispatcher;
     }(store.ActionsSubject));
+    DevtoolsDispatcher.decorators = [
+        { type: core.Injectable }
+    ];
 
-    var __assign = (this && this.__assign) || function () {
-        __assign = Object.assign || function(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
-                s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                    t[p] = s[p];
-            }
-            return t;
-        };
-        return __assign.apply(this, arguments);
-    };
+    /**
+     * @fileoverview added by tsickle
+     * Generated from: src/utils.ts
+     * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     */
     /**
      * @param {?} first
      * @param {?} second
      * @return {?}
      */
     function difference(first, second) {
-        return first.filter((/**
+        return first.filter(( /**
          * @param {?} item
          * @return {?}
-         */
-        function (item) { return second.indexOf(item) < 0; }));
+         */function (item) { return second.indexOf(item) < 0; }));
     }
     /**
      * Provides an app's view into the state of the lifted store.
@@ -427,17 +735,16 @@
      * @return {?}
      */
     function sanitizeActions(actionSanitizer, actions) {
-        return Object.keys(actions).reduce((/**
+        return Object.keys(actions).reduce(( /**
          * @param {?} sanitizedActions
          * @param {?} actionIdx
          * @return {?}
-         */
-        function (sanitizedActions, actionIdx) {
+         */function (sanitizedActions, actionIdx) {
             /** @type {?} */
             var idx = Number(actionIdx);
             sanitizedActions[idx] = sanitizeAction(actionSanitizer, actions[idx], idx);
             return sanitizedActions;
-        }), (/** @type {?} */ ({})));
+        }), ( /** @type {?} */({})));
     }
     /**
      * Sanitizes given action with given function.
@@ -447,7 +754,7 @@
      * @return {?}
      */
     function sanitizeAction(actionSanitizer, action, actionIdx) {
-        return __assign(__assign({}, action), { action: actionSanitizer(action.action, actionIdx) });
+        return Object.assign(Object.assign({}, action), { action: actionSanitizer(action.action, actionIdx) });
     }
     /**
      * Sanitizes given states with given function.
@@ -456,12 +763,11 @@
      * @return {?}
      */
     function sanitizeStates(stateSanitizer, states) {
-        return states.map((/**
+        return states.map(( /**
          * @param {?} computedState
          * @param {?} idx
          * @return {?}
-         */
-        function (computedState, idx) { return ({
+         */function (computedState, idx) { return ({
             state: sanitizeState(stateSanitizer, computedState.state, idx),
             error: computedState.error,
         }); }));
@@ -499,12 +805,11 @@
         var filteredActionsById = {};
         /** @type {?} */
         var filteredComputedStates = [];
-        liftedState.stagedActionIds.forEach((/**
+        liftedState.stagedActionIds.forEach(( /**
          * @param {?} id
          * @param {?} idx
          * @return {?}
-         */
-        function (id, idx) {
+         */function (id, idx) {
             /** @type {?} */
             var liftedAction = liftedState.actionsById[id];
             if (!liftedAction)
@@ -517,7 +822,7 @@
             filteredStagedActionIds.push(id);
             filteredComputedStates.push(liftedState.computedStates[idx]);
         }));
-        return __assign(__assign({}, liftedState), { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
+        return Object.assign(Object.assign({}, liftedState), { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
     }
     /**
      * Return true is the action should be ignored
@@ -533,18 +838,16 @@
         var predicateMatch = predicate && !predicate(state, action.action);
         /** @type {?} */
         var safelistMatch = safelist &&
-            !action.action.type.match(safelist.map((/**
+            !action.action.type.match(safelist.map(( /**
              * @param {?} s
              * @return {?}
-             */
-            function (s) { return escapeRegExp(s); })).join('|'));
+             */function (s) { return escapeRegExp(s); })).join('|'));
         /** @type {?} */
         var blocklistMatch = blockedlist &&
-            action.action.type.match(blockedlist.map((/**
+            action.action.type.match(blockedlist.map(( /**
              * @param {?} s
              * @return {?}
-             */
-            function (s) { return escapeRegExp(s); })).join('|'));
+             */function (s) { return escapeRegExp(s); })).join('|'));
         return predicateMatch || safelistMatch || blocklistMatch;
     }
     /**
@@ -557,17 +860,11 @@
         return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    var __assign$1 = (this && this.__assign) || function () {
-        __assign$1 = Object.assign || function(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
-                s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                    t[p] = s[p];
-            }
-            return t;
-        };
-        return __assign$1.apply(this, arguments);
-    };
+    /**
+     * @fileoverview added by tsickle
+     * Generated from: src/extension.ts
+     * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     */
     /** @type {?} */
     var ExtensionActionTypes = {
         START: 'START',
@@ -641,6 +938,11 @@
         ReduxDevtoolsExtension.prototype.send = function (action, state, options) { };
     }
     var DevtoolsExtension = /** @class */ (function () {
+        /**
+         * @param {?} devtoolsExtension
+         * @param {?} config
+         * @param {?} dispatcher
+         */
         function DevtoolsExtension(devtoolsExtension, config, dispatcher) {
             this.config = config;
             this.dispatcher = dispatcher;
@@ -652,12 +954,7 @@
          * @param {?} state
          * @return {?}
          */
-        DevtoolsExtension.prototype.notify = /**
-         * @param {?} action
-         * @param {?} state
-         * @return {?}
-         */
-        function (action, state) {
+        DevtoolsExtension.prototype.notify = function (action, state) {
             var _this = this;
             if (!this.devtoolsExtension) {
                 return;
@@ -693,56 +990,44 @@
                 var sanitizedAction_1 = this.config.actionSanitizer
                     ? sanitizeAction(this.config.actionSanitizer, action, state.nextActionId)
                     : action;
-                this.sendToReduxDevtools((/**
+                this.sendToReduxDevtools(( /**
                  * @return {?}
-                 */
-                function () {
-                    return _this.extensionConnection.send(sanitizedAction_1, sanitizedState_1);
-                }));
+                 */function () { return _this.extensionConnection.send(sanitizedAction_1, sanitizedState_1); }));
             }
             else {
                 // Requires full state update
                 /** @type {?} */
-                var sanitizedLiftedState_1 = __assign$1(__assign$1({}, state), { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
+                var sanitizedLiftedState_1 = Object.assign(Object.assign({}, state), { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
                         ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
                         : state.actionsById, computedStates: this.config.stateSanitizer
                         ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
                         : state.computedStates });
-                this.sendToReduxDevtools((/**
+                this.sendToReduxDevtools(( /**
                  * @return {?}
-                 */
-                function () {
-                    return _this.devtoolsExtension.send(null, sanitizedLiftedState_1, _this.getExtensionConfig(_this.config));
-                }));
+                 */function () { return _this.devtoolsExtension.send(null, sanitizedLiftedState_1, _this.getExtensionConfig(_this.config)); }));
             }
         };
         /**
          * @private
          * @return {?}
          */
-        DevtoolsExtension.prototype.createChangesObservable = /**
-         * @private
-         * @return {?}
-         */
-        function () {
+        DevtoolsExtension.prototype.createChangesObservable = function () {
             var _this = this;
             if (!this.devtoolsExtension) {
                 return rxjs.empty();
             }
-            return new rxjs.Observable((/**
+            return new rxjs.Observable(( /**
              * @param {?} subscriber
              * @return {?}
-             */
-            function (subscriber) {
+             */function (subscriber) {
                 /** @type {?} */
                 var connection = _this.devtoolsExtension.connect(_this.getExtensionConfig(_this.config));
                 _this.extensionConnection = connection;
                 connection.init();
-                connection.subscribe((/**
+                connection.subscribe(( /**
                  * @param {?} change
                  * @return {?}
-                 */
-                function (change) { return subscriber.next(change); }));
+                 */function (change) { return subscriber.next(change); }));
                 return connection.unsubscribe;
             }));
         };
@@ -750,44 +1035,35 @@
          * @private
          * @return {?}
          */
-        DevtoolsExtension.prototype.createActionStreams = /**
-         * @private
-         * @return {?}
-         */
-        function () {
+        DevtoolsExtension.prototype.createActionStreams = function () {
             var _this = this;
             // Listens to all changes
             /** @type {?} */
             var changes$ = this.createChangesObservable().pipe(operators.share());
             // Listen for the start action
             /** @type {?} */
-            var start$ = changes$.pipe(operators.filter((/**
+            var start$ = changes$.pipe(operators.filter(( /**
              * @param {?} change
              * @return {?}
-             */
-            function (change) { return change.type === ExtensionActionTypes.START; })));
+             */function (change) { return change.type === ExtensionActionTypes.START; })));
             // Listen for the stop action
             /** @type {?} */
-            var stop$ = changes$.pipe(operators.filter((/**
+            var stop$ = changes$.pipe(operators.filter(( /**
              * @param {?} change
              * @return {?}
-             */
-            function (change) { return change.type === ExtensionActionTypes.STOP; })));
+             */function (change) { return change.type === ExtensionActionTypes.STOP; })));
             // Listen for lifted actions
             /** @type {?} */
-            var liftedActions$ = changes$.pipe(operators.filter((/**
+            var liftedActions$ = changes$.pipe(operators.filter(( /**
              * @param {?} change
              * @return {?}
-             */
-            function (change) { return change.type === ExtensionActionTypes.DISPATCH; })), operators.map((/**
+             */function (change) { return change.type === ExtensionActionTypes.DISPATCH; })), operators.map(( /**
              * @param {?} change
              * @return {?}
-             */
-            function (change) { return _this.unwrapAction(change.payload); })), operators.concatMap((/**
+             */function (change) { return _this.unwrapAction(change.payload); })), operators.concatMap(( /**
              * @param {?} action
              * @return {?}
-             */
-            function (action) {
+             */function (action) {
                 if (action.type === IMPORT_STATE) {
                     // State imports may happen in two situations:
                     // 1. Explicitly by user
@@ -797,17 +1073,14 @@
                     // lazy loaded reducers time to instantiate.
                     // As soon as there is no UPDATE action within 1 second,
                     // it is assumed that all reducers are loaded.
-                    return _this.dispatcher.pipe(operators.filter((/**
+                    return _this.dispatcher.pipe(operators.filter(( /**
                      * @param {?} action
                      * @return {?}
-                     */
-                    function (action) { return action.type === store.UPDATE; })), operators.timeout(1000), operators.debounceTime(1000), operators.map((/**
+                     */function (action) { return action.type === store.UPDATE; })), operators.timeout(1000), operators.debounceTime(1000), operators.map(( /**
                      * @return {?}
-                     */
-                    function () { return action; })), operators.catchError((/**
+                     */function () { return action; })), operators.catchError(( /**
                      * @return {?}
-                     */
-                    function () { return rxjs.of(action); })), operators.take(1));
+                     */function () { return rxjs.of(action); })), operators.take(1));
                 }
                 else {
                     return rxjs.of(action);
@@ -815,41 +1088,32 @@
             })));
             // Listen for unlifted actions
             /** @type {?} */
-            var actions$ = changes$.pipe(operators.filter((/**
+            var actions$ = changes$.pipe(operators.filter(( /**
              * @param {?} change
              * @return {?}
-             */
-            function (change) { return change.type === ExtensionActionTypes.ACTION; })), operators.map((/**
+             */function (change) { return change.type === ExtensionActionTypes.ACTION; })), operators.map(( /**
              * @param {?} change
              * @return {?}
-             */
-            function (change) { return _this.unwrapAction(change.payload); })));
+             */function (change) { return _this.unwrapAction(change.payload); })));
             /** @type {?} */
             var actionsUntilStop$ = actions$.pipe(operators.takeUntil(stop$));
             /** @type {?} */
             var liftedUntilStop$ = liftedActions$.pipe(operators.takeUntil(stop$));
             this.start$ = start$.pipe(operators.takeUntil(stop$));
             // Only take the action sources between the start/stop events
-            this.actions$ = this.start$.pipe(operators.switchMap((/**
+            this.actions$ = this.start$.pipe(operators.switchMap(( /**
              * @return {?}
-             */
-            function () { return actionsUntilStop$; })));
-            this.liftedActions$ = this.start$.pipe(operators.switchMap((/**
+             */function () { return actionsUntilStop$; })));
+            this.liftedActions$ = this.start$.pipe(operators.switchMap(( /**
              * @return {?}
-             */
-            function () { return liftedUntilStop$; })));
+             */function () { return liftedUntilStop$; })));
         };
         /**
          * @private
          * @param {?} action
          * @return {?}
          */
-        DevtoolsExtension.prototype.unwrapAction = /**
-         * @private
-         * @param {?} action
-         * @return {?}
-         */
-        function (action) {
+        DevtoolsExtension.prototype.unwrapAction = function (action) {
             return typeof action === 'string' ? eval("(" + action + ")") : action;
         };
         /**
@@ -857,12 +1121,7 @@
          * @param {?} config
          * @return {?}
          */
-        DevtoolsExtension.prototype.getExtensionConfig = /**
-         * @private
-         * @param {?} config
-         * @return {?}
-         */
-        function (config) {
+        DevtoolsExtension.prototype.getExtensionConfig = function (config) {
             /** @type {?} */
             var extensionOptions = {
                 name: config.name,
@@ -879,12 +1138,7 @@
          * @param {?} send
          * @return {?}
          */
-        DevtoolsExtension.prototype.sendToReduxDevtools = /**
-         * @private
-         * @param {?} send
-         * @return {?}
-         */
-        function (send) {
+        DevtoolsExtension.prototype.sendToReduxDevtools = function (send) {
             try {
                 send();
             }
@@ -892,17 +1146,17 @@
                 console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
             }
         };
-        DevtoolsExtension.decorators = [
-            { type: core.Injectable }
-        ];
-        /** @nocollapse */
-        DevtoolsExtension.ctorParameters = function () { return [
-            { type: undefined, decorators: [{ type: core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] }] },
-            { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] }] },
-            { type: DevtoolsDispatcher }
-        ]; };
         return DevtoolsExtension;
     }());
+    DevtoolsExtension.decorators = [
+        { type: core.Injectable }
+    ];
+    /** @nocollapse */
+    DevtoolsExtension.ctorParameters = function () { return [
+        { type: undefined, decorators: [{ type: core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] }] },
+        { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] }] },
+        { type: DevtoolsDispatcher }
+    ]; };
     if (false) {
         /**
          * @type {?}
@@ -932,41 +1186,10 @@
         DevtoolsExtension.prototype.dispatcher;
     }
 
-    var __assign$2 = (this && this.__assign) || function () {
-        __assign$2 = Object.assign || function(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
-                s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                    t[p] = s[p];
-            }
-            return t;
-        };
-        return __assign$2.apply(this, arguments);
-    };
-    var __read = (this && this.__read) || function (o, n) {
-        var m = typeof Symbol === "function" && o[Symbol.iterator];
-        if (!m) return o;
-        var i = m.call(o), r, ar = [], e;
-        try {
-            while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-        }
-        catch (error) { e = { error: error }; }
-        finally {
-            try {
-                if (r && !r.done && (m = i["return"])) m.call(i);
-            }
-            finally { if (e) throw e.error; }
-        }
-        return ar;
-    };
-    var __spread = (this && this.__spread) || function () {
-        for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-        return ar;
-    };
     /** @type {?} */
     var INIT_ACTION = { type: store.INIT };
     /** @type {?} */
-    var RECOMPUTE = (/** @type {?} */ ('@ngrx/store-devtools/recompute'));
+    var RECOMPUTE = ( /** @type {?} */('@ngrx/store-devtools/recompute'));
     /** @type {?} */
     var RECOMPUTE_ACTION = { type: RECOMPUTE };
     /**
@@ -1136,16 +1359,14 @@
         /**
          * Manages how the history actions modify the history state.
          */
-        return (/**
+        return ( /**
          * @param {?} reducer
          * @return {?}
-         */
-        function (reducer) { return (/**
+         */function (reducer) { return ( /**
          * @param {?} liftedState
          * @param {?} liftedAction
          * @return {?}
-         */
-        function (liftedState, liftedAction) {
+         */function (liftedState, liftedAction) {
             var _a;
             var _b = liftedState || initialLiftedState, monitorState = _b.monitorState, actionsById = _b.actionsById, nextActionId = _b.nextActionId, stagedActionIds = _b.stagedActionIds, skippedActionIds = _b.skippedActionIds, committedState = _b.committedState, currentStateIndex = _b.currentStateIndex, computedStates = _b.computedStates, isLocked = _b.isLocked, isPaused = _b.isPaused;
             if (!liftedState) {
@@ -1173,11 +1394,10 @@
                         delete actionsById[idsToDelete[i]];
                     }
                 }
-                skippedActionIds = skippedActionIds.filter((/**
+                skippedActionIds = skippedActionIds.filter(( /**
                  * @param {?} id
                  * @return {?}
-                 */
-                function (id) { return idsToDelete.indexOf(id) === -1; }));
+                 */function (id) { return idsToDelete.indexOf(id) === -1; }));
                 stagedActionIds = __spread([0], stagedActionIds.slice(excess + 1));
                 committedState = computedStates[excess].state;
                 computedStates = computedStates.slice(excess);
@@ -1268,11 +1488,10 @@
                         skippedActionIds = __spread([actionId_1], skippedActionIds);
                     }
                     else {
-                        skippedActionIds = skippedActionIds.filter((/**
+                        skippedActionIds = skippedActionIds.filter(( /**
                          * @param {?} id
                          * @return {?}
-                         */
-                        function (id) { return id !== actionId_1; }));
+                         */function (id) { return id !== actionId_1; }));
                     }
                     // Optimization: we know history before this action hasn't changed
                     minInvalidatedStateIndex = stagedActionIds.indexOf(actionId_1);
@@ -1379,11 +1598,10 @@
                 }
                 case store.UPDATE: {
                     /** @type {?} */
-                    var stateHasErrors = computedStates.filter((/**
+                    var stateHasErrors = computedStates.filter(( /**
                      * @param {?} state
                      * @return {?}
-                     */
-                    function (state) { return state.error; })).length > 0;
+                     */function (state) { return state.error; })).length > 0;
                     if (stateHasErrors) {
                         // Recompute all states
                         minInvalidatedStateIndex = 0;
@@ -1411,11 +1629,10 @@
                             computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                         }
                         // Recompute state history with latest reducer and update action
-                        computedStates = computedStates.map((/**
+                        computedStates = computedStates.map(( /**
                          * @param {?} cmp
                          * @return {?}
-                         */
-                        function (cmp) { return (__assign$2(__assign$2({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) })); }));
+                         */function (cmp) { return (Object.assign(Object.assign({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) })); }));
                         currentStateIndex = stagedActionIds.length - 1;
                         if (options.maxAge && stagedActionIds.length > options.maxAge) {
                             commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -1449,23 +1666,17 @@
         }); });
     }
 
-    var __read$1 = (this && this.__read) || function (o, n) {
-        var m = typeof Symbol === "function" && o[Symbol.iterator];
-        if (!m) return o;
-        var i = m.call(o), r, ar = [], e;
-        try {
-            while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-        }
-        catch (error) { e = { error: error }; }
-        finally {
-            try {
-                if (r && !r.done && (m = i["return"])) m.call(i);
-            }
-            finally { if (e) throw e.error; }
-        }
-        return ar;
-    };
     var StoreDevtools = /** @class */ (function () {
+        /**
+         * @param {?} dispatcher
+         * @param {?} actions$
+         * @param {?} reducers$
+         * @param {?} extension
+         * @param {?} scannedActions
+         * @param {?} errorHandler
+         * @param {?} initialState
+         * @param {?} config
+         */
         function StoreDevtools(dispatcher, actions$, reducers$, extension, scannedActions, errorHandler, initialState, config) {
             var _this = this;
             /** @type {?} */
@@ -1480,14 +1691,13 @@
             var liftedStateSubject = new rxjs.ReplaySubject(1);
             /** @type {?} */
             var liftedStateSubscription = liftedAction$
-                .pipe(operators.withLatestFrom(liftedReducer$), operators.scan((/**
-             * @param {?} __0
-             * @param {?} __1
-             * @return {?}
-             */
-            function (_a, _b) {
+                .pipe(operators.withLatestFrom(liftedReducer$), operators.scan(( /**
+         * @param {?} __0
+         * @param {?} __1
+         * @return {?}
+         */function (_a, _b) {
                 var liftedState = _a.state;
-                var _c = __read$1(_b, 2), action = _c[0], reducer = _c[1];
+                var _c = __read(_b, 2), action = _c[0], reducer = _c[1];
                 /** @type {?} */
                 var reducedLiftedState = reducer(liftedState, action);
                 // On full state update
@@ -1498,29 +1708,27 @@
                 // Extension should be sent the sanitized lifted state
                 extension.notify(action, reducedLiftedState);
                 return { state: reducedLiftedState, action: action };
-            }), { state: liftedInitialState, action: (/** @type {?} */ (null)) }))
-                .subscribe((/**
-             * @param {?} __0
-             * @return {?}
-             */
-            function (_a) {
+            }), { state: liftedInitialState, action: ( /** @type {?} */(null)) }))
+                .subscribe(( /**
+         * @param {?} __0
+         * @return {?}
+         */function (_a) {
                 var state = _a.state, action = _a.action;
                 liftedStateSubject.next(state);
                 if (action.type === PERFORM_ACTION) {
                     /** @type {?} */
-                    var unliftedAction = ((/** @type {?} */ (action))).action;
+                    var unliftedAction = (( /** @type {?} */(action))).action;
                     scannedActions.next(unliftedAction);
                 }
             }));
             /** @type {?} */
-            var extensionStartSubscription = extension.start$.subscribe((/**
+            var extensionStartSubscription = extension.start$.subscribe(( /**
              * @return {?}
-             */
-            function () {
+             */function () {
                 _this.refresh();
             }));
             /** @type {?} */
-            var liftedState$ = (/** @type {?} */ (liftedStateSubject.asObservable()));
+            var liftedState$ = ( /** @type {?} */(liftedStateSubject.asObservable()));
             /** @type {?} */
             var state$ = liftedState$.pipe(operators.map(unliftState));
             this.extensionStartSubscription = extensionStartSubscription;
@@ -1533,178 +1741,120 @@
          * @param {?} action
          * @return {?}
          */
-        StoreDevtools.prototype.dispatch = /**
-         * @param {?} action
-         * @return {?}
-         */
-        function (action) {
+        StoreDevtools.prototype.dispatch = function (action) {
             this.dispatcher.next(action);
         };
         /**
          * @param {?} action
          * @return {?}
          */
-        StoreDevtools.prototype.next = /**
-         * @param {?} action
-         * @return {?}
-         */
-        function (action) {
+        StoreDevtools.prototype.next = function (action) {
             this.dispatcher.next(action);
         };
         /**
          * @param {?} error
          * @return {?}
          */
-        StoreDevtools.prototype.error = /**
-         * @param {?} error
-         * @return {?}
-         */
-        function (error) { };
+        StoreDevtools.prototype.error = function (error) { };
         /**
          * @return {?}
          */
-        StoreDevtools.prototype.complete = /**
-         * @return {?}
-         */
-        function () { };
+        StoreDevtools.prototype.complete = function () { };
         /**
          * @param {?} action
          * @return {?}
          */
-        StoreDevtools.prototype.performAction = /**
-         * @param {?} action
-         * @return {?}
-         */
-        function (action) {
+        StoreDevtools.prototype.performAction = function (action) {
             this.dispatch(new PerformAction(action, +Date.now()));
         };
         /**
          * @return {?}
          */
-        StoreDevtools.prototype.refresh = /**
-         * @return {?}
-         */
-        function () {
+        StoreDevtools.prototype.refresh = function () {
             this.dispatch(new Refresh());
         };
         /**
          * @return {?}
          */
-        StoreDevtools.prototype.reset = /**
-         * @return {?}
-         */
-        function () {
+        StoreDevtools.prototype.reset = function () {
             this.dispatch(new Reset(+Date.now()));
         };
         /**
          * @return {?}
          */
-        StoreDevtools.prototype.rollback = /**
-         * @return {?}
-         */
-        function () {
+        StoreDevtools.prototype.rollback = function () {
             this.dispatch(new Rollback(+Date.now()));
         };
         /**
          * @return {?}
          */
-        StoreDevtools.prototype.commit = /**
-         * @return {?}
-         */
-        function () {
+        StoreDevtools.prototype.commit = function () {
             this.dispatch(new Commit(+Date.now()));
         };
         /**
          * @return {?}
          */
-        StoreDevtools.prototype.sweep = /**
-         * @return {?}
-         */
-        function () {
+        StoreDevtools.prototype.sweep = function () {
             this.dispatch(new Sweep());
         };
         /**
          * @param {?} id
          * @return {?}
          */
-        StoreDevtools.prototype.toggleAction = /**
-         * @param {?} id
-         * @return {?}
-         */
-        function (id) {
+        StoreDevtools.prototype.toggleAction = function (id) {
             this.dispatch(new ToggleAction(id));
         };
         /**
          * @param {?} actionId
          * @return {?}
          */
-        StoreDevtools.prototype.jumpToAction = /**
-         * @param {?} actionId
-         * @return {?}
-         */
-        function (actionId) {
+        StoreDevtools.prototype.jumpToAction = function (actionId) {
             this.dispatch(new JumpToAction(actionId));
         };
         /**
          * @param {?} index
          * @return {?}
          */
-        StoreDevtools.prototype.jumpToState = /**
-         * @param {?} index
-         * @return {?}
-         */
-        function (index) {
+        StoreDevtools.prototype.jumpToState = function (index) {
             this.dispatch(new JumpToState(index));
         };
         /**
          * @param {?} nextLiftedState
          * @return {?}
          */
-        StoreDevtools.prototype.importState = /**
-         * @param {?} nextLiftedState
-         * @return {?}
-         */
-        function (nextLiftedState) {
+        StoreDevtools.prototype.importState = function (nextLiftedState) {
             this.dispatch(new ImportState(nextLiftedState));
         };
         /**
          * @param {?} status
          * @return {?}
          */
-        StoreDevtools.prototype.lockChanges = /**
-         * @param {?} status
-         * @return {?}
-         */
-        function (status) {
+        StoreDevtools.prototype.lockChanges = function (status) {
             this.dispatch(new LockChanges(status));
         };
         /**
          * @param {?} status
          * @return {?}
          */
-        StoreDevtools.prototype.pauseRecording = /**
-         * @param {?} status
-         * @return {?}
-         */
-        function (status) {
+        StoreDevtools.prototype.pauseRecording = function (status) {
             this.dispatch(new PauseRecording(status));
         };
-        StoreDevtools.decorators = [
-            { type: core.Injectable }
-        ];
-        /** @nocollapse */
-        StoreDevtools.ctorParameters = function () { return [
-            { type: DevtoolsDispatcher },
-            { type: store.ActionsSubject },
-            { type: store.ReducerObservable },
-            { type: DevtoolsExtension },
-            { type: store.ScannedActionsSubject },
-            { type: core.ErrorHandler },
-            { type: undefined, decorators: [{ type: core.Inject, args: [store.INITIAL_STATE,] }] },
-            { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] }] }
-        ]; };
         return StoreDevtools;
     }());
+    StoreDevtools.decorators = [
+        { type: core.Injectable }
+    ];
+    /** @nocollapse */
+    StoreDevtools.ctorParameters = function () { return [
+        { type: DevtoolsDispatcher },
+        { type: store.ActionsSubject },
+        { type: store.ReducerObservable },
+        { type: DevtoolsExtension },
+        { type: store.ScannedActionsSubject },
+        { type: core.ErrorHandler },
+        { type: undefined, decorators: [{ type: core.Inject, args: [store.INITIAL_STATE,] }] },
+        { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] }] }
+    ]; };
     if (false) {
         /**
          * @type {?}
@@ -1746,8 +1896,8 @@
         /** @type {?} */
         var extensionKey = '__REDUX_DEVTOOLS_EXTENSION__';
         if (typeof window === 'object' &&
-            typeof ((/** @type {?} */ (window)))[extensionKey] !== 'undefined') {
-            return ((/** @type {?} */ (window)))[extensionKey];
+            typeof (( /** @type {?} */(window)))[extensionKey] !== 'undefined') {
+            return (( /** @type {?} */(window)))[extensionKey];
         }
         else {
             return null;
@@ -1767,11 +1917,7 @@
          * @param {?=} options
          * @return {?}
          */
-        StoreDevtoolsModule.instrument = /**
-         * @param {?=} options
-         * @return {?}
-         */
-        function (options) {
+        StoreDevtoolsModule.instrument = function (options) {
             if (options === void 0) { options = {}; }
             return {
                 ngModule: StoreDevtoolsModule,
@@ -1809,11 +1955,35 @@
                 ],
             };
         };
-        StoreDevtoolsModule.decorators = [
-            { type: core.NgModule, args: [{},] }
-        ];
         return StoreDevtoolsModule;
     }());
+    StoreDevtoolsModule.decorators = [
+        { type: core.NgModule, args: [{},] }
+    ];
+
+    /**
+     * @fileoverview added by tsickle
+     * Generated from: src/index.ts
+     * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     */
+
+    /**
+     * @fileoverview added by tsickle
+     * Generated from: public_api.ts
+     * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     */
+
+    /**
+     * @fileoverview added by tsickle
+     * Generated from: index.ts
+     * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     */
+
+    /**
+     * @fileoverview added by tsickle
+     * Generated from: ngrx-store-devtools.ts
+     * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     */
 
     exports.INITIAL_OPTIONS = INITIAL_OPTIONS;
     exports.RECOMPUTE = RECOMPUTE;
