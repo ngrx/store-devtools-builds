@@ -39,14 +39,14 @@
     "migrations": "./migrations/migration.json"
   },
   "sideEffects": false,
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "main": "bundles/ngrx-store-devtools.umd.js",
   "module": "fesm2015/ngrx-store-devtools.js",
   "es2015": "fesm2015/ngrx-store-devtools.js",
   "esm2015": "esm2015/ngrx-store-devtools.js",
   "fesm2015": "fesm2015/ngrx-store-devtools.js",
   "typings": "ngrx-store-devtools.d.ts",
-  "metadata": "ngrx-store-devtools.metadata.json",
-  "dependencies": {
-    "tslib": "^2.0.0"
-  }
+  "metadata": "ngrx-store-devtools.metadata.json"
 }
