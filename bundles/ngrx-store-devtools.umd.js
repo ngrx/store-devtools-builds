@@ -66,9 +66,9 @@
         StoreDevtoolsConfig.prototype.predicate;
     }
     /** @type {?} */
-    var STORE_DEVTOOLS_CONFIG = new core.InjectionToken('@ngrx/devtools Options');
+    var STORE_DEVTOOLS_CONFIG = new core.InjectionToken('@ngrx/store-devtools Options');
     /** @type {?} */
-    var INITIAL_OPTIONS = new core.InjectionToken('@ngrx/devtools Initial Config');
+    var INITIAL_OPTIONS = new core.InjectionToken('@ngrx/store-devtools Initial Config');
     /**
      * @return {?}
      */
@@ -882,7 +882,7 @@
         ACTION: 'ACTION',
     };
     /** @type {?} */
-    var REDUX_DEVTOOLS_EXTENSION = new core.InjectionToken('Redux Devtools Extension');
+    var REDUX_DEVTOOLS_EXTENSION = new core.InjectionToken('@ngrx/store-devtools Redux Devtools Extension');
     /**
      * @record
      */
@@ -1889,7 +1889,7 @@
      * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
      */
     /** @type {?} */
-    var IS_EXTENSION_OR_MONITOR_PRESENT = new core.InjectionToken('Is Devtools Extension or Monitor Present');
+    var IS_EXTENSION_OR_MONITOR_PRESENT = new core.InjectionToken('@ngrx/store-devtools Is Devtools Extension or Monitor Present');
     /**
      * @param {?} extension
      * @param {?} config
