@@ -1276,7 +1276,7 @@
         }
         catch (err) {
             nextError = err.toString();
-            errorHandler.handleError(err.stack || err);
+            errorHandler.handleError(err);
         }
         return {
             state: nextState,
@@ -1588,9 +1588,7 @@
                 }
                 case IMPORT_STATE: {
                     // Completely replace everything.
-                    (_a = liftedAction.nextLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates, isLocked = _a.isLocked, 
-                    // prettier-ignore
-                    isPaused = _a.isPaused);
+                    (_a = liftedAction.nextLiftedState, monitorState = _a.monitorState, actionsById = _a.actionsById, nextActionId = _a.nextActionId, stagedActionIds = _a.stagedActionIds, skippedActionIds = _a.skippedActionIds, committedState = _a.committedState, currentStateIndex = _a.currentStateIndex, computedStates = _a.computedStates, isLocked = _a.isLocked, isPaused = _a.isPaused);
                     break;
                 }
                 case store.INIT: {

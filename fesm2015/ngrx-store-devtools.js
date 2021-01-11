@@ -982,7 +982,7 @@ function computeNextEntry(reducer, action, state, error, errorHandler) {
     }
     catch (err) {
         nextError = err.toString();
-        errorHandler.handleError(err.stack || err);
+        errorHandler.handleError(err);
     }
     return {
         state: nextState,
@@ -1307,8 +1307,7 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                     currentStateIndex,
                     computedStates,
                     isLocked,
-                    // prettier-ignore
-                    isPaused
+                    isPaused,
                 } = liftedAction.nextLiftedState);
                 break;
             }
