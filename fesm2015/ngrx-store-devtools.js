@@ -1,6 +1,6 @@
 import { InjectionToken, Injectable, Inject, ErrorHandler, NgModule } from '@angular/core';
 import { ActionsSubject, UPDATE, INIT, ReducerObservable, ScannedActionsSubject, INITIAL_STATE, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
-import { empty, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
+import { EMPTY, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
 import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
 
 /**
@@ -712,7 +712,7 @@ class DevtoolsExtension {
      */
     createChangesObservable() {
         if (!this.devtoolsExtension) {
-            return empty();
+            return EMPTY;
         }
         return new Observable((/**
          * @param {?} subscriber

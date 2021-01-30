@@ -1023,7 +1023,7 @@
         DevtoolsExtension.prototype.createChangesObservable = function () {
             var _this = this;
             if (!this.devtoolsExtension) {
-                return rxjs.empty();
+                return rxjs.EMPTY;
             }
             return new rxjs.Observable(( /**
              * @param {?} subscriber
