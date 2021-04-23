@@ -37,7 +37,7 @@
                 skip: true,
                 reorder: true,
                 dispatch: true,
-                test: true,
+                test: true, // generate tests for the selected actions
             },
         };
         var options = typeof _options === 'function' ? _options() : _options;
@@ -71,11 +71,13 @@
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b)
-                if (b.hasOwnProperty(p))
+                if (Object.prototype.hasOwnProperty.call(b, p))
                     d[p] = b[p]; };
         return extendStatics(d, b);
     };
     function __extends(d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -218,10 +220,10 @@
             k2 = k;
         o[k2] = m[k];
     });
-    function __exportStar(m, exports) {
+    function __exportStar(m, o) {
         for (var p in m)
-            if (p !== "default" && !exports.hasOwnProperty(p))
-                __createBinding(exports, m, p);
+            if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p))
+                __createBinding(o, m, p);
     }
     function __values(o) {
         var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -261,11 +263,13 @@
         }
         return ar;
     }
+    /** @deprecated */
     function __spread() {
         for (var ar = [], i = 0; i < arguments.length; i++)
             ar = ar.concat(__read(arguments[i]));
         return ar;
     }
+    /** @deprecated */
     function __spreadArrays() {
         for (var s = 0, i = 0, il = arguments.length; i < il; i++)
             s += arguments[i].length;
@@ -274,7 +278,11 @@
                 r[k] = a[j];
         return r;
     }
-    ;
+    function __spreadArray(to, from) {
+        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+            to[j] = from[i];
+        return to;
+    }
     function __await(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     }
@@ -331,7 +339,7 @@
         var result = {};
         if (mod != null)
             for (var k in mod)
-                if (Object.hasOwnProperty.call(mod, k))
+                if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
                     __createBinding(result, mod, k);
         __setModuleDefault(result, mod);
         return result;
@@ -339,18 +347,21 @@
     function __importDefault(mod) {
         return (mod && mod.__esModule) ? mod : { default: mod };
     }
-    function __classPrivateFieldGet(receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
+    function __classPrivateFieldGet(receiver, state, kind, f) {
+        if (kind === "a" && !f)
+            throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+            throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
     }
-    function __classPrivateFieldSet(receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
+    function __classPrivateFieldSet(receiver, state, value, kind, f) {
+        if (kind === "m")
+            throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+            throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+            throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     }
 
     var PERFORM_ACTION = 'PERFORM_ACTION';
@@ -694,6 +705,13 @@
                 name: config.name,
                 features: config.features,
                 serialize: config.serialize,
+                // The action/state sanitizers are not added to the config
+                // because sanitation is done in this class already.
+                // It is done before sending it to the devtools extension for consistency:
+                // - If we call extensionConnection.send(...),
+                //   the extension would call the sanitizers.
+                // - If we call devtoolsExtension.send(...) (aka full state update),
+                //   the extension would NOT call the sanitizers, so we have to do it ourselves.
             };
             if (config.maxAge !== false /* support === 0 */) {
                 extensionOptions.maxAge = config.maxAge;
@@ -825,7 +843,7 @@
                     }
                 }
                 skippedActionIds = skippedActionIds.filter(function (id) { return idsToDelete.indexOf(id) === -1; });
-                stagedActionIds = __spread([0], stagedActionIds.slice(excess + 1));
+                stagedActionIds = __spreadArray([0], __read(stagedActionIds.slice(excess + 1)));
                 committedState = computedStates[excess].state;
                 computedStates = computedStates.slice(excess);
                 currentStateIndex =
@@ -858,7 +876,7 @@
                         // Add a pause action to signal the devtools-user the recording is paused.
                         // The corresponding state will be overwritten on each update to always contain
                         // the latest state (see Actions.PERFORM_ACTION).
-                        stagedActionIds = __spread(stagedActionIds, [nextActionId]);
+                        stagedActionIds = __spreadArray(__spreadArray([], __read(stagedActionIds)), [nextActionId]);
                         actionsById[nextActionId] = new PerformAction({
                             type: '@ngrx/devtools/pause',
                         }, +Date.now());
@@ -907,7 +925,7 @@
                     var actionId_1 = liftedAction.id;
                     var index = skippedActionIds.indexOf(actionId_1);
                     if (index === -1) {
-                        skippedActionIds = __spread([actionId_1], skippedActionIds);
+                        skippedActionIds = __spreadArray([actionId_1], __read(skippedActionIds));
                     }
                     else {
                         skippedActionIds = skippedActionIds.filter(function (id) { return id !== actionId_1; });
@@ -927,7 +945,7 @@
                         skippedActionIds = difference(skippedActionIds, actionIds);
                     }
                     else {
-                        skippedActionIds = __spread(skippedActionIds, actionIds);
+                        skippedActionIds = __spreadArray(__spreadArray([], __read(skippedActionIds)), __read(actionIds));
                     }
                     // Optimization: we know history before this action hasn't changed
                     minInvalidatedStateIndex = stagedActionIds.indexOf(start);
@@ -970,7 +988,7 @@
                         // This way, the app gets the new current state while the devtools
                         // do not record another action.
                         var lastState = computedStates[computedStates.length - 1];
-                        computedStates = __spread(computedStates.slice(0, -1), [
+                        computedStates = __spreadArray(__spreadArray([], __read(computedStates.slice(0, -1))), [
                             computeNextEntry(reducer, liftedAction.action, lastState.state, lastState.error, errorHandler),
                         ]);
                         minInvalidatedStateIndex = Infinity;
@@ -987,7 +1005,7 @@
                     // Mutation! This is the hottest path, and we optimize on purpose.
                     // It is safe because we set a new key in a cache dictionary.
                     actionsById[actionId] = liftedAction;
-                    stagedActionIds = __spread(stagedActionIds, [actionId]);
+                    stagedActionIds = __spreadArray(__spreadArray([], __read(stagedActionIds)), [actionId]);
                     // Optimization: we know that only the new action needs computing.
                     minInvalidatedStateIndex = stagedActionIds.length - 1;
                     break;
@@ -1032,7 +1050,7 @@
                             // Add a new action to only recompute state
                             var actionId = nextActionId++;
                             actionsById[actionId] = new PerformAction(liftedAction, +Date.now());
-                            stagedActionIds = __spread(stagedActionIds, [actionId]);
+                            stagedActionIds = __spreadArray(__spreadArray([], __read(stagedActionIds)), [actionId]);
                             minInvalidatedStateIndex = stagedActionIds.length - 1;
                             computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                         }

@@ -35,7 +35,7 @@ function createConfig(_options) {
             skip: true,
             reorder: true,
             dispatch: true,
-            test: true,
+            test: true, // generate tests for the selected actions
         },
     };
     let options = typeof _options === 'function' ? _options() : _options;
@@ -369,6 +369,13 @@ class DevtoolsExtension {
             name: config.name,
             features: config.features,
             serialize: config.serialize,
+            // The action/state sanitizers are not added to the config
+            // because sanitation is done in this class already.
+            // It is done before sending it to the devtools extension for consistency:
+            // - If we call extensionConnection.send(...),
+            //   the extension would call the sanitizers.
+            // - If we call devtoolsExtension.send(...) (aka full state update),
+            //   the extension would NOT call the sanitizers, so we have to do it ourselves.
         };
         if (config.maxAge !== false /* support === 0 */) {
             extensionOptions.maxAge = config.maxAge;
