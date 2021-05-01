@@ -16,7 +16,7 @@
         return null;
     }
     var DEFAULT_NAME = 'NgRx Store DevTools';
-    function createConfig(_options) {
+    function createConfig(optionsInput) {
         var DEFAULT_OPTIONS = {
             maxAge: false,
             monitor: noMonitor,
@@ -40,7 +40,7 @@
                 test: true, // generate tests for the selected actions
             },
         };
-        var options = typeof _options === 'function' ? _options() : _options;
+        var options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;
         var logOnly = options.logOnly
             ? { pause: true, export: true, test: true }
             : false;

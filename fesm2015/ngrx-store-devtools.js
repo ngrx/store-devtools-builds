@@ -14,7 +14,7 @@ function noMonitor() {
     return null;
 }
 const DEFAULT_NAME = 'NgRx Store DevTools';
-function createConfig(_options) {
+function createConfig(optionsInput) {
     const DEFAULT_OPTIONS = {
         maxAge: false,
         monitor: noMonitor,
@@ -38,7 +38,7 @@ function createConfig(_options) {
             test: true, // generate tests for the selected actions
         },
     };
-    let options = typeof _options === 'function' ? _options() : _options;
+    const options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;
     const logOnly = options.logOnly
         ? { pause: true, export: true, test: true }
         : false;

@@ -95,7 +95,7 @@ function default_1(options) {
         }
         var parsedPath = schematics_core_1.parseName(options.path, '');
         options.path = parsedPath.path;
-        if (options.maxAge < 0 || options.maxAge === 1) {
+        if (options.maxAge && (options.maxAge < 0 || options.maxAge === 1)) {
             throw new schematics_1.SchematicsException("maxAge should be an integer greater than 1.");
         }
         return schematics_1.chain([

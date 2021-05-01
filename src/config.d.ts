@@ -40,4 +40,4 @@ export declare const INITIAL_OPTIONS: InjectionToken<StoreDevtoolsConfig>;
 export declare type StoreDevtoolsOptions = Partial<StoreDevtoolsConfig> | (() => Partial<StoreDevtoolsConfig>);
 export declare function noMonitor(): null;
 export declare const DEFAULT_NAME = "NgRx Store DevTools";
-export declare function createConfig(_options: StoreDevtoolsOptions): StoreDevtoolsConfig;
+export declare function createConfig(optionsInput: StoreDevtoolsOptions): StoreDevtoolsConfig;
