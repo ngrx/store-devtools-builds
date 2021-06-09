@@ -34,6 +34,7 @@ export declare class StoreDevtoolsConfig {
     actionsBlocklist?: string[];
     actionsSafelist?: string[];
     predicate?: Predicate;
+    autoPause?: boolean;
 }
 export declare const STORE_DEVTOOLS_CONFIG: InjectionToken<StoreDevtoolsConfig>;
 export declare const INITIAL_OPTIONS: InjectionToken<StoreDevtoolsConfig>;

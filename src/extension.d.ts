@@ -21,6 +21,7 @@ export interface ReduxDevtoolsExtensionConfig {
     features?: object | boolean;
     name: string | undefined;
     maxAge?: number;
+    autoPause?: boolean;
     serialize?: boolean | SerializationOptions;
 }
 export interface ReduxDevtoolsExtension {

@@ -25,6 +25,7 @@
             name: DEFAULT_NAME,
             serialize: false,
             logOnly: false,
+            autoPause: false,
             // Add all features explicitly. This prevent buggy behavior for
             // options like "lock" which might otherwise not show up.
             features: {
@@ -701,10 +702,12 @@
             return typeof action === 'string' ? eval("(" + action + ")") : action;
         };
         DevtoolsExtension.prototype.getExtensionConfig = function (config) {
+            var _a;
             var extensionOptions = {
                 name: config.name,
                 features: config.features,
                 serialize: config.serialize,
+                autoPause: (_a = config.autoPause) !== null && _a !== void 0 ? _a : false,
                 // The action/state sanitizers are not added to the config
                 // because sanitation is done in this class already.
                 // It is done before sending it to the devtools extension for consistency:
