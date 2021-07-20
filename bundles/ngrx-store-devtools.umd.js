@@ -4,13 +4,22 @@
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory((global.ngrx = global.ngrx || {}, global.ngrx['store-devtools'] = {}), global.ng.core, global.ngrx.store, global.rxjs, global.rxjs.operators));
 }(this, (function (exports, core, store, rxjs, operators) { 'use strict';
 
+    /**
+     * @see http://extension.remotedev.io/docs/API/Arguments.html
+     */
     var StoreDevtoolsConfig = /** @class */ (function () {
         function StoreDevtoolsConfig() {
+            /**
+             * Maximum allowed actions to be stored in the history tree (default: `false`)
+             */
             this.maxAge = false;
         }
         return StoreDevtoolsConfig;
     }());
     var STORE_DEVTOOLS_CONFIG = new core.InjectionToken('@ngrx/store-devtools Options');
+    /**
+     * Used to provide a `StoreDevtoolsConfig` for the store-devtools.
+     */
     var INITIAL_OPTIONS = new core.InjectionToken('@ngrx/store-devtools Initial Config');
     function noMonitor() {
         return null;
@@ -38,7 +47,7 @@
                 skip: true,
                 reorder: true,
                 dispatch: true,
-                test: true, // generate tests for the selected actions
+                test: true, // Generate tests for the selected actions
             },
         };
         var options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;

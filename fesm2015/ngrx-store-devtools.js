@@ -3,12 +3,21 @@ import { ActionsSubject, UPDATE, INIT, ReducerObservable, ScannedActionsSubject,
 import { EMPTY, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
 import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
 
+/**
+ * @see http://extension.remotedev.io/docs/API/Arguments.html
+ */
 class StoreDevtoolsConfig {
     constructor() {
+        /**
+         * Maximum allowed actions to be stored in the history tree (default: `false`)
+         */
         this.maxAge = false;
     }
 }
 const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/store-devtools Options');
+/**
+ * Used to provide a `StoreDevtoolsConfig` for the store-devtools.
+ */
 const INITIAL_OPTIONS = new InjectionToken('@ngrx/store-devtools Initial Config');
 function noMonitor() {
     return null;
@@ -36,7 +45,7 @@ function createConfig(optionsInput) {
             skip: true,
             reorder: true,
             dispatch: true,
-            test: true, // generate tests for the selected actions
+            test: true, // Generate tests for the selected actions
         },
     };
     const options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;
