@@ -4,7 +4,10 @@ import { EMPTY, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxj
 import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
 
 /**
- * @see http://extension.remotedev.io/docs/API/Arguments.html
+ * Chrome extension documentation
+ * @see https://github.com/reduxjs/redux-devtools/blob/main/extension/docs/API/Arguments.md
+ * Firefox extension documentation
+ * @see https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md
  */
 class StoreDevtoolsConfig {
     constructor() {

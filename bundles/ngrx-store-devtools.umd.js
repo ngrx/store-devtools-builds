@@ -5,7 +5,10 @@
 }(this, (function (exports, core, store, rxjs, operators) { 'use strict';
 
     /**
-     * @see http://extension.remotedev.io/docs/API/Arguments.html
+     * Chrome extension documentation
+     * @see https://github.com/reduxjs/redux-devtools/blob/main/extension/docs/API/Arguments.md
+     * Firefox extension documentation
+     * @see https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md
      */
     var StoreDevtoolsConfig = /** @class */ (function () {
         function StoreDevtoolsConfig() {
