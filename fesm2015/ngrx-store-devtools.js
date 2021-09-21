@@ -162,6 +162,7 @@ class PauseRecording {
 
 class DevtoolsDispatcher extends ActionsSubject {
 }
+/** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
 DevtoolsDispatcher.decorators = [
     { type: Injectable }
 ];
@@ -406,10 +407,17 @@ class DevtoolsExtension {
         }
     }
 }
+/** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
 DevtoolsExtension.decorators = [
     { type: Injectable }
 ];
-/** @nocollapse */
+/**
+ * @type {function(): !Array<(null|{
+ *   type: ?,
+ *   decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>),
+ * })>}
+ * @nocollapse
+ */
 DevtoolsExtension.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [REDUX_DEVTOOLS_EXTENSION,] }] },
     { type: StoreDevtoolsConfig, decorators: [{ type: Inject, args: [STORE_DEVTOOLS_CONFIG,] }] },
@@ -859,10 +867,17 @@ class StoreDevtools {
         this.dispatch(new PauseRecording(status));
     }
 }
+/** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
 StoreDevtools.decorators = [
     { type: Injectable }
 ];
-/** @nocollapse */
+/**
+ * @type {function(): !Array<(null|{
+ *   type: ?,
+ *   decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>),
+ * })>}
+ * @nocollapse
+ */
 StoreDevtools.ctorParameters = () => [
     { type: DevtoolsDispatcher },
     { type: ActionsSubject },
@@ -930,6 +945,7 @@ class StoreDevtoolsModule {
         };
     }
 }
+/** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
 StoreDevtoolsModule.decorators = [
     { type: NgModule, args: [{},] }
 ];

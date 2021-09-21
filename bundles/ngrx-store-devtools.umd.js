@@ -495,6 +495,7 @@
         }
         return DevtoolsDispatcher;
     }(store.ActionsSubject));
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     DevtoolsDispatcher.decorators = [
         { type: core.Injectable }
     ];
@@ -743,10 +744,17 @@
         };
         return DevtoolsExtension;
     }());
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     DevtoolsExtension.decorators = [
         { type: core.Injectable }
     ];
-    /** @nocollapse */
+    /**
+     * @type {function(): !Array<(null|{
+     *   type: ?,
+     *   decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>),
+     * })>}
+     * @nocollapse
+     */
     DevtoolsExtension.ctorParameters = function () { return [
         { type: undefined, decorators: [{ type: core.Inject, args: [REDUX_DEVTOOLS_EXTENSION,] }] },
         { type: StoreDevtoolsConfig, decorators: [{ type: core.Inject, args: [STORE_DEVTOOLS_CONFIG,] }] },
@@ -1191,10 +1199,17 @@
         };
         return StoreDevtools;
     }());
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     StoreDevtools.decorators = [
         { type: core.Injectable }
     ];
-    /** @nocollapse */
+    /**
+     * @type {function(): !Array<(null|{
+     *   type: ?,
+     *   decorators: (undefined|!Array<{type: !Function, args: (undefined|!Array<?>)}>),
+     * })>}
+     * @nocollapse
+     */
     StoreDevtools.ctorParameters = function () { return [
         { type: DevtoolsDispatcher },
         { type: store.ActionsSubject },
@@ -1266,6 +1281,7 @@
         };
         return StoreDevtoolsModule;
     }());
+    /** @type {!Array<{type: !Function, args: (undefined|!Array<?>)}>} */
     StoreDevtoolsModule.decorators = [
         { type: core.NgModule, args: [{},] }
     ];
