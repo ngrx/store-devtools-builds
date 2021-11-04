@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { SerializationOptions, StoreDevtoolsConfig } from './config';
 import { DevtoolsDispatcher } from './devtools-dispatcher';
 import { LiftedAction, LiftedState } from './reducer';
+import * as i0 from "@angular/core";
 export declare const ExtensionActionTypes: {
     START: string;
     DISPATCH: string;
@@ -43,4 +44,6 @@ export declare class DevtoolsExtension {
     private unwrapAction;
     private getExtensionConfig;
     private sendToReduxDevtools;
+    static ɵfac: i0.ɵɵFactoryDeclaration<DevtoolsExtension, never>;
+    static ɵprov: i0.ɵɵInjectableDeclaration<DevtoolsExtension>;
 }

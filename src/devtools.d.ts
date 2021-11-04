@@ -5,6 +5,7 @@ import { StoreDevtoolsConfig } from './config';
 import { DevtoolsExtension } from './extension';
 import { LiftedState } from './reducer';
 import { DevtoolsDispatcher } from './devtools-dispatcher';
+import * as i0 from "@angular/core";
 export declare class StoreDevtools implements Observer<any> {
     private stateSubscription;
     private extensionStartSubscription;
@@ -28,4 +29,6 @@ export declare class StoreDevtools implements Observer<any> {
     importState(nextLiftedState: any): void;
     lockChanges(status: boolean): void;
     pauseRecording(status: boolean): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<StoreDevtools, never>;
+    static ɵprov: i0.ɵɵInjectableDeclaration<StoreDevtools>;
 }
