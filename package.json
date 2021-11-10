@@ -42,10 +42,23 @@
   "dependencies": {
     "tslib": "^2.0.0"
   },
-  "main": "bundles/ngrx-store-devtools.umd.js",
-  "module": "fesm2015/ngrx-store-devtools.js",
-  "es2015": "fesm2015/ngrx-store-devtools.js",
-  "esm2015": "esm2015/ngrx-store-devtools.js",
-  "fesm2015": "fesm2015/ngrx-store-devtools.js",
-  "typings": "ngrx-store-devtools.d.ts"
+  "module": "fesm2015/ngrx-store-devtools.mjs",
+  "es2020": "fesm2020/ngrx-store-devtools.mjs",
+  "esm2020": "esm2020/ngrx-store-devtools.mjs",
+  "fesm2020": "fesm2020/ngrx-store-devtools.mjs",
+  "fesm2015": "fesm2015/ngrx-store-devtools.mjs",
+  "typings": "ngrx-store-devtools.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./ngrx-store-devtools.d.ts",
+      "esm2020": "./esm2020/ngrx-store-devtools.mjs",
+      "es2020": "./fesm2020/ngrx-store-devtools.mjs",
+      "es2015": "./fesm2015/ngrx-store-devtools.mjs",
+      "node": "./fesm2015/ngrx-store-devtools.mjs",
+      "default": "./fesm2020/ngrx-store-devtools.mjs"
+    }
+  }
 }

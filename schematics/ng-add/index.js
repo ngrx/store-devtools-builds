@@ -48,12 +48,12 @@ function addImportToNgModule(options) {
         }
         var sourceText = text.toString('utf-8');
         var source = ts.createSourceFile(modulePath, sourceText, ts.ScriptTarget.Latest, true);
-        var _b = __read(schematics_core_1.addImportToModule(source, modulePath, "StoreDevtoolsModule.instrument({ maxAge: " + options.maxAge + ", logOnly: environment.production })", modulePath), 1), instrumentNgModuleImport = _b[0];
-        var srcPath = core_1.dirname(options.path);
-        var environmentsPath = schematics_core_1.buildRelativePath(modulePath, "/" + srcPath + "/environments/environment");
+        var _b = __read((0, schematics_core_1.addImportToModule)(source, modulePath, "StoreDevtoolsModule.instrument({ maxAge: " + options.maxAge + ", logOnly: environment.production })", modulePath), 1), instrumentNgModuleImport = _b[0];
+        var srcPath = (0, core_1.dirname)(options.path);
+        var environmentsPath = (0, schematics_core_1.buildRelativePath)(modulePath, "/" + srcPath + "/environments/environment");
         var changes = [
-            schematics_core_1.insertImport(source, modulePath, 'StoreDevtoolsModule', '@ngrx/store-devtools'),
-            schematics_core_1.insertImport(source, modulePath, 'environment', environmentsPath),
+            (0, schematics_core_1.insertImport)(source, modulePath, 'StoreDevtoolsModule', '@ngrx/store-devtools'),
+            (0, schematics_core_1.insertImport)(source, modulePath, 'environment', environmentsPath),
             instrumentNgModuleImport,
         ];
         var recorder = host.beginUpdate(modulePath);
@@ -78,30 +78,30 @@ function addImportToNgModule(options) {
 }
 function addNgRxStoreDevToolsToPackageJson() {
     return function (host, context) {
-        schematics_core_1.addPackageToPackageJson(host, 'dependencies', '@ngrx/store-devtools', schematics_core_1.platformVersion);
+        (0, schematics_core_1.addPackageToPackageJson)(host, 'dependencies', '@ngrx/store-devtools', schematics_core_1.platformVersion);
         context.addTask(new tasks_1.NodePackageInstallTask());
         return host;
     };
 }
 function default_1(options) {
     return function (host, context) {
-        options.path = schematics_core_1.getProjectPath(host, options);
+        options.path = (0, schematics_core_1.getProjectPath)(host, options);
         if (options.module) {
-            options.module = schematics_core_1.findModuleFromOptions(host, {
+            options.module = (0, schematics_core_1.findModuleFromOptions)(host, {
                 name: '',
                 module: options.module,
                 path: options.path
             });
         }
-        var parsedPath = schematics_core_1.parseName(options.path, '');
+        var parsedPath = (0, schematics_core_1.parseName)(options.path, '');
         options.path = parsedPath.path;
         if (options.maxAge && (options.maxAge < 0 || options.maxAge === 1)) {
             throw new schematics_1.SchematicsException("maxAge should be an integer greater than 1.");
         }
-        return schematics_1.chain([
-            schematics_1.branchAndMerge(schematics_1.chain([addImportToNgModule(options)])),
+        return (0, schematics_1.chain)([
+            (0, schematics_1.branchAndMerge)((0, schematics_1.chain)([addImportToNgModule(options)])),
             options && options.skipPackageJson
-                ? schematics_1.noop()
+                ? (0, schematics_1.noop)()
                 : addNgRxStoreDevToolsToPackageJson(),
         ])(host, context);
     };

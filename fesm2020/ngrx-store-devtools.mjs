@@ -204,7 +204,10 @@ function sanitizeActions(actionSanitizer, actions) {
  * Sanitizes given action with given function.
  */
 function sanitizeAction(actionSanitizer, action, actionIdx) {
-    return Object.assign(Object.assign({}, action), { action: actionSanitizer(action.action, actionIdx) });
+    return {
+        ...action,
+        action: actionSanitizer(action.action, actionIdx),
+    };
 }
 /**
  * Sanitizes given states with given function.
@@ -246,7 +249,12 @@ function filterLiftedState(liftedState, predicate, safelist, blocklist) {
         filteredStagedActionIds.push(id);
         filteredComputedStates.push(liftedState.computedStates[idx]);
     });
-    return Object.assign(Object.assign({}, liftedState), { stagedActionIds: filteredStagedActionIds, actionsById: filteredActionsById, computedStates: filteredComputedStates });
+    return {
+        ...liftedState,
+        stagedActionIds: filteredStagedActionIds,
+        actionsById: filteredActionsById,
+        computedStates: filteredComputedStates,
+    };
 }
 /**
  * Return true is the action should be ignored
@@ -594,7 +602,10 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
                         computedStates = recomputeStates(computedStates, minInvalidatedStateIndex, reducer, committedState, actionsById, stagedActionIds, skippedActionIds, errorHandler, isPaused);
                     }
                     // Recompute state history with latest reducer and update action
-                    computedStates = computedStates.map((cmp) => (Object.assign(Object.assign({}, cmp), { state: reducer(cmp.state, RECOMPUTE_ACTION) })));
+                    computedStates = computedStates.map((cmp) => ({
+                        ...cmp,
+                        state: reducer(cmp.state, RECOMPUTE_ACTION),
+                    }));
                     currentStateIndex = stagedActionIds.length - 1;
                     if (options.maxAge && stagedActionIds.length > options.maxAge) {
                         commitExcessActions(stagedActionIds.length - options.maxAge);
@@ -630,9 +641,9 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
 
 class DevtoolsDispatcher extends ActionsSubject {
 }
-/** @nocollapse */ DevtoolsDispatcher.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable });
-/** @nocollapse */ DevtoolsDispatcher.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: DevtoolsDispatcher });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
+/** @nocollapse */ /** @nocollapse */ DevtoolsDispatcher.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable });
+/** @nocollapse */ /** @nocollapse */ DevtoolsDispatcher.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsDispatcher });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
             type: Injectable
         }] });
 
@@ -686,11 +697,16 @@ class DevtoolsExtension {
         }
         else {
             // Requires full state update
-            const sanitizedLiftedState = Object.assign(Object.assign({}, state), { stagedActionIds: state.stagedActionIds, actionsById: this.config.actionSanitizer
+            const sanitizedLiftedState = {
+                ...state,
+                stagedActionIds: state.stagedActionIds,
+                actionsById: this.config.actionSanitizer
                     ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
-                    : state.actionsById, computedStates: this.config.stateSanitizer
+                    : state.actionsById,
+                computedStates: this.config.stateSanitizer
                     ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
-                    : state.computedStates });
+                    : state.computedStates,
+            };
             this.sendToReduxDevtools(() => this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config)));
         }
     }
@@ -743,12 +759,11 @@ class DevtoolsExtension {
         return typeof action === 'string' ? eval(`(${action})`) : action;
     }
     getExtensionConfig(config) {
-        var _a;
         const extensionOptions = {
             name: config.name,
             features: config.features,
             serialize: config.serialize,
-            autoPause: (_a = config.autoPause) !== null && _a !== void 0 ? _a : false,
+            autoPause: config.autoPause ?? false,
             // The action/state sanitizers are not added to the config
             // because sanitation is done in this class already.
             // It is done before sending it to the devtools extension for consistency:
@@ -771,9 +786,9 @@ class DevtoolsExtension {
         }
     }
 }
-/** @nocollapse */ DevtoolsExtension.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable });
-/** @nocollapse */ DevtoolsExtension.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: DevtoolsExtension });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: DevtoolsExtension, decorators: [{
+/** @nocollapse */ /** @nocollapse */ DevtoolsExtension.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable });
+/** @nocollapse */ /** @nocollapse */ DevtoolsExtension.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsExtension });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsExtension, decorators: [{
             type: Injectable
         }], ctorParameters: function () { return [{ type: undefined, decorators: [{
                     type: Inject,
@@ -865,9 +880,9 @@ class StoreDevtools {
         this.dispatch(new PauseRecording(status));
     }
 }
-/** @nocollapse */ StoreDevtools.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable });
-/** @nocollapse */ StoreDevtools.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: StoreDevtools });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: StoreDevtools, decorators: [{
+/** @nocollapse */ /** @nocollapse */ StoreDevtools.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable });
+/** @nocollapse */ /** @nocollapse */ StoreDevtools.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtools });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtools, decorators: [{
             type: Injectable
         }], ctorParameters: function () { return [{ type: DevtoolsDispatcher }, { type: i2.ActionsSubject }, { type: i2.ReducerObservable }, { type: DevtoolsExtension }, { type: i2.ScannedActionsSubject }, { type: i0.ErrorHandler }, { type: undefined, decorators: [{
                     type: Inject,
@@ -933,10 +948,10 @@ class StoreDevtoolsModule {
         };
     }
 }
-/** @nocollapse */ StoreDevtoolsModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
-/** @nocollapse */ StoreDevtoolsModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: StoreDevtoolsModule });
-/** @nocollapse */ StoreDevtoolsModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: StoreDevtoolsModule });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.6", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
+/** @nocollapse */ /** @nocollapse */ StoreDevtoolsModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
+/** @nocollapse */ /** @nocollapse */ StoreDevtoolsModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule });
+/** @nocollapse */ /** @nocollapse */ StoreDevtoolsModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
             type: NgModule,
             args: [{}]
         }] });
@@ -952,4 +967,4 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.6", ngImpor
  */
 
 export { INITIAL_OPTIONS, RECOMPUTE, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule };
-//# sourceMappingURL=ngrx-store-devtools.js.map
+//# sourceMappingURL=ngrx-store-devtools.mjs.map
