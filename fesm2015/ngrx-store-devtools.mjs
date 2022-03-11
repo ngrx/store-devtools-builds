@@ -955,5 +955,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImpor
  * Generated bundle index. Do not edit.
  */
 
-export { INITIAL_OPTIONS, RECOMPUTE, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule };
+export { INITIAL_OPTIONS, RECOMPUTE, REDUX_DEVTOOLS_EXTENSION, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule };
 //# sourceMappingURL=ngrx-store-devtools.mjs.map
