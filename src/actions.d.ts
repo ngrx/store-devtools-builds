@@ -76,4 +76,4 @@ export declare class PauseRecording implements Action {
     readonly type = "PAUSE_RECORDING";
     constructor(status: boolean);
 }
-export declare type All = PerformAction | Refresh | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState | LockChanges | PauseRecording;
+export type All = PerformAction | Refresh | Reset | Rollback | Commit | Sweep | ToggleAction | SetActionsActive | JumpToState | JumpToAction | ImportState | LockChanges | PauseRecording;

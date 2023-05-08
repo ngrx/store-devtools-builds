@@ -2,14 +2,14 @@ import { ErrorHandler } from '@angular/core';
 import { Action, ActionReducer, UPDATE, INIT } from '@ngrx/store';
 import * as DevtoolsActions from './actions';
 import { StoreDevtoolsConfig } from './config';
-export declare type InitAction = {
+export type InitAction = {
     readonly type: typeof INIT;
 };
-export declare type UpdateReducerAction = {
+export type UpdateReducerAction = {
     readonly type: typeof UPDATE;
 };
-export declare type CoreActions = InitAction | UpdateReducerAction;
-export declare type Actions = DevtoolsActions.All | CoreActions;
+export type CoreActions = InitAction | UpdateReducerAction;
+export type Actions = DevtoolsActions.All | CoreActions;
 export declare const INIT_ACTION: {
     type: "@ngrx/store/init";
 };

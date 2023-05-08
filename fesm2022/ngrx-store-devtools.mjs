@@ -1,69 +1,9 @@
 import * as i0 from '@angular/core';
-import { InjectionToken, Injectable, Inject, NgModule } from '@angular/core';
+import { InjectionToken, Injectable, Inject, makeEnvironmentProviders, NgModule } from '@angular/core';
 import * as i2 from '@ngrx/store';
-import { INIT, UPDATE, ActionsSubject, INITIAL_STATE, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
+import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
 import { EMPTY, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
 import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
-
-/**
- * Chrome extension documentation
- * @see https://github.com/reduxjs/redux-devtools/blob/main/extension/docs/API/Arguments.md
- * Firefox extension documentation
- * @see https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md
- */
-class StoreDevtoolsConfig {
-    constructor() {
-        /**
-         * Maximum allowed actions to be stored in the history tree (default: `false`)
-         */
-        this.maxAge = false;
-    }
-}
-const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/store-devtools Options');
-/**
- * Used to provide a `StoreDevtoolsConfig` for the store-devtools.
- */
-const INITIAL_OPTIONS = new InjectionToken('@ngrx/store-devtools Initial Config');
-function noMonitor() {
-    return null;
-}
-const DEFAULT_NAME = 'NgRx Store DevTools';
-function createConfig(optionsInput) {
-    const DEFAULT_OPTIONS = {
-        maxAge: false,
-        monitor: noMonitor,
-        actionSanitizer: undefined,
-        stateSanitizer: undefined,
-        name: DEFAULT_NAME,
-        serialize: false,
-        logOnly: false,
-        autoPause: false,
-        // Add all features explicitly. This prevent buggy behavior for
-        // options like "lock" which might otherwise not show up.
-        features: {
-            pause: true,
-            lock: true,
-            persist: true,
-            export: true,
-            import: 'custom',
-            jump: true,
-            skip: true,
-            reorder: true,
-            dispatch: true,
-            test: true, // Generate tests for the selected actions
-        },
-    };
-    const options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;
-    const logOnly = options.logOnly
-        ? { pause: true, export: true, test: true }
-        : false;
-    const features = options.features || logOnly || DEFAULT_OPTIONS.features;
-    const config = Object.assign({}, DEFAULT_OPTIONS, { features }, options);
-    if (config.maxAge && config.maxAge < 2) {
-        throw new Error(`Devtools 'maxAge' cannot be less than 2, got ${config.maxAge}`);
-    }
-    return config;
-}
 
 const PERFORM_ACTION = 'PERFORM_ACTION';
 const REFRESH = 'REFRESH';
@@ -160,6 +100,73 @@ class PauseRecording {
         this.status = status;
         this.type = PAUSE_RECORDING;
     }
+}
+
+/**
+ * Chrome extension documentation
+ * @see https://github.com/reduxjs/redux-devtools/blob/main/extension/docs/API/Arguments.md
+ * Firefox extension documentation
+ * @see https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md
+ */
+class StoreDevtoolsConfig {
+    constructor() {
+        /**
+         * Maximum allowed actions to be stored in the history tree (default: `false`)
+         */
+        this.maxAge = false;
+    }
+}
+const STORE_DEVTOOLS_CONFIG = new InjectionToken('@ngrx/store-devtools Options');
+/**
+ * Used to provide a `StoreDevtoolsConfig` for the store-devtools.
+ */
+const INITIAL_OPTIONS = new InjectionToken('@ngrx/store-devtools Initial Config');
+function noMonitor() {
+    return null;
+}
+const DEFAULT_NAME = 'NgRx Store DevTools';
+function createConfig(optionsInput) {
+    const DEFAULT_OPTIONS = {
+        maxAge: false,
+        monitor: noMonitor,
+        actionSanitizer: undefined,
+        stateSanitizer: undefined,
+        name: DEFAULT_NAME,
+        serialize: false,
+        logOnly: false,
+        autoPause: false,
+        trace: false,
+        traceLimit: 75,
+        // Add all features explicitly. This prevent buggy behavior for
+        // options like "lock" which might otherwise not show up.
+        features: {
+            pause: true,
+            lock: true,
+            persist: true,
+            export: true,
+            import: 'custom',
+            jump: true,
+            skip: true,
+            reorder: true,
+            dispatch: true,
+            test: true, // Generate tests for the selected actions
+        },
+    };
+    const options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;
+    const logOnly = options.logOnly
+        ? { pause: true, export: true, test: true }
+        : false;
+    const features = options.features ||
+        logOnly ||
+        DEFAULT_OPTIONS.features;
+    if (features.import === true) {
+        features.import = 'custom';
+    }
+    const config = Object.assign({}, DEFAULT_OPTIONS, { features }, options);
+    if (config.maxAge && config.maxAge < 2) {
+        throw new Error(`Devtools 'maxAge' cannot be less than 2, got ${config.maxAge}`);
+    }
+    return config;
 }
 
 function difference(first, second) {
@@ -274,6 +281,167 @@ function isActionFiltered(state, action, predicate, safelist, blockedlist) {
 function escapeRegExp(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+
+class DevtoolsDispatcher extends ActionsSubject {
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: DevtoolsDispatcher }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
+            type: Injectable
+        }] });
+
+const ExtensionActionTypes = {
+    START: 'START',
+    DISPATCH: 'DISPATCH',
+    STOP: 'STOP',
+    ACTION: 'ACTION',
+};
+const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('@ngrx/store-devtools Redux Devtools Extension');
+class DevtoolsExtension {
+    constructor(devtoolsExtension, config, dispatcher) {
+        this.config = config;
+        this.dispatcher = dispatcher;
+        this.devtoolsExtension = devtoolsExtension;
+        this.createActionStreams();
+    }
+    notify(action, state) {
+        if (!this.devtoolsExtension) {
+            return;
+        }
+        // Check to see if the action requires a full update of the liftedState.
+        // If it is a simple action generated by the user's app and the recording
+        // is not locked/paused, only send the action and the current state (fast).
+        //
+        // A full liftedState update (slow: serializes the entire liftedState) is
+        // only required when:
+        //   a) redux-devtools-extension fires the @@Init action (ignored by
+        //      @ngrx/store-devtools)
+        //   b) an action is generated by an @ngrx module (e.g. @ngrx/effects/init
+        //      or @ngrx/store/update-reducers)
+        //   c) the state has been recomputed due to time-traveling
+        //   d) any action that is not a PerformAction to err on the side of
+        //      caution.
+        if (action.type === PERFORM_ACTION) {
+            if (state.isLocked || state.isPaused) {
+                return;
+            }
+            const currentState = unliftState(state);
+            if (shouldFilterActions(this.config) &&
+                isActionFiltered(currentState, action, this.config.predicate, this.config.actionsSafelist, this.config.actionsBlocklist)) {
+                return;
+            }
+            const sanitizedState = this.config.stateSanitizer
+                ? sanitizeState(this.config.stateSanitizer, currentState, state.currentStateIndex)
+                : currentState;
+            const sanitizedAction = this.config.actionSanitizer
+                ? sanitizeAction(this.config.actionSanitizer, action, state.nextActionId)
+                : action;
+            this.sendToReduxDevtools(() => this.extensionConnection.send(sanitizedAction, sanitizedState));
+        }
+        else {
+            // Requires full state update
+            const sanitizedLiftedState = {
+                ...state,
+                stagedActionIds: state.stagedActionIds,
+                actionsById: this.config.actionSanitizer
+                    ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
+                    : state.actionsById,
+                computedStates: this.config.stateSanitizer
+                    ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
+                    : state.computedStates,
+            };
+            this.sendToReduxDevtools(() => this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config)));
+        }
+    }
+    createChangesObservable() {
+        if (!this.devtoolsExtension) {
+            return EMPTY;
+        }
+        return new Observable((subscriber) => {
+            const connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.config));
+            this.extensionConnection = connection;
+            connection.init();
+            connection.subscribe((change) => subscriber.next(change));
+            return connection.unsubscribe;
+        });
+    }
+    createActionStreams() {
+        // Listens to all changes
+        const changes$ = this.createChangesObservable().pipe(share());
+        // Listen for the start action
+        const start$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.START));
+        // Listen for the stop action
+        const stop$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.STOP));
+        // Listen for lifted actions
+        const liftedActions$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.DISPATCH), map((change) => this.unwrapAction(change.payload)), concatMap((action) => {
+            if (action.type === IMPORT_STATE) {
+                // State imports may happen in two situations:
+                // 1. Explicitly by user
+                // 2. User activated the "persist state accross reloads" option
+                //    and now the state is imported during reload.
+                // Because of option 2, we need to give possible
+                // lazy loaded reducers time to instantiate.
+                // As soon as there is no UPDATE action within 1 second,
+                // it is assumed that all reducers are loaded.
+                return this.dispatcher.pipe(filter((action) => action.type === UPDATE), timeout(1000), debounceTime(1000), map(() => action), catchError(() => of(action)), take(1));
+            }
+            else {
+                return of(action);
+            }
+        }));
+        // Listen for unlifted actions
+        const actions$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.ACTION), map((change) => this.unwrapAction(change.payload)));
+        const actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
+        const liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
+        this.start$ = start$.pipe(takeUntil(stop$));
+        // Only take the action sources between the start/stop events
+        this.actions$ = this.start$.pipe(switchMap(() => actionsUntilStop$));
+        this.liftedActions$ = this.start$.pipe(switchMap(() => liftedUntilStop$));
+    }
+    unwrapAction(action) {
+        return typeof action === 'string' ? eval(`(${action})`) : action;
+    }
+    getExtensionConfig(config) {
+        const extensionOptions = {
+            name: config.name,
+            features: config.features,
+            serialize: config.serialize,
+            autoPause: config.autoPause ?? false,
+            trace: config.trace ?? false,
+            traceLimit: config.traceLimit ?? 75,
+            // The action/state sanitizers are not added to the config
+            // because sanitation is done in this class already.
+            // It is done before sending it to the devtools extension for consistency:
+            // - If we call extensionConnection.send(...),
+            //   the extension would call the sanitizers.
+            // - If we call devtoolsExtension.send(...) (aka full state update),
+            //   the extension would NOT call the sanitizers, so we have to do it ourselves.
+        };
+        if (config.maxAge !== false /* support === 0 */) {
+            extensionOptions.maxAge = config.maxAge;
+        }
+        return extensionOptions;
+    }
+    sendToReduxDevtools(send) {
+        try {
+            send();
+        }
+        catch (err) {
+            console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
+        }
+    }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: DevtoolsExtension }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: DevtoolsExtension, decorators: [{
+            type: Injectable
+        }], ctorParameters: function () { return [{ type: undefined, decorators: [{
+                    type: Inject,
+                    args: [REDUX_DEVTOOLS_EXTENSION]
+                }] }, { type: StoreDevtoolsConfig, decorators: [{
+                    type: Inject,
+                    args: [STORE_DEVTOOLS_CONFIG]
+                }] }, { type: DevtoolsDispatcher }]; } });
 
 const INIT_ACTION = { type: INIT };
 const RECOMPUTE = '@ngrx/store-devtools/recompute';
@@ -639,165 +807,6 @@ function liftReducerWith(initialCommittedState, initialLiftedState, errorHandler
     };
 }
 
-class DevtoolsDispatcher extends ActionsSubject {
-}
-/** @nocollapse */ /** @nocollapse */ DevtoolsDispatcher.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable });
-/** @nocollapse */ /** @nocollapse */ DevtoolsDispatcher.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsDispatcher });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
-            type: Injectable
-        }] });
-
-const ExtensionActionTypes = {
-    START: 'START',
-    DISPATCH: 'DISPATCH',
-    STOP: 'STOP',
-    ACTION: 'ACTION',
-};
-const REDUX_DEVTOOLS_EXTENSION = new InjectionToken('@ngrx/store-devtools Redux Devtools Extension');
-class DevtoolsExtension {
-    constructor(devtoolsExtension, config, dispatcher) {
-        this.config = config;
-        this.dispatcher = dispatcher;
-        this.devtoolsExtension = devtoolsExtension;
-        this.createActionStreams();
-    }
-    notify(action, state) {
-        if (!this.devtoolsExtension) {
-            return;
-        }
-        // Check to see if the action requires a full update of the liftedState.
-        // If it is a simple action generated by the user's app and the recording
-        // is not locked/paused, only send the action and the current state (fast).
-        //
-        // A full liftedState update (slow: serializes the entire liftedState) is
-        // only required when:
-        //   a) redux-devtools-extension fires the @@Init action (ignored by
-        //      @ngrx/store-devtools)
-        //   b) an action is generated by an @ngrx module (e.g. @ngrx/effects/init
-        //      or @ngrx/store/update-reducers)
-        //   c) the state has been recomputed due to time-traveling
-        //   d) any action that is not a PerformAction to err on the side of
-        //      caution.
-        if (action.type === PERFORM_ACTION) {
-            if (state.isLocked || state.isPaused) {
-                return;
-            }
-            const currentState = unliftState(state);
-            if (shouldFilterActions(this.config) &&
-                isActionFiltered(currentState, action, this.config.predicate, this.config.actionsSafelist, this.config.actionsBlocklist)) {
-                return;
-            }
-            const sanitizedState = this.config.stateSanitizer
-                ? sanitizeState(this.config.stateSanitizer, currentState, state.currentStateIndex)
-                : currentState;
-            const sanitizedAction = this.config.actionSanitizer
-                ? sanitizeAction(this.config.actionSanitizer, action, state.nextActionId)
-                : action;
-            this.sendToReduxDevtools(() => this.extensionConnection.send(sanitizedAction, sanitizedState));
-        }
-        else {
-            // Requires full state update
-            const sanitizedLiftedState = {
-                ...state,
-                stagedActionIds: state.stagedActionIds,
-                actionsById: this.config.actionSanitizer
-                    ? sanitizeActions(this.config.actionSanitizer, state.actionsById)
-                    : state.actionsById,
-                computedStates: this.config.stateSanitizer
-                    ? sanitizeStates(this.config.stateSanitizer, state.computedStates)
-                    : state.computedStates,
-            };
-            this.sendToReduxDevtools(() => this.devtoolsExtension.send(null, sanitizedLiftedState, this.getExtensionConfig(this.config)));
-        }
-    }
-    createChangesObservable() {
-        if (!this.devtoolsExtension) {
-            return EMPTY;
-        }
-        return new Observable((subscriber) => {
-            const connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.config));
-            this.extensionConnection = connection;
-            connection.init();
-            connection.subscribe((change) => subscriber.next(change));
-            return connection.unsubscribe;
-        });
-    }
-    createActionStreams() {
-        // Listens to all changes
-        const changes$ = this.createChangesObservable().pipe(share());
-        // Listen for the start action
-        const start$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.START));
-        // Listen for the stop action
-        const stop$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.STOP));
-        // Listen for lifted actions
-        const liftedActions$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.DISPATCH), map((change) => this.unwrapAction(change.payload)), concatMap((action) => {
-            if (action.type === IMPORT_STATE) {
-                // State imports may happen in two situations:
-                // 1. Explicitly by user
-                // 2. User activated the "persist state accross reloads" option
-                //    and now the state is imported during reload.
-                // Because of option 2, we need to give possible
-                // lazy loaded reducers time to instantiate.
-                // As soon as there is no UPDATE action within 1 second,
-                // it is assumed that all reducers are loaded.
-                return this.dispatcher.pipe(filter((action) => action.type === UPDATE), timeout(1000), debounceTime(1000), map(() => action), catchError(() => of(action)), take(1));
-            }
-            else {
-                return of(action);
-            }
-        }));
-        // Listen for unlifted actions
-        const actions$ = changes$.pipe(filter((change) => change.type === ExtensionActionTypes.ACTION), map((change) => this.unwrapAction(change.payload)));
-        const actionsUntilStop$ = actions$.pipe(takeUntil(stop$));
-        const liftedUntilStop$ = liftedActions$.pipe(takeUntil(stop$));
-        this.start$ = start$.pipe(takeUntil(stop$));
-        // Only take the action sources between the start/stop events
-        this.actions$ = this.start$.pipe(switchMap(() => actionsUntilStop$));
-        this.liftedActions$ = this.start$.pipe(switchMap(() => liftedUntilStop$));
-    }
-    unwrapAction(action) {
-        return typeof action === 'string' ? eval(`(${action})`) : action;
-    }
-    getExtensionConfig(config) {
-        const extensionOptions = {
-            name: config.name,
-            features: config.features,
-            serialize: config.serialize,
-            autoPause: config.autoPause ?? false,
-            // The action/state sanitizers are not added to the config
-            // because sanitation is done in this class already.
-            // It is done before sending it to the devtools extension for consistency:
-            // - If we call extensionConnection.send(...),
-            //   the extension would call the sanitizers.
-            // - If we call devtoolsExtension.send(...) (aka full state update),
-            //   the extension would NOT call the sanitizers, so we have to do it ourselves.
-        };
-        if (config.maxAge !== false /* support === 0 */) {
-            extensionOptions.maxAge = config.maxAge;
-        }
-        return extensionOptions;
-    }
-    sendToReduxDevtools(send) {
-        try {
-            send();
-        }
-        catch (err) {
-            console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
-        }
-    }
-}
-/** @nocollapse */ /** @nocollapse */ DevtoolsExtension.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable });
-/** @nocollapse */ /** @nocollapse */ DevtoolsExtension.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsExtension });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: DevtoolsExtension, decorators: [{
-            type: Injectable
-        }], ctorParameters: function () { return [{ type: undefined, decorators: [{
-                    type: Inject,
-                    args: [REDUX_DEVTOOLS_EXTENSION]
-                }] }, { type: StoreDevtoolsConfig, decorators: [{
-                    type: Inject,
-                    args: [STORE_DEVTOOLS_CONFIG]
-                }] }, { type: DevtoolsDispatcher }]; } });
-
 class StoreDevtools {
     constructor(dispatcher, actions$, reducers$, extension, scannedActions, errorHandler, initialState, config) {
         const liftedInitialState = liftInitialState(initialState, config.monitor);
@@ -879,10 +888,10 @@ class StoreDevtools {
     pauseRecording(status) {
         this.dispatch(new PauseRecording(status));
     }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: StoreDevtools }); }
 }
-/** @nocollapse */ /** @nocollapse */ StoreDevtools.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable });
-/** @nocollapse */ /** @nocollapse */ StoreDevtools.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtools });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtools, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: StoreDevtools, decorators: [{
             type: Injectable
         }], ctorParameters: function () { return [{ type: DevtoolsDispatcher }, { type: i2.ActionsSubject }, { type: i2.ReducerObservable }, { type: DevtoolsExtension }, { type: i2.ScannedActionsSubject }, { type: i0.ErrorHandler }, { type: undefined, decorators: [{
                     type: Inject,
@@ -906,6 +915,57 @@ function createReduxDevtoolsExtension() {
         return null;
     }
 }
+/**
+ * Provides developer tools and instrumentation for `Store`.
+ *
+ * @usageNotes
+ *
+ * ```ts
+ * bootstrapApplication(AppComponent, {
+ *   providers: [
+ *     provideStoreDevtools({
+ *       maxAge: 25,
+ *       logOnly: !isDevMode(),
+ *     }),
+ *   ],
+ * });
+ * ```
+ */
+function provideStoreDevtools(options = {}) {
+    return makeEnvironmentProviders([
+        DevtoolsExtension,
+        DevtoolsDispatcher,
+        StoreDevtools,
+        {
+            provide: INITIAL_OPTIONS,
+            useValue: options,
+        },
+        {
+            provide: IS_EXTENSION_OR_MONITOR_PRESENT,
+            deps: [REDUX_DEVTOOLS_EXTENSION, STORE_DEVTOOLS_CONFIG],
+            useFactory: createIsExtensionOrMonitorPresent,
+        },
+        {
+            provide: REDUX_DEVTOOLS_EXTENSION,
+            useFactory: createReduxDevtoolsExtension,
+        },
+        {
+            provide: STORE_DEVTOOLS_CONFIG,
+            deps: [INITIAL_OPTIONS],
+            useFactory: createConfig,
+        },
+        {
+            provide: StateObservable,
+            deps: [StoreDevtools],
+            useFactory: createStateObservable,
+        },
+        {
+            provide: ReducerManagerDispatcher,
+            useExisting: DevtoolsDispatcher,
+        },
+    ]);
+}
+
 function createStateObservable(devtools) {
     return devtools.state;
 }
@@ -913,45 +973,14 @@ class StoreDevtoolsModule {
     static instrument(options = {}) {
         return {
             ngModule: StoreDevtoolsModule,
-            providers: [
-                DevtoolsExtension,
-                DevtoolsDispatcher,
-                StoreDevtools,
-                {
-                    provide: INITIAL_OPTIONS,
-                    useValue: options,
-                },
-                {
-                    provide: IS_EXTENSION_OR_MONITOR_PRESENT,
-                    deps: [REDUX_DEVTOOLS_EXTENSION, STORE_DEVTOOLS_CONFIG],
-                    useFactory: createIsExtensionOrMonitorPresent,
-                },
-                {
-                    provide: REDUX_DEVTOOLS_EXTENSION,
-                    useFactory: createReduxDevtoolsExtension,
-                },
-                {
-                    provide: STORE_DEVTOOLS_CONFIG,
-                    deps: [INITIAL_OPTIONS],
-                    useFactory: createConfig,
-                },
-                {
-                    provide: StateObservable,
-                    deps: [StoreDevtools],
-                    useFactory: createStateObservable,
-                },
-                {
-                    provide: ReducerManagerDispatcher,
-                    useExisting: DevtoolsDispatcher,
-                },
-            ],
+            providers: [provideStoreDevtools(options)],
         };
     }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule }); }
+    /** @nocollapse */ static { this.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "16.0.0", ngImport: i0, type: StoreDevtoolsModule }); }
+    /** @nocollapse */ static { this.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: StoreDevtoolsModule }); }
 }
-/** @nocollapse */ /** @nocollapse */ StoreDevtoolsModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
-/** @nocollapse */ /** @nocollapse */ StoreDevtoolsModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule });
-/** @nocollapse */ /** @nocollapse */ StoreDevtoolsModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
             type: NgModule,
             args: [{}]
         }] });
@@ -966,5 +995,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.0.0", ngImpor
  * Generated bundle index. Do not edit.
  */
 
-export { INITIAL_OPTIONS, RECOMPUTE, REDUX_DEVTOOLS_EXTENSION, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule };
+export { INITIAL_OPTIONS, RECOMPUTE, REDUX_DEVTOOLS_EXTENSION, StoreDevtools, StoreDevtoolsConfig, StoreDevtoolsModule, provideStoreDevtools };
 //# sourceMappingURL=ngrx-store-devtools.mjs.map

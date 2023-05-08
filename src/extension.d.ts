@@ -24,6 +24,8 @@ export interface ReduxDevtoolsExtensionConfig {
     maxAge?: number;
     autoPause?: boolean;
     serialize?: boolean | SerializationOptions;
+    trace?: boolean | (() => string);
+    traceLimit?: number;
 }
 export interface ReduxDevtoolsExtension {
     connect(options: ReduxDevtoolsExtensionConfig): ReduxDevtoolsExtensionConnection;

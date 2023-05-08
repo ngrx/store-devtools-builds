@@ -1,6 +1,6 @@
 {
   "name": "@ngrx/store-devtools",
-  "version": "13.1.0",
+  "version": "16.0.0-rc.0",
   "description": "Developer tools for @ngrx/store",
   "repository": {
     "type": "git",
@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/ngrx/platform#readme",
   "peerDependencies": {
-    "@ngrx/store": "13.1.0",
-    "rxjs": "^6.5.3 || ^7.4.0"
+    "@ngrx/store": "16.0.0-rc.0",
+    "rxjs": "^6.5.3 || ^7.5.0"
   },
   "schematics": "./schematics/collection.json",
   "ng-update": {
@@ -43,23 +43,17 @@
   "dependencies": {
     "tslib": "^2.0.0"
   },
-  "module": "fesm2015/ngrx-store-devtools.mjs",
-  "es2020": "fesm2020/ngrx-store-devtools.mjs",
-  "esm2020": "esm2020/ngrx-store-devtools.mjs",
-  "fesm2020": "fesm2020/ngrx-store-devtools.mjs",
-  "fesm2015": "fesm2015/ngrx-store-devtools.mjs",
-  "typings": "ngrx-store-devtools.d.ts",
+  "module": "fesm2022/ngrx-store-devtools.mjs",
+  "typings": "index.d.ts",
   "exports": {
     "./package.json": {
       "default": "./package.json"
     },
     ".": {
-      "types": "./ngrx-store-devtools.d.ts",
-      "esm2020": "./esm2020/ngrx-store-devtools.mjs",
-      "es2020": "./fesm2020/ngrx-store-devtools.mjs",
-      "es2015": "./fesm2015/ngrx-store-devtools.mjs",
-      "node": "./fesm2015/ngrx-store-devtools.mjs",
-      "default": "./fesm2020/ngrx-store-devtools.mjs"
+      "types": "./index.d.ts",
+      "esm2022": "./esm2022/ngrx-store-devtools.mjs",
+      "esm": "./esm2022/ngrx-store-devtools.mjs",
+      "default": "./fesm2022/ngrx-store-devtools.mjs"
     }
   }
 }
