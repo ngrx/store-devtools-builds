@@ -4,6 +4,7 @@ import * as i2 from '@ngrx/store';
 import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
 import { EMPTY, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
 import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 const PERFORM_ACTION = 'PERFORM_ACTION';
 const REFRESH = 'REFRESH';
@@ -838,6 +839,9 @@ class StoreDevtools {
         });
         const liftedState$ = liftedStateSubject.asObservable();
         const state$ = liftedState$.pipe(map(unliftState));
+        Object.defineProperty(state$, 'state', {
+            value: toSignal(state$, { manualCleanup: true, requireSync: true }),
+        });
         this.extensionStartSubscription = extensionStartSubscription;
         this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;

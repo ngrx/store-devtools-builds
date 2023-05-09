@@ -1,5 +1,5 @@
 import { ErrorHandler } from '@angular/core';
-import { Action, ActionsSubject, ReducerObservable, ScannedActionsSubject } from '@ngrx/store';
+import { Action, ActionsSubject, ReducerObservable, ScannedActionsSubject, StateObservable } from '@ngrx/store';
 import { Observable, Observer } from 'rxjs';
 import { StoreDevtoolsConfig } from './config';
 import { DevtoolsExtension } from './extension';
@@ -11,7 +11,7 @@ export declare class StoreDevtools implements Observer<any> {
     private extensionStartSubscription;
     dispatcher: ActionsSubject;
     liftedState: Observable<LiftedState>;
-    state: Observable<any>;
+    state: StateObservable;
     constructor(dispatcher: DevtoolsDispatcher, actions$: ActionsSubject, reducers$: ReducerObservable, extension: DevtoolsExtension, scannedActions: ScannedActionsSubject, errorHandler: ErrorHandler, initialState: any, config: StoreDevtoolsConfig);
     dispatch(action: Action): void;
     next(action: any): void;
