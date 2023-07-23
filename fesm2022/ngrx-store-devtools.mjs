@@ -815,7 +815,7 @@ class StoreDevtools {
         const liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
         const liftedReducer$ = reducers$.pipe(map(liftReducer));
         const liftedStateSubject = new ReplaySubject(1);
-        const liftedStateSubscription = liftedAction$
+        this.liftedStateSubscription = liftedAction$
             .pipe(withLatestFrom(liftedReducer$), scan(({ state: liftedState }, [action, reducer]) => {
             let reducedLiftedState = reducer(liftedState, action);
             // On full state update
@@ -834,7 +834,7 @@ class StoreDevtools {
                 scannedActions.next(unliftedAction);
             }
         });
-        const extensionStartSubscription = extension.start$.subscribe(() => {
+        this.extensionStartSubscription = extension.start$.subscribe(() => {
             this.refresh();
         });
         const liftedState$ = liftedStateSubject.asObservable();
@@ -842,11 +842,18 @@ class StoreDevtools {
         Object.defineProperty(state$, 'state', {
             value: toSignal(state$, { manualCleanup: true, requireSync: true }),
         });
-        this.extensionStartSubscription = extensionStartSubscription;
-        this.stateSubscription = liftedStateSubscription;
         this.dispatcher = dispatcher;
         this.liftedState = liftedState$;
         this.state = state$;
+    }
+    ngOnDestroy() {
+        // Even though the store devtools plugin is recommended to be
+        // used only in development mode, it can still cause a memory leak
+        // in microfrontend applications that are being created and destroyed
+        // multiple times during development. This results in excessive memory
+        // consumption, as it prevents entire apps from being garbage collected.
+        this.liftedStateSubscription.unsubscribe();
+        this.extensionStartSubscription.unsubscribe();
     }
     dispatch(action) {
         this.dispatcher.next(action);

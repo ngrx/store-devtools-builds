@@ -1,4 +1,4 @@
-import { ErrorHandler } from '@angular/core';
+import { ErrorHandler, OnDestroy } from '@angular/core';
 import { Action, ActionsSubject, ReducerObservable, ScannedActionsSubject, StateObservable } from '@ngrx/store';
 import { Observable, Observer } from 'rxjs';
 import { StoreDevtoolsConfig } from './config';
@@ -6,13 +6,14 @@ import { DevtoolsExtension } from './extension';
 import { LiftedState } from './reducer';
 import { DevtoolsDispatcher } from './devtools-dispatcher';
 import * as i0 from "@angular/core";
-export declare class StoreDevtools implements Observer<any> {
-    private stateSubscription;
+export declare class StoreDevtools implements Observer<any>, OnDestroy {
+    private liftedStateSubscription;
     private extensionStartSubscription;
     dispatcher: ActionsSubject;
     liftedState: Observable<LiftedState>;
     state: StateObservable;
     constructor(dispatcher: DevtoolsDispatcher, actions$: ActionsSubject, reducers$: ReducerObservable, extension: DevtoolsExtension, scannedActions: ScannedActionsSubject, errorHandler: ErrorHandler, initialState: any, config: StoreDevtoolsConfig);
+    ngOnDestroy(): void;
     dispatch(action: Action): void;
     next(action: any): void;
     error(error: any): void;
