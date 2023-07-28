@@ -1,5 +1,5 @@
 import * as i0 from '@angular/core';
-import { InjectionToken, Injectable, Inject, makeEnvironmentProviders, NgModule } from '@angular/core';
+import { InjectionToken, inject, NgZone, Injectable, Inject, makeEnvironmentProviders, NgModule } from '@angular/core';
 import * as i2 from '@ngrx/store';
 import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
 import { EMPTY, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
@@ -152,6 +152,7 @@ function createConfig(optionsInput) {
             dispatch: true,
             test: true, // Generate tests for the selected actions
         },
+        connectOutsideZone: false,
     };
     const options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;
     const logOnly = options.logOnly
@@ -283,6 +284,11 @@ function escapeRegExp(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function injectZoneConfig(connectOutsideZone) {
+    const ngZone = connectOutsideZone ? inject(NgZone) : null;
+    return { ngZone, connectOutsideZone };
+}
+
 class DevtoolsDispatcher extends ActionsSubject {
     /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.1.6", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable }); }
     /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "16.1.6", ngImport: i0, type: DevtoolsDispatcher }); }
@@ -302,6 +308,7 @@ class DevtoolsExtension {
     constructor(devtoolsExtension, config, dispatcher) {
         this.config = config;
         this.dispatcher = dispatcher;
+        this.zoneConfig = injectZoneConfig(this.config.connectOutsideZone);
         this.devtoolsExtension = devtoolsExtension;
         this.createActionStreams();
     }
@@ -359,7 +366,13 @@ class DevtoolsExtension {
             return EMPTY;
         }
         return new Observable((subscriber) => {
-            const connection = this.devtoolsExtension.connect(this.getExtensionConfig(this.config));
+            const connection = this.zoneConfig.connectOutsideZone
+                ? // To reduce change detection cycles, we need to run the `connect` method
+                    // outside of the Angular zone. The `connect` method adds a `message`
+                    // event listener to communicate with an extension using `window.postMessage`
+                    // and handle message events.
+                    this.zoneConfig.ngZone.runOutsideAngular(() => this.devtoolsExtension.connect(this.getExtensionConfig(this.config)))
+                : this.devtoolsExtension.connect(this.getExtensionConfig(this.config));
             this.extensionConnection = connection;
             connection.init();
             connection.subscribe((change) => subscriber.next(change));
@@ -814,9 +827,17 @@ class StoreDevtools {
         const liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
         const liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
         const liftedReducer$ = reducers$.pipe(map(liftReducer));
+        const zoneConfig = injectZoneConfig(config.connectOutsideZone);
         const liftedStateSubject = new ReplaySubject(1);
         this.liftedStateSubscription = liftedAction$
-            .pipe(withLatestFrom(liftedReducer$), scan(({ state: liftedState }, [action, reducer]) => {
+            .pipe(withLatestFrom(liftedReducer$), 
+        // The extension would post messages back outside of the Angular zone
+        // because we call `connect()` wrapped with `runOutsideAngular`. We run change
+        // detection only once at the end after all the required asynchronous tasks have
+        // been processed (for instance, `setInterval` scheduled by the `timeout` operator).
+        // We have to re-enter the Angular zone before the `scan` since it runs the reducer
+        // which must be run within the Angular zone.
+        emitInZone(zoneConfig), scan(({ state: liftedState }, [action, reducer]) => {
             let reducedLiftedState = reducer(liftedState, action);
             // On full state update
             // If we have actions filters, we must filter completely our lifted state to be sync with the extension
@@ -834,7 +855,9 @@ class StoreDevtools {
                 scannedActions.next(unliftedAction);
             }
         });
-        this.extensionStartSubscription = extension.start$.subscribe(() => {
+        this.extensionStartSubscription = extension.start$
+            .pipe(emitInZone(zoneConfig))
+            .subscribe(() => {
             this.refresh();
         });
         const liftedState$ = liftedStateSubject.asObservable();
@@ -911,6 +934,19 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.1.6", ngImpor
                     type: Inject,
                     args: [STORE_DEVTOOLS_CONFIG]
                 }] }]; } });
+/**
+ * If the devtools extension is connected out of the Angular zone,
+ * this operator will emit all events within the zone.
+ */
+function emitInZone({ ngZone, connectOutsideZone, }) {
+    return (source) => connectOutsideZone
+        ? new Observable((subscriber) => source.subscribe({
+            next: (value) => ngZone.run(() => subscriber.next(value)),
+            error: (error) => ngZone.run(() => subscriber.error(error)),
+            complete: () => ngZone.run(() => subscriber.complete()),
+        }))
+        : source;
+}
 
 const IS_EXTENSION_OR_MONITOR_PRESENT = new InjectionToken('@ngrx/store-devtools Is Devtools Extension or Monitor Present');
 function createIsExtensionOrMonitorPresent(extension, config) {
