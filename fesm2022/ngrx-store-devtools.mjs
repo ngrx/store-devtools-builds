@@ -290,10 +290,10 @@ function injectZoneConfig(connectOutsideZone) {
 }
 
 class DevtoolsDispatcher extends ActionsSubject {
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable }); }
-    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: DevtoolsDispatcher }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: DevtoolsDispatcher }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
             type: Injectable
         }] });
 
@@ -444,18 +444,18 @@ class DevtoolsExtension {
             console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
         }
     }
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable }); }
-    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: DevtoolsExtension }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: DevtoolsExtension }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: DevtoolsExtension, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: DevtoolsExtension, decorators: [{
             type: Injectable
-        }], ctorParameters: function () { return [{ type: undefined, decorators: [{
+        }], ctorParameters: () => [{ type: undefined, decorators: [{
                     type: Inject,
                     args: [REDUX_DEVTOOLS_EXTENSION]
                 }] }, { type: StoreDevtoolsConfig, decorators: [{
                     type: Inject,
                     args: [STORE_DEVTOOLS_CONFIG]
-                }] }, { type: DevtoolsDispatcher }]; } });
+                }] }, { type: DevtoolsDispatcher }] });
 
 const INIT_ACTION = { type: INIT };
 const RECOMPUTE = '@ngrx/store-devtools/recompute';
@@ -922,18 +922,18 @@ class StoreDevtools {
     pauseRecording(status) {
         this.dispatch(new PauseRecording(status));
     }
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable }); }
-    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: StoreDevtools }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: StoreDevtools }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: StoreDevtools, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: StoreDevtools, decorators: [{
             type: Injectable
-        }], ctorParameters: function () { return [{ type: DevtoolsDispatcher }, { type: i2.ActionsSubject }, { type: i2.ReducerObservable }, { type: DevtoolsExtension }, { type: i2.ScannedActionsSubject }, { type: i0.ErrorHandler }, { type: undefined, decorators: [{
+        }], ctorParameters: () => [{ type: DevtoolsDispatcher }, { type: i2.ActionsSubject }, { type: i2.ReducerObservable }, { type: DevtoolsExtension }, { type: i2.ScannedActionsSubject }, { type: i0.ErrorHandler }, { type: undefined, decorators: [{
                     type: Inject,
                     args: [INITIAL_STATE]
                 }] }, { type: StoreDevtoolsConfig, decorators: [{
                     type: Inject,
                     args: [STORE_DEVTOOLS_CONFIG]
-                }] }]; } });
+                }] }] });
 /**
  * If the devtools extension is connected out of the Angular zone,
  * this operator will emit all events within the zone.
@@ -1023,11 +1023,11 @@ class StoreDevtoolsModule {
             providers: [provideStoreDevtools(options)],
         };
     }
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule }); }
-    /** @nocollapse */ static { this.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "16.2.3", ngImport: i0, type: StoreDevtoolsModule }); }
-    /** @nocollapse */ static { this.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: StoreDevtoolsModule }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule }); }
+    /** @nocollapse */ static { this.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "17.0.0-next.8", ngImport: i0, type: StoreDevtoolsModule }); }
+    /** @nocollapse */ static { this.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: StoreDevtoolsModule }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.3", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0-next.8", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
             type: NgModule,
             args: [{}]
         }] });
