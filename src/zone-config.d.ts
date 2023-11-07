@@ -1,9 +1,9 @@
 import { NgZone } from '@angular/core';
 export type ZoneConfig = {
-    connectOutsideZone: true;
+    connectInZone: true;
     ngZone: NgZone;
 } | {
-    connectOutsideZone: false;
+    connectInZone: false;
     ngZone: null;
 };
-export declare function injectZoneConfig(connectOutsideZone: boolean): ZoneConfig;
+export declare function injectZoneConfig(connectInZone: boolean): ZoneConfig;

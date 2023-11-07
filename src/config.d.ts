@@ -113,7 +113,7 @@ export declare class StoreDevtoolsConfig {
      * The property determines whether the extension connection is established within the
      * Angular zone or not. It is set to `false` by default.
      */
-    connectOutsideZone?: boolean;
+    connectInZone?: boolean;
 }
 export declare const STORE_DEVTOOLS_CONFIG: InjectionToken<StoreDevtoolsConfig>;
 /**

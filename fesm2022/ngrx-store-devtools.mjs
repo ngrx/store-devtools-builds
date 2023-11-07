@@ -152,7 +152,7 @@ function createConfig(optionsInput) {
             dispatch: true,
             test: true, // Generate tests for the selected actions
         },
-        connectOutsideZone: false,
+        connectInZone: false,
     };
     const options = typeof optionsInput === 'function' ? optionsInput() : optionsInput;
     const logOnly = options.logOnly
@@ -284,9 +284,9 @@ function escapeRegExp(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function injectZoneConfig(connectOutsideZone) {
-    const ngZone = connectOutsideZone ? inject(NgZone) : null;
-    return { ngZone, connectOutsideZone };
+function injectZoneConfig(connectInZone) {
+    const ngZone = connectInZone ? inject(NgZone) : null;
+    return { ngZone, connectInZone };
 }
 
 class DevtoolsDispatcher extends ActionsSubject {
@@ -308,7 +308,7 @@ class DevtoolsExtension {
     constructor(devtoolsExtension, config, dispatcher) {
         this.config = config;
         this.dispatcher = dispatcher;
-        this.zoneConfig = injectZoneConfig(this.config.connectOutsideZone);
+        this.zoneConfig = injectZoneConfig(this.config.connectInZone);
         this.devtoolsExtension = devtoolsExtension;
         this.createActionStreams();
     }
@@ -366,7 +366,7 @@ class DevtoolsExtension {
             return EMPTY;
         }
         return new Observable((subscriber) => {
-            const connection = this.zoneConfig.connectOutsideZone
+            const connection = this.zoneConfig.connectInZone
                 ? // To reduce change detection cycles, we need to run the `connect` method
                     // outside of the Angular zone. The `connect` method adds a `message`
                     // event listener to communicate with an extension using `window.postMessage`
@@ -827,7 +827,7 @@ class StoreDevtools {
         const liftReducer = liftReducerWith(initialState, liftedInitialState, errorHandler, config.monitor, config);
         const liftedAction$ = merge(merge(actions$.asObservable().pipe(skip(1)), extension.actions$).pipe(map(liftAction)), dispatcher, extension.liftedActions$).pipe(observeOn(queueScheduler));
         const liftedReducer$ = reducers$.pipe(map(liftReducer));
-        const zoneConfig = injectZoneConfig(config.connectOutsideZone);
+        const zoneConfig = injectZoneConfig(config.connectInZone);
         const liftedStateSubject = new ReplaySubject(1);
         this.liftedStateSubscription = liftedAction$
             .pipe(withLatestFrom(liftedReducer$), 
@@ -938,8 +938,8 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0-next.8", 
  * If the devtools extension is connected out of the Angular zone,
  * this operator will emit all events within the zone.
  */
-function emitInZone({ ngZone, connectOutsideZone, }) {
-    return (source) => connectOutsideZone
+function emitInZone({ ngZone, connectInZone, }) {
+    return (source) => connectInZone
         ? new Observable((subscriber) => source.subscribe({
             next: (value) => ngZone.run(() => subscriber.next(value)),
             error: (error) => ngZone.run(() => subscriber.error(error)),
