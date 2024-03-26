@@ -1,9 +1,9 @@
 import * as i0 from '@angular/core';
-import { InjectionToken, NgZone, inject, Injectable, Inject, makeEnvironmentProviders, NgModule } from '@angular/core';
+import { InjectionToken, inject, NgZone, Injectable, Inject, makeEnvironmentProviders, NgModule } from '@angular/core';
 import * as i2 from '@ngrx/store';
 import { ActionsSubject, UPDATE, INIT, INITIAL_STATE, StateObservable, ReducerManagerDispatcher } from '@ngrx/store';
-import { EMPTY, Observable, of, queueScheduler, merge, ReplaySubject } from 'rxjs';
-import { share, filter, map, timeout, debounceTime, catchError, take, concatMap, takeUntil, switchMap, observeOn, skip, withLatestFrom, scan } from 'rxjs/operators';
+import { EMPTY, Observable, of, merge, queueScheduler, ReplaySubject } from 'rxjs';
+import { share, filter, map, concatMap, timeout, debounceTime, catchError, take, takeUntil, switchMap, skip, observeOn, withLatestFrom, scan } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 const PERFORM_ACTION = 'PERFORM_ACTION';
@@ -141,15 +141,15 @@ function createConfig(optionsInput) {
         // Add all features explicitly. This prevent buggy behavior for
         // options like "lock" which might otherwise not show up.
         features: {
-            pause: true,
-            lock: true,
-            persist: true,
-            export: true,
-            import: 'custom',
-            jump: true,
-            skip: true,
-            reorder: true,
-            dispatch: true,
+            pause: true, // Start/pause recording of dispatched actions
+            lock: true, // Lock/unlock dispatching actions and side effects
+            persist: true, // Persist states on page reloading
+            export: true, // Export history of actions in a file
+            import: 'custom', // Import history of actions from a file
+            jump: true, // Jump back and forth (time travelling)
+            skip: true, // Skip (cancel) actions
+            reorder: true, // Drag and drop actions in the history list
+            dispatch: true, // Dispatch custom actions or action creators
             test: true, // Generate tests for the selected actions
         },
         connectInZone: false,
@@ -290,10 +290,10 @@ function injectZoneConfig(connectInZone) {
 }
 
 class DevtoolsDispatcher extends ActionsSubject {
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable }); }
-    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: DevtoolsDispatcher }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: DevtoolsDispatcher, deps: null, target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: DevtoolsDispatcher }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: DevtoolsDispatcher, decorators: [{
             type: Injectable
         }] });
 
@@ -445,10 +445,10 @@ class DevtoolsExtension {
             console.warn('@ngrx/store-devtools: something went wrong inside the redux devtools', err);
         }
     }
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable }); }
-    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: DevtoolsExtension }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: DevtoolsExtension, deps: [{ token: REDUX_DEVTOOLS_EXTENSION }, { token: STORE_DEVTOOLS_CONFIG }, { token: DevtoolsDispatcher }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: DevtoolsExtension }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: DevtoolsExtension, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: DevtoolsExtension, decorators: [{
             type: Injectable
         }], ctorParameters: () => [{ type: undefined, decorators: [{
                     type: Inject,
@@ -923,10 +923,10 @@ class StoreDevtools {
     pauseRecording(status) {
         this.dispatch(new PauseRecording(status));
     }
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable }); }
-    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: StoreDevtools }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: StoreDevtools, deps: [{ token: DevtoolsDispatcher }, { token: i2.ActionsSubject }, { token: i2.ReducerObservable }, { token: DevtoolsExtension }, { token: i2.ScannedActionsSubject }, { token: i0.ErrorHandler }, { token: INITIAL_STATE }, { token: STORE_DEVTOOLS_CONFIG }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    /** @nocollapse */ static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: StoreDevtools }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: StoreDevtools, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: StoreDevtools, decorators: [{
             type: Injectable
         }], ctorParameters: () => [{ type: DevtoolsDispatcher }, { type: i2.ActionsSubject }, { type: i2.ReducerObservable }, { type: DevtoolsExtension }, { type: i2.ScannedActionsSubject }, { type: i0.ErrorHandler }, { type: undefined, decorators: [{
                     type: Inject,
@@ -1024,11 +1024,11 @@ class StoreDevtoolsModule {
             providers: [provideStoreDevtools(options)],
         };
     }
-    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule }); }
-    /** @nocollapse */ static { this.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "17.0.0", ngImport: i0, type: StoreDevtoolsModule }); }
-    /** @nocollapse */ static { this.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: StoreDevtoolsModule }); }
+    /** @nocollapse */ static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: StoreDevtoolsModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule }); }
+    /** @nocollapse */ static { this.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "17.3.0", ngImport: i0, type: StoreDevtoolsModule }); }
+    /** @nocollapse */ static { this.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: StoreDevtoolsModule }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.0.0", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.0", ngImport: i0, type: StoreDevtoolsModule, decorators: [{
             type: NgModule,
             args: [{}]
         }] });
