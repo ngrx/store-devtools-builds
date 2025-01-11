@@ -963,6 +963,9 @@ function createReduxDevtoolsExtension() {
         return null;
     }
 }
+function createStateObservable(devtools) {
+    return devtools.state;
+}
 /**
  * Provides developer tools and instrumentation for `Store`.
  *
@@ -1014,9 +1017,6 @@ function provideStoreDevtools(options = {}) {
     ]);
 }
 
-function createStateObservable(devtools) {
-    return devtools.state;
-}
 class StoreDevtoolsModule {
     static instrument(options = {}) {
         return {
